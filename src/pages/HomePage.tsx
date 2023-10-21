@@ -3,7 +3,7 @@ import { Card } from "../components";
 
 export const HomePage = () => {
   return (
-    <Box overflow="auto" w="full" h="full" p="50px">
+    <Box p="50px">
       <Heading>Welcome</Heading>
 
       <Wrap mt="50px" spacing="30px">

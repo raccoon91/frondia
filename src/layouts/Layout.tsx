@@ -4,10 +4,10 @@ import { Sidebar } from "./Sidebar";
 
 export const Layout = () => {
   return (
-    <Flex align="stretch" w="100vw" h="100vh" bg="brand.50">
+    <Flex align="stretch" w="100vw" h="100vh" bg="background">
       <Sidebar />
 
-      <Box overflow="hidden" flex="1">
+      <Box overflow="auto" flex="1">
         <Outlet />
       </Box>
     </Flex>
