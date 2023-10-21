@@ -1,6 +1,7 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HomePage } from "./pages";
+import { Layout } from "./layouts";
 import { theme } from "./styles";
 
 export const App = () => {
@@ -8,7 +9,9 @@ export const App = () => {
     <ChakraProvider theme={theme}>
       <Router>
         <Routes>
-          <Route index element={<HomePage />} />
+          <Route element={<Layout />}>
+            <Route index element={<HomePage />} />
+          </Route>
         </Routes>
       </Router>
     </ChakraProvider>
