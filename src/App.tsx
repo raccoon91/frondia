@@ -1,6 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { HomePage } from "./pages";
+import { HomePage, LoginPage } from "./pages";
 import { Layout } from "./layouts";
 import { theme } from "./styles";
 
@@ -12,6 +12,8 @@ export const App = () => {
           <Route element={<Layout />}>
             <Route index element={<HomePage />} />
           </Route>
+
+          <Route path="login" element={<LoginPage />} />
         </Routes>
       </Router>
     </ChakraProvider>
