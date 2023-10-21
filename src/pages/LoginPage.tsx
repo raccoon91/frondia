@@ -31,8 +31,8 @@ export const LoginPage = () => {
     <Center w="100vw" h="100vh" bg="background">
       <VStack
         as="form"
-        spacing="20px"
         align="stretch"
+        spacing="20px"
         w="400px"
         p="30px"
         bg="surface"

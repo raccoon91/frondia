@@ -1,2 +1,2 @@
 export * from "./auth.store";
-export * from "./goal.store";
+export * from "./category.store";
