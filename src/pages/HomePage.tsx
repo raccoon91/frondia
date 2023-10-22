@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect } from "react";
-import { Box, Text, VStack, Wrap } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
 import { Card } from "../components";
 import { useCategoryStore } from "../stores";
 
@@ -49,29 +50,33 @@ export const HomePage = () => {
           </Card>
         </VStack>
 
-        <VStack spacing="30px" w="400px">
-          <Card title="오늘 내역 입력하기">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates vitae illo assumenda deserunt earum nam
-            placeat perferendis laborum cum. Deleniti natus ducimus perspiciatis quibusdam tempore. Distinctio atque sit
-            deserunt vel.💰
+        <VStack align="stretch" spacing="30px" w="300px">
+          <Card>
+            <Flex as={Link} to="/today" align="center" justify="center" gap="16px" cursor="pointer">
+              <Text fontSize="30px">💰</Text>
+              <Text>오늘 내역 입력하기</Text>
+            </Flex>
           </Card>
 
-          <Card title="고정 수입">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates vitae illo assumenda deserunt earum nam
-            placeat perferendis laborum cum. Deleniti natus ducimus perspiciatis quibusdam tempore. Distinctio atque sit
-            deserunt vel.
+          <Card>
+            <Flex align="center" justify="center" gap="16px" cursor="pointer">
+              <Text fontSize="30px">💵</Text>
+              <Text>고정 수입 추가하기</Text>
+            </Flex>
           </Card>
 
-          <Card title="고정 지출">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates vitae illo assumenda deserunt earum nam
-            placeat perferendis laborum cum. Deleniti natus ducimus perspiciatis quibusdam tempore. Distinctio atque sit
-            deserunt vel.
+          <Card>
+            <Flex align="center" justify="center" gap="16px" cursor="pointer">
+              <Text fontSize="30px">💳</Text>
+              <Text>고정 지출 추가하기</Text>
+            </Flex>
           </Card>
 
-          <Card title="목표 설정">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates vitae illo assumenda deserunt earum nam
-            placeat perferendis laborum cum. Deleniti natus ducimus perspiciatis quibusdam tempore. Distinctio atque sit
-            deserunt vel.
+          <Card>
+            <Flex align="center" justify="center" gap="16px" cursor="pointer">
+              <Text fontSize="30px">🌏</Text>
+              <Text>목표 설정</Text>
+            </Flex>
           </Card>
         </VStack>
       </Wrap>
