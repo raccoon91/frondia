@@ -1,17 +1,9 @@
 import dayjs from "dayjs";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
 import { Card } from "../components";
-import { useCategoryStore } from "../stores";
 
 export const HomePage = () => {
-  const { getCategories } = useCategoryStore(state => ({ getCategories: state.getCategories }));
-
-  useEffect(() => {
-    getCategories();
-  }, []);
-
   return (
     <Box p="50px">
       <Text fontSize="20px" fontWeight="bold">
