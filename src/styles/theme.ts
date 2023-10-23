@@ -15,6 +15,8 @@ export const theme = extendTheme(
         background: baseTheme.colors.yellow[50],
         surface: "#fcfcf5",
         border: baseTheme.colors.gray[200],
+        theader: baseTheme.colors.blackAlpha[50],
+        tactive: "#f7ebb5",
       },
     },
     styles: {
@@ -31,6 +33,20 @@ export const theme = extendTheme(
           "&::-webkit-scrollbar-thumb": {
             background: baseTheme.colors.yellow[500],
             borderRadius: "3px",
+          },
+        },
+      },
+    },
+    components: {
+      Input: {
+        variants: {
+          outline: {
+            field: {
+              _focusVisible: {
+                borderColor: baseTheme.colors.yellow[500],
+                boxShadow: `0 0 0 2px ${baseTheme.colors.yellow[500]}`,
+              },
+            },
           },
         },
       },

@@ -1,54 +1,56 @@
-import { FC, useCallback } from "react";
-import { AgGridReact } from "ag-grid-react";
-import { Box } from "@chakra-ui/react";
-import { grid } from "../../styles";
+import { FC } from "react";
+import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from "@tanstack/react-table";
+import { Box, Flex, Text } from "@chakra-ui/react";
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
-
-import { ColDef, ColGroupDef, RowValueChangedEvent } from "ag-grid-community";
-
-interface IDataGridProps<T = unknown> {
-  columns: (ColDef | ColGroupDef)[];
-  rows: T[];
+interface IDataGridProps<T = any> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  onChangeRowData?: (rowIndex: number, columnId: string, value: T) => void;
 }
 
-export const DataGrid: FC<IDataGridProps> = ({ columns, rows }) => {
-  const handleRowValueChange = useCallback((event: RowValueChangedEvent) => {
-    console.log(event);
-  }, []);
+export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData }) => {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    meta: {
+      updateData: (rowIndex, columnId, value) => {
+        console.log(rowIndex, columnId, value);
+
+        onChangeRowData?.(rowIndex, columnId, value);
+      },
+    },
+    debugTable: true,
+  });
 
   return (
-    <Box
-      className="ag-theme-alpine"
-      w="full"
-      h="full"
-      sx={{
-        "--ag-borders": grid.border,
-        "--ag-border-color": grid.borderColor,
-        "--ag-font-size": grid.fontSize,
-        "--ag-font-family": grid.fontFamily,
-        "--ag-row-hover-color": grid.rowHoverColor,
-        "--ag-alpine-active-color": grid.alpineActiveColor,
-        "--ag-header-foreground-color": grid.headerForegroundColor,
-        "--ag-header-background-color": grid.headerBackgroundColor,
-        "--ag-header-column-resize-handle-color": grid.headerColumnResizeHandleColor,
-        "--ag-foreground-color": grid.foregroundColor,
-        "--ag-background-color": grid.backgroundColor,
-        "--ag-odd-row-background-color": grid.oddBackgroundColor,
-        "--ag-selected-row-background-color": grid.selectedRowBackgroundColor,
-        "--ag-borders-input": grid.bordersInput,
-        "--ag-input-border-color": grid.inputBorderColor,
-        "--ag-input-focus-border-color": grid.inputFocusBorderColor,
-      }}
-    >
-      <AgGridReact
-        editType="fullRow"
-        columnDefs={columns}
-        rowData={rows}
-        tabToNextCell={event => event.nextCellPosition}
-        onRowValueChanged={handleRowValueChange}
-      />
-    </Box>
+    <Flex direction="column" w="full" h="full" border="1px solid" borderColor="border">
+      <Flex bg="theader" borderBottom="1px solid" borderColor="border">
+        {table.getFlatHeaders().map(header => (
+          <Flex
+            key={header.id}
+            align="center"
+            minW={header.getSize()}
+            h="40px"
+            px="16px"
+            borderRight="1px solid"
+            borderColor="border"
+          >
+            <Text fontWeight="bold">{flexRender(header.column.columnDef.header, header.getContext())}</Text>
+          </Flex>
+        ))}
+      </Flex>
+      <Box bg="surface" flex="1" w="full">
+        {table.getRowModel().rows.map(row => (
+          <Flex key={row.id} _hover={{ bg: "tactive" }} borderBottom="1px solid" borderColor="border">
+            {row.getAllCells().map(cell => (
+              <Box key={cell.id} minW={cell.column.getSize()} borderRight="1px solid" borderColor="border">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Box>
+            ))}
+          </Flex>
+        ))}
+      </Box>
+    </Flex>
   );
 };

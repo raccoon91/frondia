@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
-import { useMemo } from "react";
-import { ColDef } from "ag-grid-community";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { DataGrid, createSelectColumn, createTextColumn } from "../components";
 import { useCategoryStore } from "../stores";
+import { DataGrid, TextEditor } from "../components";
 
 const rows = [
   { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: "", type: "", count: "" },
@@ -13,31 +12,40 @@ const rows = [
   { category: "", price: "", note: "", type: "", count: "" },
   { category: "", price: "", note: "", type: "", count: "" },
   { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
+];
+
+const columnHelper = createColumnHelper<any>();
+
+const columns = [
+  columnHelper.accessor("category", {
+    cell: props => <TextEditor {...props} getValue={() => props.row.original.category.name} />,
+    header: "Category",
+    size: 200,
+  }),
+  columnHelper.accessor("price", {
+    cell: TextEditor,
+    header: "Price",
+    size: 200,
+  }),
+  columnHelper.accessor("note", {
+    cell: TextEditor,
+    header: "Note",
+    size: 200,
+  }),
+  columnHelper.accessor("type", {
+    cell: TextEditor,
+    header: "Type",
+    size: 200,
+  }),
+  columnHelper.accessor("count", {
+    cell: TextEditor,
+    header: "Count",
+    size: 200,
+  }),
 ];
 
 export const TodayPage = () => {
   const { categories } = useCategoryStore(state => ({ categories: state.categories }));
-
-  const columns: ColDef[] = useMemo(
-    () => [
-      createSelectColumn(
-        "category",
-        categories,
-        (origin, target) => origin?.id === target?.id,
-        option => option?.name ?? ""
-      ),
-      createTextColumn("price"),
-      createTextColumn("note"),
-      createTextColumn("type"),
-      createTextColumn("count"),
-    ],
-    [categories]
-  );
 
   return (
     <Flex direction="column" w="full" h="full" p="50px">
@@ -58,7 +66,7 @@ export const TodayPage = () => {
       </Flex>
 
       <Box overflow="auto" flex="1" mt="30px">
-        <DataGrid columns={columns} rows={rows} />
+        <DataGrid data={rows} columns={columns} />
       </Box>
     </Flex>
   );
