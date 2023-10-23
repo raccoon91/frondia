@@ -1,20 +1,14 @@
-import { Center, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
-import { ColDef, Column, GridApi, RowNode } from "ag-grid-community";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-
-type EditorParams = {
-  api: GridApi;
-  column: Column;
-  colDef: ColDef;
-  node: RowNode;
-  value: any;
-  options: any[];
-};
+import { KeyboardEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Box, Flex, Input, Modal, ModalContent } from "@chakra-ui/react";
+import { EditorParams } from "./types";
+import { grid } from "../../styles";
 
 export const SelectEditor = forwardRef((params: EditorParams, ref) => {
-  const inputRef = useRef<HTMLDivElement>(null);
-  const [value, setValue] = useState(params?.value ?? "");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const itemRef = useRef<HTMLDivElement>(null);
+  const [option, setOption] = useState<{ label: string; value: string | number } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [itemIndex, setItemIndex] = useState(0);
 
   useEffect(() => {
     const focused = params.api.getFocusedCell();
@@ -26,10 +20,24 @@ export const SelectEditor = forwardRef((params: EditorParams, ref) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!params?.options?.length) return;
+
+    const option = params.options.find(option => params.optionIsEqual(option, params.value));
+
+    if (!option) return;
+
+    setOption(option);
+  }, [params?.options]);
+
+  // useEffect(() => {
+  //   itemRef.current?.children[itemIndex]?.scrollIntoView({ block: "center" });
+  // }, [itemIndex]);
+
   useImperativeHandle(ref, () => {
     return {
       getValue() {
-        return value;
+        return option;
       },
 
       focusIn() {
@@ -48,42 +56,116 @@ export const SelectEditor = forwardRef((params: EditorParams, ref) => {
     };
   });
 
-  return (
-    <Menu isOpen={isOpen} gutter={0} matchWidth>
-      <MenuButton
-        ref={inputRef}
-        as={Center}
-        tabIndex={0}
-        w={params.column.getActualWidth()}
-        h={params.node.rowHeight ?? "none"}
-        px="16px"
-        border="1px solid"
-        bg="background"
-        rounded="sm"
-        outline="none"
-        onClick={() => {
-          setIsOpen(p => !p);
-        }}
-      >
-        <Text fontSize="16px">{value || params.colDef.field}</Text>
-      </MenuButton>
-      <MenuList fontSize="16px">
-        {params.options?.map((option, index) => (
-          <MenuItem
-            key={index}
-            onClick={() => {
-              setValue(option);
+  const handleOpenMenu = () => {
+    setIsOpen(true);
+  };
 
-              setTimeout(() => {
-                params.api.stopEditing();
-                params.api.setFocusedCell(params.node.rowIndex ?? 0, params.column);
-              }, 100);
-            }}
-          >
-            {option}
-          </MenuItem>
-        ))}
-      </MenuList>
-    </Menu>
+  const handleCloseMenu = () => {
+    setIsOpen(false);
+  };
+
+  const handleSelectEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    if (e.key === "Enter") {
+      handleOpenMenu();
+    }
+  };
+
+  const handleMoveItem = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowDown") {
+      setItemIndex(p => {
+        if (p + 1 > params.options.length - 1) {
+          itemRef.current?.children[0]?.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+          });
+          return 0;
+        } else {
+          itemRef.current?.children[p + 1]?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          return p + 1;
+        }
+      });
+    } else if (e.key === "ArrowUp") {
+      setItemIndex(p => {
+        if (p - 1 < 0) {
+          itemRef.current?.children[params.options.length - 1]?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          return params.options.length - 1;
+        } else {
+          itemRef.current?.children[p - 1]?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+          return p - 1;
+        }
+      });
+    }
+  };
+
+  const handleClickItem = (option: any) => () => {
+    setOption(option);
+
+    setTimeout(() => {
+      params.api.stopEditing();
+      params.api.setFocusedCell(params.node.rowIndex ?? 0, params.column);
+    }, 200);
+  };
+
+  return (
+    <>
+      <Input
+        ref={inputRef}
+        readOnly
+        value={params.optionFormatter(option)}
+        onClick={handleOpenMenu}
+        onKeyDown={handleSelectEnter}
+        sx={{
+          rounded: "none",
+          border: "none",
+          backgroundColor: grid.backgroundColor,
+          _focusVisible: {
+            border: "none",
+          },
+        }}
+      />
+      <Modal isOpen={isOpen} onClose={handleCloseMenu}>
+        <ModalContent
+          position="fixed"
+          overflow="auto"
+          top={(inputRef.current?.getBoundingClientRect().top ?? 0) - 24}
+          left={inputRef.current?.getBoundingClientRect().left}
+          w={params.column.getActualWidth()}
+          h="200px"
+          rounded="none"
+        >
+          <Box ref={itemRef} tabIndex={0} outline="none" onKeyDown={handleMoveItem}>
+            {params.options?.map((option, index) => (
+              <Flex
+                key={index}
+                align="center"
+                px="16px"
+                h="40px"
+                _hover={{
+                  backgroundColor: "primary",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+                backgroundColor={index === itemIndex ? "primary" : "none"}
+                color={index === itemIndex ? "white" : "none"}
+                onClick={handleClickItem(option)}
+              >
+                {params.optionFormatter(option)}
+              </Flex>
+            ))}
+          </Box>
+        </ModalContent>
+      </Modal>
+    </>
   );
 });

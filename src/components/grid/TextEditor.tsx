@@ -1,13 +1,7 @@
 import { ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Column, GridApi } from "ag-grid-community";
 import { Input } from "@chakra-ui/react";
+import { EditorParams } from "./types";
 import { grid } from "../../styles";
-
-type EditorParams = {
-  api: GridApi;
-  column: Column;
-  value: any;
-};
 
 export const TextEditor = forwardRef((params: EditorParams, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);

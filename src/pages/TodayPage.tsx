@@ -1,51 +1,17 @@
 import dayjs from "dayjs";
+import { useMemo } from "react";
+import { ColDef } from "ag-grid-community";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { DataGrid, SelectEditor, TextEditor } from "../components";
-import { SuppressKeyboardEventParams } from "ag-grid-community";
-
-const columns = [
-  {
-    field: "category",
-    editable: true,
-    cellEditor: TextEditor,
-  },
-  {
-    field: "price",
-    editable: true,
-    cellEditor: TextEditor,
-  },
-  // { field: "price", editable: true, cellEditor: "agNumberCellEditor" },
-  {
-    field: "note",
-    editable: true,
-    cellEditor: SelectEditor,
-    cellEditorPopup: true,
-    cellEditorParams: {
-      options: ["English", "Spanish", "French", "Portuguese", "(other)"],
-    },
-    suppressKeyboardEvent: (params: SuppressKeyboardEventParams) => {
-      const key = params.event.key;
-
-      return params.editing && key === "Enter";
-    },
-  },
-  // {
-  //   field: "note",
-  //   editable: true,
-  //   cellEditor: "agSelectCellEditor",
-  //   cellEditorParams: {
-  //     values: ["English", "Spanish", "French", "Portuguese", "(other)"],
-  //     valueListGap: 0,
-  //   },
-  // },
-  { field: "type", editable: true },
-  { field: "count", editable: true },
-];
+import { DataGrid, createSelectColumn, createTextColumn } from "../components";
+import { useCategoryStore } from "../stores";
 
 const rows = [
-  { id: 0, category: "Income", price: "100", note: "", type: "", count: "" },
-  { id: 1, category: "Expense", price: "200", note: "", type: "", count: "" },
+  { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: "", type: "", count: "" },
+  { id: 1, category: { id: 2, type: "income", name: "부수입" }, price: "200", note: "", type: "", count: "" },
+  { category: "", price: "", note: "", type: "", count: "" },
+  { category: "", price: "", note: "", type: "", count: "" },
+  { category: "", price: "", note: "", type: "", count: "" },
   { category: "", price: "", note: "", type: "", count: "" },
   { category: "", price: "", note: "", type: "", count: "" },
   { category: "", price: "", note: "", type: "", count: "" },
@@ -55,6 +21,24 @@ const rows = [
 ];
 
 export const TodayPage = () => {
+  const { categories } = useCategoryStore(state => ({ categories: state.categories }));
+
+  const columns: ColDef[] = useMemo(
+    () => [
+      createSelectColumn(
+        "category",
+        categories,
+        (origin, target) => origin?.id === target?.id,
+        option => option?.name ?? ""
+      ),
+      createTextColumn("price"),
+      createTextColumn("note"),
+      createTextColumn("type"),
+      createTextColumn("count"),
+    ],
+    [categories]
+  );
+
   return (
     <Flex direction="column" w="full" h="full" p="50px">
       <Flex justify="space-between">
@@ -69,6 +53,7 @@ export const TodayPage = () => {
         <Flex gap="8px">
           <Button>💰 수입</Button>
           <Button>💵 지출</Button>
+          <Button colorScheme="green">💾 저장</Button>
         </Flex>
       </Flex>
 
