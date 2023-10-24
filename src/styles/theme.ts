@@ -15,8 +15,8 @@ export const theme = extendTheme(
         background: baseTheme.colors.yellow[50],
         surface: "#fcfcf5",
         border: baseTheme.colors.gray[200],
-        theader: baseTheme.colors.blackAlpha[50],
-        tactive: "#f7ebb5",
+        theader: baseTheme.colors.orange[100],
+        tactive: baseTheme.colors.green[50],
       },
     },
     styles: {
