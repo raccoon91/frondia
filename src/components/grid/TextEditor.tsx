@@ -23,7 +23,7 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, any>> = props => {
   return (
     <Input
       value={value}
-      maxW={column?.getSize()}
+      maxW={column?.getSize() - 1}
       onChange={handleChangeInput}
       onBlur={onBlur}
       border="none"

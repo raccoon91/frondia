@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from "@tanstack/react-table";
 import { Box, Flex, Text } from "@chakra-ui/react";
 
@@ -9,6 +9,9 @@ interface IDataGridProps<T = any> {
 }
 
 export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData }) => {
+  const headerRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
   const table = useReactTable({
     data,
     columns,
@@ -23,9 +26,23 @@ export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData })
     debugTable: true,
   });
 
+  const handleScrollBody = () => {
+    if (!headerRef.current || !bodyRef.current) return;
+
+    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+  };
+
   return (
-    <Flex direction="column" w="full" h="full" border="1px solid" borderColor="border">
-      <Flex bg="theader" borderBottom="1px solid" borderColor="border">
+    <Flex
+      overflow="hidden"
+      direction="column"
+      align="stretch"
+      w="full"
+      h="full"
+      border="1px solid"
+      borderColor="border"
+    >
+      <Flex ref={headerRef} overflow="hidden" bg="theader" borderBottom="1px solid" borderColor="border" zIndex="1">
         {table.getFlatHeaders().map(header => (
           <Flex
             key={header.id}
@@ -40,11 +57,19 @@ export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData })
           </Flex>
         ))}
       </Flex>
-      <Box bg="surface" flex="1" w="full">
+
+      <Box ref={bodyRef} overflow="auto" bg="surface" flex="1" onScroll={handleScrollBody}>
         {table.getRowModel().rows.map(row => (
-          <Flex key={row.id} _hover={{ bg: "tactive" }} borderBottom="1px solid" borderColor="border">
+          <Flex key={row.id} _hover={{ bg: "tactive", ".cell": { bg: "tactive" } }}>
             {row.getAllCells().map(cell => (
-              <Box key={cell.id} minW={cell.column.getSize()} borderRight="1px solid" borderColor="border">
+              <Box
+                key={cell.id}
+                className="cell"
+                minW={cell.column.getSize()}
+                borderRight="1px solid"
+                borderBottom="1px solid"
+                borderColor="border"
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Box>
             ))}
