@@ -1,51 +1,64 @@
 import dayjs from "dayjs";
+import { useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore } from "../stores";
-import { DataGrid, TextEditor } from "../components";
-
-const rows = [
-  { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: "", type: "", count: "" },
-  { id: 1, category: { id: 2, type: "income", name: "부수입" }, price: "200", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-  { category: "", price: "", note: "", type: "", count: "" },
-];
+import { DataGrid, SelectEditor, TextEditor } from "../components";
 
 const columnHelper = createColumnHelper<any>();
 
-const columns = [
-  columnHelper.accessor("category", {
-    cell: props => <TextEditor {...props} getValue={() => props.row.original.category.name} />,
-    header: "Category",
-    size: 200,
-  }),
-  columnHelper.accessor("price", {
-    cell: TextEditor,
-    header: "Price",
-    size: 200,
-  }),
-  columnHelper.accessor("note", {
-    cell: TextEditor,
-    header: "Note",
-    size: 200,
-  }),
-  columnHelper.accessor("type", {
-    cell: TextEditor,
-    header: "Type",
-    size: 200,
-  }),
-  columnHelper.accessor("count", {
-    cell: TextEditor,
-    header: "Count",
-    size: 200,
-  }),
-];
-
 export const TodayPage = () => {
   const { categories } = useCategoryStore(state => ({ categories: state.categories }));
+  const [data, setData] = useState([
+    { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: "", type: "", count: "" },
+    { id: 1, category: { id: 2, type: "income", name: "부수입" }, price: "200", note: "", type: "", count: "" },
+    { category: "", price: "", note: "", type: "", count: "" },
+    { category: "", price: "", note: "", type: "", count: "" },
+  ]);
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("category", {
+        cell: props => <SelectEditor {...props} value={props.row.original.category.id} options={categories} />,
+        header: "Category",
+        size: 200,
+      }),
+      columnHelper.accessor("price", {
+        cell: props => <TextEditor {...props} value={props.row.original.price} />,
+        header: "Price",
+        size: 200,
+      }),
+      columnHelper.accessor("note", {
+        cell: props => <TextEditor {...props} value={props.row.original.note} />,
+        header: "Note",
+        size: 200,
+      }),
+      columnHelper.accessor("type", {
+        cell: props => <TextEditor {...props} value={props.row.original.type} />,
+        header: "Type",
+        size: 200,
+      }),
+      columnHelper.accessor("count", {
+        cell: props => <TextEditor {...props} value={props.row.original.count} />,
+        header: "Count",
+        size: 200,
+      }),
+    ],
+    [categories]
+  );
+
+  const handleChangeRowData = (rowIndex: number, columnId: string, value: any) => {
+    setData(row =>
+      row.map((column, index) => {
+        if (index === rowIndex) {
+          return { ...column, [columnId]: value };
+        }
+
+        return column;
+      })
+    );
+  };
 
   return (
     <Flex direction="column" w="full" h="full" p="50px">
@@ -66,7 +79,7 @@ export const TodayPage = () => {
       </Flex>
 
       <Box overflow="auto" flex="1" mt="30px">
-        <DataGrid data={rows} columns={columns} />
+        <DataGrid data={data} columns={columns} onChangeRowData={handleChangeRowData} />
       </Box>
     </Flex>
   );

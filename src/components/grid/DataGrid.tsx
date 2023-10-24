@@ -18,8 +18,6 @@ export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData })
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex, columnId, value) => {
-        console.log(rowIndex, columnId, value);
-
         onChangeRowData?.(rowIndex, columnId, value);
       },
     },

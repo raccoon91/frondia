@@ -1,28 +1,26 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
 import { Input } from "@chakra-ui/react";
 
-export const TextEditor: ColumnDefTemplate<CellContext<any, any>> = props => {
-  const { getValue, row, column, table } = props;
-  const initialValue = getValue();
-
-  const [value, setValue] = useState(initialValue);
+export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { value?: string | number }> = ({
+  row,
+  column,
+  table,
+  value,
+}) => {
+  const [cellData, setCellData] = useState(value);
 
   const onBlur = () => {
-    table.options.meta?.updateData(row.index, column.id, value);
+    table.options.meta?.updateData(row.index, column.id, cellData);
   };
 
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    setCellData(e.target.value);
   };
 
   return (
     <Input
-      value={value}
+      value={cellData}
       maxW={column?.getSize() - 1}
       onChange={handleChangeInput}
       onBlur={onBlur}
