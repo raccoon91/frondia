@@ -1,11 +1,29 @@
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
-import { Card } from "../components";
+import { Card, Dropdown, DropdownItem } from "../components";
 
 export const HomePage = () => {
   return (
     <Box p="50px">
+      <Dropdown
+        value="1"
+        onChange={e => {
+          console.log(e);
+        }}
+      >
+        <DropdownItem value="0">0</DropdownItem>
+        <DropdownItem value="1">1</DropdownItem>
+        <DropdownItem value="2">2</DropdownItem>
+        <DropdownItem value="3">3</DropdownItem>
+        <DropdownItem value="4">4</DropdownItem>
+        <DropdownItem value="5">5</DropdownItem>
+        <DropdownItem value="6">6</DropdownItem>
+        <DropdownItem value="7">7</DropdownItem>
+        <DropdownItem value="8">8</DropdownItem>
+        <DropdownItem value="9">9</DropdownItem>
+      </Dropdown>
+
       <Text fontSize="20px" fontWeight="bold">
         {dayjs().format("YYYY-MM-DD")}
       </Text>
