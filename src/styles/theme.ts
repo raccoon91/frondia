@@ -12,6 +12,7 @@ export const theme = extendTheme(
     semanticTokens: {
       colors: {
         primary: baseTheme.colors.yellow[500],
+        secondary: baseTheme.colors.orange[200],
         background: baseTheme.colors.yellow[50],
         surface: "#fcfcf5",
         border: baseTheme.colors.gray[200],
