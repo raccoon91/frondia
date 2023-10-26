@@ -26,6 +26,7 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { value?: str
       onBlur={onBlur}
       border="none"
       rounded="none"
+      cursor="cell"
     />
   );
 };
