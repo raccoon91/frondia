@@ -11,16 +11,26 @@ import {
   useRef,
   useState,
 } from "react";
-import { Box, Flex, Input, LayoutProps, Modal, ModalContent } from "@chakra-ui/react";
+import { BorderProps, Box, Flex, Input, LayoutProps, Modal, ModalContent } from "@chakra-ui/react";
 
 interface IDropdownProps {
   w?: LayoutProps["w"];
   h?: LayoutProps["h"];
+  border?: BorderProps["border"];
   value: string;
+  display?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({ value, w, h = "200px", onChange, children }) => {
+export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
+  w,
+  h = "160px",
+  border,
+  value,
+  display,
+  onChange,
+  children,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -58,14 +68,14 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({ value, w, h = 
 
       if (!inputRef.current) return;
 
-      const event = new Event("change", { bubbles: true });
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+      nativeInputValueSetter?.call(inputRef.current, target.dataset["value"] ?? value);
 
-      inputRef.current.value = target.dataset["value"] ?? value;
+      const event = new Event("input", { bubbles: true });
+
       inputRef.current.dispatchEvent(event);
 
-      console.log("enter", inputRef.current);
-
-      // setIsOpen(false);
+      setIsOpen(false);
 
       return;
     }
@@ -93,14 +103,14 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({ value, w, h = 
 
     if (!inputRef.current) return;
 
-    const event = new Event("change", { bubbles: true });
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    nativeInputValueSetter?.call(inputRef.current, e.target.dataset["value"] ?? value);
 
-    inputRef.current.value = e.target.dataset["value"] ?? value;
+    const event = new Event("input", { bubbles: true });
+
     inputRef.current.dispatchEvent(event);
 
-    console.log("click", inputRef.current);
-
-    // setIsOpen(false);
+    setIsOpen(false);
   };
 
   return (
@@ -108,13 +118,13 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({ value, w, h = 
       <Input
         ref={inputRef}
         w={w}
+        border={border}
         rounded="none"
         cursor="cell"
-        readOnly
-        value={value}
+        value={display ?? value ?? ""}
         onClick={handleOpenMenu}
-        onKeyDown={handleSelectEnter}
-        // onChange={onChange}
+        onKeyUp={handleSelectEnter}
+        onChange={onChange}
       />
       <Modal isOpen={isOpen} onClose={handleCloseMenu}>
         <ModalContent
@@ -132,7 +142,7 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({ value, w, h = 
               if (isValidElement(child)) {
                 return cloneElement(child, {
                   ...(child?.props ?? {}),
-                  selected: child.props.value === value,
+                  selected: child.props.value === value?.toString(),
                   focused: index === itemIndex,
                   onHover: () => {
                     setItemIndex(index);

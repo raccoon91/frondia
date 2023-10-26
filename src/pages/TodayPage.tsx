@@ -20,14 +20,21 @@ export const TodayPage = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor("category", {
-        cell: props => <SelectEditor {...props} value={props.row.original.category.id} options={categories} />,
+        cell: props => (
+          <SelectEditor
+            {...props}
+            value={props.row.original.category.id}
+            displayValue={(option: any) => option?.name}
+            options={categories}
+          />
+        ),
         header: "Category",
-        size: 200,
+        size: 160,
       }),
       columnHelper.accessor("price", {
         cell: props => <TextEditor {...props} value={props.row.original.price} />,
         header: "Price",
-        size: 200,
+        size: 160,
       }),
       columnHelper.accessor("note", {
         cell: props => <TextEditor {...props} value={props.row.original.note} />,
@@ -37,12 +44,12 @@ export const TodayPage = () => {
       columnHelper.accessor("type", {
         cell: props => <TextEditor {...props} value={props.row.original.type} />,
         header: "Type",
-        size: 200,
+        size: 120,
       }),
       columnHelper.accessor("count", {
         cell: props => <TextEditor {...props} value={props.row.original.count} />,
         header: "Count",
-        size: 200,
+        size: 120,
       }),
     ],
     [categories]
