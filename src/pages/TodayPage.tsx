@@ -23,22 +23,17 @@ export const TodayPage = () => {
         cell: props => (
           <SelectEditor
             {...props}
-            value={props.row.original.category.id}
             displayValue={(option: any) => option?.name}
             options={categories}
+            inputProps={{ value: props.row.original.category.id }}
           />
         ),
         header: "Category",
         size: 160,
       }),
       columnHelper.accessor("price", {
-        cell: props => <TextEditor {...props} value={props.row.original.price} />,
+        cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.price, textAlign: "right" }} />,
         header: "Price",
-        size: 160,
-      }),
-      columnHelper.accessor("note", {
-        cell: props => <TextEditor {...props} value={props.row.original.note} />,
-        header: "Note",
         size: 200,
       }),
       columnHelper.accessor("type", {
@@ -46,20 +41,25 @@ export const TodayPage = () => {
           props.row.original.type === null ? (
             <UnEditable {...props} />
           ) : (
-            <TextEditor {...props} value={props.row.original.type} />
+            <TextEditor {...props} inputProps={{ value: props.row.original.type }} />
           ),
         header: "Type",
-        size: 120,
+        size: 140,
       }),
       columnHelper.accessor("count", {
         cell: props =>
           props.row.original.count === null ? (
             <UnEditable {...props} />
           ) : (
-            <TextEditor {...props} value={props.row.original.count} />
+            <TextEditor {...props} inputProps={{ value: props.row.original.count }} />
           ),
         header: "Count",
-        size: 120,
+        size: 140,
+      }),
+      columnHelper.accessor("note", {
+        cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.note, textAlign: "right" }} />,
+        header: "Note",
+        size: 300,
       }),
     ],
     [categories]

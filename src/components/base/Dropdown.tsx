@@ -13,14 +13,14 @@ import {
 } from "react";
 import { Box, Flex, Input, InputProps, LayoutProps, Modal, ModalContent } from "@chakra-ui/react";
 
-interface IDropdownProps extends InputProps {
+interface IDropdownProps extends Omit<InputProps, "display"> {
   display?: string;
   menuHeight?: LayoutProps["h"];
 }
 
 export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
   display,
-  menuHeight,
+  menuHeight = "160px",
   value,
   onChange,
   children,
@@ -128,9 +128,9 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
         <ModalContent
           position="fixed"
           overflow="auto"
-          top={rect.top - 24}
+          top={rect.top - 20}
           left={rect.left}
-          minW={rect.width}
+          w={rect.width}
           minH="40px"
           maxH={menuHeight}
           rounded="none"
@@ -146,7 +146,7 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
               if (isValidElement(child)) {
                 return cloneElement(child, {
                   ...(child?.props ?? {}),
-                  selected: child.props.value === value?.toString(),
+                  selected: child.props?.value?.toString() === value?.toString(),
                   focused: index === itemIndex,
                   onHover: () => {
                     setItemIndex(index);

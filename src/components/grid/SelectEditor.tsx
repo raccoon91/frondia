@@ -1,11 +1,17 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
 import { Dropdown, DropdownItem } from "..";
+import { InputProps } from "@chakra-ui/react";
 
 export const SelectEditor: ColumnDefTemplate<
-  CellContext<any, any> & { value?: any; options: any[]; displayValue: (option: any) => string | undefined }
-> = ({ row, column, table, value, options, displayValue }) => {
-  const [cellData, setCellData] = useState(value);
+  CellContext<any, any> & {
+    options: any[];
+    displayValue: (option: any) => string | undefined;
+    inputProps: Omit<InputProps, "display">;
+  }
+> = ({ row, column, table, inputProps, options, displayValue }) => {
+  const { value, ...restProps } = inputProps;
+  const [cellData, setCellData] = useState<any>(value);
 
   useEffect(() => {
     const option = options.find(option => option.id === value);
@@ -33,6 +39,7 @@ export const SelectEditor: ColumnDefTemplate<
       value={cellData?.id}
       display={displayValue(cellData)}
       onChange={handleChangeSelect}
+      {...restProps}
     >
       {options.map(option => (
         <DropdownItem key={option.id} value={option.id}>

@@ -1,13 +1,14 @@
 import { ChangeEvent, useState } from "react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
-import { Input } from "@chakra-ui/react";
+import { Input, InputProps } from "@chakra-ui/react";
 
-export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { value?: string | number }> = ({
+export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { inputProps: InputProps }> = ({
   row,
   column,
   table,
-  value,
+  inputProps,
 }) => {
+  const { value, ...restProps } = inputProps;
   const [cellData, setCellData] = useState(value);
 
   const onBlur = () => {
@@ -32,6 +33,7 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { value?: str
       value={cellData ?? ""}
       onChange={handleChangeInput}
       onBlur={onBlur}
+      {...restProps}
     />
   );
 };
