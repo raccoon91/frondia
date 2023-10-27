@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { HomePage, LoginPage, TodayPage } from "./pages";
-import { Layout } from "./layouts";
-import { ToastContainer, theme } from "./styles";
-import { useCategoryStore, useExpenseTypeStore } from "./stores";
+import { useCategoryStore, useExpenseTypeStore } from "@/stores";
+import { ToastContainer, theme } from "@/styles";
+import { Layout } from "@/layouts";
+import { HomePage, LoginPage, TodayPage } from "@/pages";
 
 export const App = () => {
   const { getExpenseTypes } = useExpenseTypeStore(state => ({ getExpenseTypes: state.getExpenseTypes }));

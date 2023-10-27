@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
-import { Card } from "../components";
+import { Card } from "@/components";
 
 export const HomePage = () => {
   return (

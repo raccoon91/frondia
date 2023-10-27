@@ -1,7 +1,7 @@
-import { Button, Center, Heading, Input, VStack } from "@chakra-ui/react";
-import { useAuthStore } from "../stores";
 import { ChangeEvent, FormEventHandler, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button, Center, Heading, Input, VStack } from "@chakra-ui/react";
+import { useAuthStore } from "@/stores";
 
 export const LoginPage = () => {
   const navigate = useNavigate();

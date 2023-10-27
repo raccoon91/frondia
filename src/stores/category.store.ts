@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { supabase } from "../db";
-import { toast } from "../styles";
+import { supabase } from "@/db";
+import { toast } from "@/styles";
 
 interface ICategoryStore {
   incomeCategories: ICategory[];

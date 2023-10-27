@@ -3,8 +3,8 @@ import { useEffect, useMemo } from "react";
 import { RowData, createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "../stores";
-import { Card, DataGrid, SelectEditor, TextEditor } from "../components";
+import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "@/stores";
+import { Card, DataGrid, SelectEditor, TextEditor } from "@/components";
 
 const columnHelper = createColumnHelper<IExpense>();
 

@@ -1,8 +1,8 @@
+import { useCallback, useEffect } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores";
 import { Sidebar } from "./Sidebar";
-import { useAuthStore } from "../stores";
-import { useCallback, useEffect } from "react";
 
 export const Layout = () => {
   const navigate = useNavigate();
