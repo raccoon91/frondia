@@ -2,8 +2,10 @@ import { create } from "zustand";
 import { supabase } from "../db";
 
 interface ICategoryStore {
-  categories: ICategory[];
-  getCategories: () => Promise<void>;
+  incomeCategories: ICategory[];
+  expenseCategories: ICategory[];
+  savingCategories: ICategory[];
+  investmentCategories: ICategory[];
   getIncomeCategories: () => Promise<void>;
   getExpenseCategories: () => Promise<void>;
   getSavingCategories: () => Promise<void>;
@@ -11,48 +13,42 @@ interface ICategoryStore {
 }
 
 export const useCategoryStore = create<ICategoryStore>(set => ({
-  categories: [],
-  getCategories: async () => {
-    try {
-      const { data } = await supabase.from("categories").select("*");
-
-      set({ categories: data ?? [] });
-    } catch (err) {
-      console.error(err);
-    }
-  },
+  incomeCategories: [],
+  expenseCategories: [],
+  savingCategories: [],
+  investmentCategories: [],
   getIncomeCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type", "income");
+      const { data } = await supabase.from("categories").select("*").eq("type_id", "7");
 
-      set({ categories: data ?? [] });
+      set({ incomeCategories: data ?? [] });
     } catch (err) {
       console.error(err);
     }
   },
   getExpenseCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type", "expense");
+      const { data } = await supabase.from("categories").select("*").eq("type_id", "8");
 
-      set({ categories: data ?? [] });
+      set({ expenseCategories: data ?? [] });
     } catch (err) {
       console.error(err);
     }
   },
   getSavingCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type", "saving");
+      const { data } = await supabase.from("categories").select("*").eq("type_id", "9");
 
-      set({ categories: data ?? [] });
+      set({ savingCategories: data ?? [] });
     } catch (err) {
       console.error(err);
     }
   },
   getInvestmentCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type", "investment");
+      const { data } = await supabase.from("categories").select("*").eq("type_id", "10");
 
-      set({ categories: data ?? [] });
+      set({ investmentCategories: data ?? [] });
     } catch (err) {
       console.error(err);
     }

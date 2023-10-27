@@ -8,11 +8,21 @@ import { useCategoryStore, useExpenseTypeStore } from "./stores";
 
 export const App = () => {
   const { getExpenseTypes } = useExpenseTypeStore(state => ({ getExpenseTypes: state.getExpenseTypes }));
-  const { getCategories } = useCategoryStore(state => ({ getCategories: state.getCategories }));
+  const { getIncomeCategories, getExpenseCategories, getSavingCategories, getInvestmentCategories } = useCategoryStore(
+    state => ({
+      getIncomeCategories: state.getIncomeCategories,
+      getExpenseCategories: state.getExpenseCategories,
+      getSavingCategories: state.getSavingCategories,
+      getInvestmentCategories: state.getInvestmentCategories,
+    })
+  );
 
   useEffect(() => {
     getExpenseTypes();
-    getCategories();
+    getIncomeCategories();
+    getExpenseCategories();
+    getSavingCategories();
+    getInvestmentCategories();
   }, []);
 
   return (

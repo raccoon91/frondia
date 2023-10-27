@@ -6,18 +6,18 @@ interface IExpenseType {
 
 interface ICategory {
   id: number;
-  type: string;
+  type_id: number;
+  types?: IExpenseType;
   name: string;
 }
 
 interface IExpense {
   id: number;
   user_id: string;
-  category_id: number;
   type_id: number;
-  expense_types?: IExpenseType;
+  category_id: number;
+  types?: IExpenseType;
   categories?: ICategory;
   price: number;
-  count?: number | null;
   note?: string | null;
 }

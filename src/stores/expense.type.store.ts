@@ -10,7 +10,7 @@ export const useExpenseTypeStore = create<IExpenseTypeStore>(set => ({
   expenseTypes: [],
   getExpenseTypes: async () => {
     try {
-      const { data } = await supabase.from("expense_types").select("*");
+      const { data } = await supabase.from("types").select("*");
 
       set({ expenseTypes: data ?? [] });
     } catch (err) {

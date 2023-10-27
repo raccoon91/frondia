@@ -4,13 +4,18 @@ import { RowData, createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "../stores";
-import { DataGrid, SelectEditor, TextEditor, UnEditable } from "../components";
+import { DataGrid, SelectEditor, TextEditor } from "../components";
 
 const columnHelper = createColumnHelper<IExpense>();
 
 export const TodayPage = () => {
   const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
-  const { categories } = useCategoryStore(state => ({ categories: state.categories }));
+  const { incomeCategories, expenseCategories, savingCategories, investmentCategories } = useCategoryStore(state => ({
+    incomeCategories: state.incomeCategories,
+    expenseCategories: state.expenseCategories,
+    savingCategories: state.savingCategories,
+    investmentCategories: state.investmentCategories,
+  }));
   const { expenses, getExpenses, setExpenses } = useExpenseStore(state => ({
     expenses: state.expenses,
     getExpenses: state.getExpenses,
@@ -19,13 +24,13 @@ export const TodayPage = () => {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("expense_types", {
+      columnHelper.accessor("types", {
         cell: props => (
           <SelectEditor
             {...props}
             displayValue={(option?: IGridOption) => option?.name}
             options={expenseTypes}
-            inputProps={{ value: props.row.original.expense_types?.id }}
+            inputProps={{ value: props.row.original.types?.id }}
           />
         ),
         header: "Type",
@@ -36,7 +41,17 @@ export const TodayPage = () => {
           <SelectEditor
             {...props}
             displayValue={(option?: IGridOption) => option?.name}
-            options={categories}
+            options={
+              props.row.original.types?.id === 7
+                ? incomeCategories
+                : props.row.original.types?.id === 8
+                ? expenseCategories
+                : props.row.original.types?.id === 9
+                ? savingCategories
+                : props.row.original.types?.id === 10
+                ? investmentCategories
+                : []
+            }
             inputProps={{ value: props.row.original.categories?.id }}
           />
         ),
@@ -48,23 +63,13 @@ export const TodayPage = () => {
         header: "Price",
         size: 200,
       }),
-      columnHelper.accessor("count", {
-        cell: props =>
-          props.row.original.expense_types?.type !== "investment" ? (
-            <UnEditable {...props} />
-          ) : (
-            <TextEditor {...props} inputProps={{ value: props.row.original.count, textAlign: "right" }} />
-          ),
-        header: "Count",
-        size: 140,
-      }),
       columnHelper.accessor("note", {
         cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.note }} />,
         header: "Note",
         size: 300,
       }),
     ],
-    [expenseTypes, categories]
+    [expenseTypes, incomeCategories, expenseCategories, savingCategories, investmentCategories]
   );
 
   useEffect(() => {

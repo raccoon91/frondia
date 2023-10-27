@@ -16,19 +16,19 @@ export const useExpenseStore = create<IExpenseStore>(set => ({
       const today = dayjs().format("YYYY-MM-DD");
       const { data: incomes } = await supabase
         .from("incomes")
-        .select<string, IExpense>("*, expense_types ( * ), categories ( * )")
+        .select<string, IExpense>("*, types ( * ), categories ( * )")
         .eq("date", today);
       const { data: expenses } = await supabase
         .from("expenses")
-        .select<string, IExpense>("*, expense_types ( * ), categories ( * )")
+        .select<string, IExpense>("*, types ( * ), categories ( * )")
         .eq("date", today);
       const { data: investments } = await supabase
         .from("investments")
-        .select<string, IExpense>("*, expense_types ( * ), categories ( * )")
+        .select<string, IExpense>("*, types ( * ), categories ( * )")
         .eq("date", today);
       const { data: savings } = await supabase
         .from("savings")
-        .select<string, IExpense>("*, expense_types ( * ), categories ( * )")
+        .select<string, IExpense>("*, types ( * ), categories ( * )")
         .eq("date", today);
 
       const data: IExpense[] = sortBy(
