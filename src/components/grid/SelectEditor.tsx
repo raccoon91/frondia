@@ -21,8 +21,15 @@ export const SelectEditor: ColumnDefTemplate<
 
   return (
     <Dropdown
-      w={column?.getSize() - 1}
-      border="none"
+      w={column.getSize()}
+      minW={column.getSize()}
+      border="transparent"
+      rounded="none"
+      cursor="cell"
+      _focusVisible={{
+        border: "2px solid",
+        borderColor: "primary",
+      }}
       value={cellData?.id}
       display={displayValue(cellData)}
       onChange={handleChangeSelect}

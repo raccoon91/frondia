@@ -4,17 +4,17 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore } from "../stores";
-import { DataGrid, SelectEditor, TextEditor } from "../components";
+import { DataGrid, SelectEditor, TextEditor, UnEditable } from "../components";
 
 const columnHelper = createColumnHelper<any>();
 
 export const TodayPage = () => {
   const { categories } = useCategoryStore(state => ({ categories: state.categories }));
   const [data, setData] = useState([
-    { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: "", type: "", count: "" },
-    { id: 1, category: { id: 2, type: "income", name: "부수입" }, price: "200", note: "", type: "", count: "" },
-    { category: "", price: "", note: "", type: "", count: "" },
-    { category: "", price: "", note: "", type: "", count: "" },
+    { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: null, type: null, count: null },
+    { id: 1, category: { id: 2, type: "income", name: "부수입" }, price: "200", note: null, type: null, count: null },
+    { category: "", price: "", note: null, type: null, count: null },
+    { category: "", price: "", note: null, type: null, count: null },
   ]);
 
   const columns = useMemo(
@@ -42,12 +42,22 @@ export const TodayPage = () => {
         size: 200,
       }),
       columnHelper.accessor("type", {
-        cell: props => <TextEditor {...props} value={props.row.original.type} />,
+        cell: props =>
+          props.row.original.type === null ? (
+            <UnEditable {...props} />
+          ) : (
+            <TextEditor {...props} value={props.row.original.type} />
+          ),
         header: "Type",
         size: 120,
       }),
       columnHelper.accessor("count", {
-        cell: props => <TextEditor {...props} value={props.row.original.count} />,
+        cell: props =>
+          props.row.original.count === null ? (
+            <UnEditable {...props} />
+          ) : (
+            <TextEditor {...props} value={props.row.original.count} />
+          ),
         header: "Count",
         size: 120,
       }),

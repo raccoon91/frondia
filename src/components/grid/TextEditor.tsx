@@ -20,13 +20,18 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { value?: str
 
   return (
     <Input
-      value={cellData}
-      maxW={column?.getSize() - 1}
-      onChange={handleChangeInput}
-      onBlur={onBlur}
-      border="none"
+      w={column.getSize()}
+      minW={column.getSize()}
+      border="transparent"
       rounded="none"
       cursor="cell"
+      _focusVisible={{
+        border: "2px solid",
+        borderColor: "primary",
+      }}
+      value={cellData ?? ""}
+      onChange={handleChangeInput}
+      onBlur={onBlur}
     />
   );
 };

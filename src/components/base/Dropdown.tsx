@@ -11,25 +11,20 @@ import {
   useRef,
   useState,
 } from "react";
-import { BorderProps, Box, Flex, Input, LayoutProps, Modal, ModalContent } from "@chakra-ui/react";
+import { Box, Flex, Input, InputProps, LayoutProps, Modal, ModalContent } from "@chakra-ui/react";
 
-interface IDropdownProps {
-  w?: LayoutProps["w"];
-  h?: LayoutProps["h"];
-  border?: BorderProps["border"];
-  value: string;
+interface IDropdownProps extends InputProps {
   display?: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  menuHeight?: LayoutProps["h"];
 }
 
 export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
-  w,
-  h = "160px",
-  border,
-  value,
   display,
+  menuHeight,
+  value,
   onChange,
   children,
+  ...props
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -50,7 +45,7 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
     setIsOpen(false);
   };
 
-  const handleSelectEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleEnterInput = (e: KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     if (e.key === "Enter") {
@@ -58,7 +53,7 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
     }
   };
 
-  const handleKeyboard = (e: KeyboardEvent<HTMLDivElement>) => {
+  const handleNavigationOption = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       const target = wrapperRef.current?.children?.[itemIndex];
 
@@ -96,7 +91,13 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
     setItemIndex(index);
   };
 
-  const handleClickItem = (e: SyntheticEvent<HTMLDivElement>) => {
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    onChange?.(e);
+  };
+
+  const handleClickOption = (e: SyntheticEvent<HTMLDivElement>) => {
     if (!(e.target instanceof HTMLDivElement)) {
       return;
     }
@@ -117,14 +118,11 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
     <>
       <Input
         ref={inputRef}
-        w={w}
-        border={border}
-        rounded="none"
-        cursor="cell"
         value={display ?? value ?? ""}
         onClick={handleOpenMenu}
-        onKeyUp={handleSelectEnter}
-        onChange={onChange}
+        onKeyUp={handleEnterInput}
+        onChange={handleChangeInput}
+        {...props}
       />
       <Modal isOpen={isOpen} onClose={handleCloseMenu}>
         <ModalContent
@@ -134,10 +132,16 @@ export const Dropdown: FC<PropsWithChildren<IDropdownProps>> = ({
           left={rect.left}
           minW={rect.width}
           minH="40px"
-          maxH={h}
+          maxH={menuHeight}
           rounded="none"
         >
-          <Box ref={wrapperRef} tabIndex={0} outline="none" onKeyDown={handleKeyboard} onClick={handleClickItem}>
+          <Box
+            ref={wrapperRef}
+            tabIndex={0}
+            outline="none"
+            onKeyDown={handleNavigationOption}
+            onClick={handleClickOption}
+          >
             {Children.map(children, (child, index) => {
               if (isValidElement(child)) {
                 return cloneElement(child, {
