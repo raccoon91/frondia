@@ -1,6 +1,12 @@
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
 
-export const UnEditable: ColumnDefTemplate<CellContext<any, any>> = () => {
-  return <Box w="full" h="full" bg="blackAlpha.50" cursor="not-allowed" />;
+export const UnEditable: ColumnDefTemplate<CellContext<any, any> & { inputProps?: { value?: string | number } }> = ({
+  inputProps,
+}) => {
+  return (
+    <Flex align="center" w="full" h="full" px="16px" bg="blackAlpha.50" cursor="not-allowed">
+      {inputProps?.value ? inputProps.value : null}
+    </Flex>
+  );
 };
