@@ -16,11 +16,17 @@ export const TodayPage = () => {
     savingCategories: state.savingCategories,
     investmentCategories: state.investmentCategories,
   }));
-  const { expenses, getExpenses, setExpenses } = useExpenseStore(state => ({
-    expenses: state.expenses,
-    getExpenses: state.getExpenses,
-    setExpenses: state.setExpenses,
-  }));
+  const { expenses, getExpenses, setExpenses, addIncome, addExpense, addSaving, addInvestment } = useExpenseStore(
+    state => ({
+      expenses: state.expenses,
+      getExpenses: state.getExpenses,
+      setExpenses: state.setExpenses,
+      addIncome: state.addIncome,
+      addExpense: state.addExpense,
+      addSaving: state.addSaving,
+      addInvestment: state.addInvestment,
+    })
+  );
 
   const columns = useMemo(
     () => [
@@ -100,9 +106,21 @@ export const TodayPage = () => {
         </Flex>
 
         <Flex gap="8px">
-          <Button>💰 수입</Button>
-          <Button>💵 지출</Button>
-          <Button colorScheme="green">💾 저장</Button>
+          <Button variant="outline" onClick={addIncome}>
+            💵 수입
+          </Button>
+          <Button variant="outline" onClick={addExpense}>
+            💳 지출
+          </Button>
+          <Button variant="outline" onClick={addSaving}>
+            🐷 저축
+          </Button>
+          <Button variant="outline" onClick={addInvestment}>
+            📈 투자
+          </Button>
+          <Button variant="outline" colorScheme="green">
+            💾 저장
+          </Button>
         </Flex>
       </Flex>
 

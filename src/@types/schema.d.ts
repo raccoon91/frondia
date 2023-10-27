@@ -12,12 +12,12 @@ interface ICategory {
 }
 
 interface IExpense {
-  id: number;
-  user_id: string;
-  type_id: number;
-  category_id: number;
+  id: number | null;
+  user_id?: string;
+  type_id: number | null;
+  category_id: number | null;
   types?: IExpenseType;
   categories?: ICategory;
-  price: number;
+  price: number | string;
   note?: string | null;
 }
