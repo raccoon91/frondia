@@ -4,7 +4,7 @@ interface IExpenseType {
   type: string;
 }
 
-interface ICategory {
+interface IExpense {
   id: number;
   user_id: string;
   category_id: number;
@@ -12,4 +12,10 @@ interface ICategory {
   price: number;
   count?: number | null;
   note?: string | null;
+}
+
+interface ICategory {
+  id: number;
+  type: string;
+  name: string;
 }
