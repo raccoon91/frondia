@@ -1,15 +1,15 @@
 import { ChangeEvent, useState } from "react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
-import { Input, InputProps } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
 
-export const TextEditor: ColumnDefTemplate<CellContext<any, any> & { inputProps: InputProps }> = ({
+export const TextEditor: ColumnDefTemplate<CellContext<any, unknown> & { inputProps: IEditorProps }> = ({
   row,
   column,
   table,
   inputProps,
 }) => {
   const { value, ...restProps } = inputProps;
-  const [cellData, setCellData] = useState(value);
+  const [cellData, setCellData] = useState<IGridText>(value);
 
   const onBlur = () => {
     table.options.meta?.updateData(row.index, column.id, cellData);

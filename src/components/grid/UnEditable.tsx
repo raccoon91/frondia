@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
 
-export const UnEditable: ColumnDefTemplate<CellContext<any, any> & { inputProps?: { value?: string | number } }> = ({
+export const UnEditable: ColumnDefTemplate<CellContext<any, unknown> & { inputProps?: IEditorProps }> = ({
   inputProps,
 }) => {
   return (

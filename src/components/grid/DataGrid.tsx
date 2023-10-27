@@ -2,10 +2,10 @@ import { FC, useRef } from "react";
 import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from "@tanstack/react-table";
 import { Box, Flex, Text } from "@chakra-ui/react";
 
-interface IDataGridProps<T = any> {
-  data: T[];
-  columns: ColumnDef<T>[];
-  onChangeRowData?: (rowIndex: number, columnId: string, value: T) => void;
+interface IDataGridProps {
+  data: IGridData[];
+  columns: ColumnDef<IGridData, any>[];
+  onChangeRowData?: (rowIndex: number, columnId: string, value: unknown) => void;
 }
 
 export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData }) => {

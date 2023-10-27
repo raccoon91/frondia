@@ -1,31 +1,47 @@
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
-import { createColumnHelper } from "@tanstack/react-table";
+import { RowData, createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore } from "../stores";
 import { DataGrid, SelectEditor, TextEditor, UnEditable } from "../components";
 
-const columnHelper = createColumnHelper<any>();
+const TYPES = [
+  { id: 1, name: "수입" },
+  { id: 2, name: "지출" },
+  { id: 3, name: "투자" },
+];
+
+const columnHelper = createColumnHelper<IGridData>();
 
 export const TodayPage = () => {
   const { categories } = useCategoryStore(state => ({ categories: state.categories }));
-  const [data, setData] = useState([
-    { id: 0, category: { id: 1, type: "income", name: "월급" }, price: "100", note: null, type: null, count: null },
-    { id: 1, category: { id: 2, type: "income", name: "부수입" }, price: "200", note: null, type: null, count: null },
-    { category: "", price: "", note: null, type: null, count: null },
-    { category: "", price: "", note: null, type: null, count: null },
+  const [data, setData] = useState<IGridData[]>([
+    { id: null, type: null, category: null, price: null, note: null, count: null },
+    { id: null, type: null, category: null, price: null, note: null, count: null },
   ]);
 
   const columns = useMemo(
     () => [
+      columnHelper.accessor("type", {
+        cell: props => (
+          <SelectEditor
+            {...props}
+            displayValue={(option?: IGridOption) => option?.name}
+            options={TYPES}
+            inputProps={{ value: props.row.original.type?.id }}
+          />
+        ),
+        header: "Type",
+        size: 140,
+      }),
       columnHelper.accessor("category", {
         cell: props => (
           <SelectEditor
             {...props}
-            displayValue={(option: any) => option?.name}
+            displayValue={(option?: IGridOption) => option?.name}
             options={categories}
-            inputProps={{ value: props.row.original.category.id }}
+            inputProps={{ value: props.row.original.category?.id }}
           />
         ),
         header: "Category",
@@ -35,16 +51,6 @@ export const TodayPage = () => {
         cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.price, textAlign: "right" }} />,
         header: "Price",
         size: 200,
-      }),
-      columnHelper.accessor("type", {
-        cell: props =>
-          props.row.original.type === null ? (
-            <UnEditable {...props} />
-          ) : (
-            <TextEditor {...props} inputProps={{ value: props.row.original.type }} />
-          ),
-        header: "Type",
-        size: 140,
       }),
       columnHelper.accessor("count", {
         cell: props =>
@@ -65,7 +71,7 @@ export const TodayPage = () => {
     [categories]
   );
 
-  const handleChangeRowData = (rowIndex: number, columnId: string, value: any) => {
+  const handleChangeRowData = (rowIndex: number, columnId: string, value: RowData) => {
     setData(row =>
       row.map((column, index) => {
         if (index === rowIndex) {
