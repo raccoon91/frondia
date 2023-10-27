@@ -19,10 +19,10 @@ export const Menu: FC<IMenuProps> = ({ to, name, icon }) => {
         h="20px"
         cursor="pointer"
         _activeLink={{
-          width: "30px",
-          height: "30px",
+          width: "36px",
+          height: "36px",
         }}
-        _hover={{ width: "30px", height: "30px" }}
+        _hover={{ width: "36px", height: "36px" }}
         transition="width 0.1s linear, height 0.1s linear"
       >
         <Icon as={icon} color="primary" boxSize="full" />
