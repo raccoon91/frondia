@@ -4,12 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HomePage, LoginPage, TodayPage } from "./pages";
 import { Layout } from "./layouts";
 import { theme } from "./styles";
-import { useCategoryStore } from "./stores";
+import { useCategoryStore, useExpenseTypeStore } from "./stores";
 
 export const App = () => {
+  const { getExpenseTypes } = useExpenseTypeStore(state => ({ getExpenseTypes: state.getExpenseTypes }));
   const { getCategories } = useCategoryStore(state => ({ getCategories: state.getCategories }));
 
   useEffect(() => {
+    getExpenseTypes();
     getCategories();
   }, []);
 

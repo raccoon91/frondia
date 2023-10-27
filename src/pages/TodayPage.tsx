@@ -1,47 +1,43 @@
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { RowData, createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useCategoryStore } from "../stores";
+import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "../stores";
 import { DataGrid, SelectEditor, TextEditor, UnEditable } from "../components";
 
-const TYPES = [
-  { id: 1, name: "수입" },
-  { id: 2, name: "지출" },
-  { id: 3, name: "투자" },
-];
-
-const columnHelper = createColumnHelper<IGridData>();
+const columnHelper = createColumnHelper<IExpense>();
 
 export const TodayPage = () => {
+  const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
   const { categories } = useCategoryStore(state => ({ categories: state.categories }));
-  const [data, setData] = useState<IGridData[]>([
-    { id: null, type: null, category: null, price: null, note: null, count: null },
-    { id: null, type: null, category: null, price: null, note: null, count: null },
-  ]);
+  const { expenses, getExpenses, setExpenses } = useExpenseStore(state => ({
+    expenses: state.expenses,
+    getExpenses: state.getExpenses,
+    setExpenses: state.setExpenses,
+  }));
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("type", {
+      columnHelper.accessor("expense_types", {
         cell: props => (
           <SelectEditor
             {...props}
             displayValue={(option?: IGridOption) => option?.name}
-            options={TYPES}
-            inputProps={{ value: props.row.original.type?.id }}
+            options={expenseTypes}
+            inputProps={{ value: props.row.original.expense_types?.id }}
           />
         ),
         header: "Type",
         size: 140,
       }),
-      columnHelper.accessor("category", {
+      columnHelper.accessor("categories", {
         cell: props => (
           <SelectEditor
             {...props}
             displayValue={(option?: IGridOption) => option?.name}
             options={categories}
-            inputProps={{ value: props.row.original.category?.id }}
+            inputProps={{ value: props.row.original.categories?.id }}
           />
         ),
         header: "Category",
@@ -54,33 +50,37 @@ export const TodayPage = () => {
       }),
       columnHelper.accessor("count", {
         cell: props =>
-          props.row.original.count === null ? (
+          props.row.original.expense_types?.type !== "investment" ? (
             <UnEditable {...props} />
           ) : (
-            <TextEditor {...props} inputProps={{ value: props.row.original.count }} />
+            <TextEditor {...props} inputProps={{ value: props.row.original.count, textAlign: "right" }} />
           ),
         header: "Count",
         size: 140,
       }),
       columnHelper.accessor("note", {
-        cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.note, textAlign: "right" }} />,
+        cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.note }} />,
         header: "Note",
         size: 300,
       }),
     ],
-    [categories]
+    [expenseTypes, categories]
   );
 
-  const handleChangeRowData = (rowIndex: number, columnId: string, value: RowData) => {
-    setData(row =>
-      row.map((column, index) => {
-        if (index === rowIndex) {
-          return { ...column, [columnId]: value };
-        }
+  useEffect(() => {
+    getExpenses();
+  }, []);
 
-        return column;
-      })
-    );
+  const handleChangeRowData = (rowIndex: number, columnId: string, value: RowData) => {
+    const newExpense = expenses.map((column, index) => {
+      if (index === rowIndex) {
+        return { ...column, [columnId]: value };
+      }
+
+      return column;
+    });
+
+    setExpenses(newExpense);
   };
 
   return (
@@ -102,7 +102,7 @@ export const TodayPage = () => {
       </Flex>
 
       <Box overflow="auto" flex="1" mt="30px">
-        <DataGrid data={data} columns={columns} onChangeRowData={handleChangeRowData} />
+        <DataGrid data={expenses} columns={columns} onChangeRowData={handleChangeRowData} />
       </Box>
     </Flex>
   );

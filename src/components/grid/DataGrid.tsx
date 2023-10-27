@@ -3,8 +3,8 @@ import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from "@tanstack
 import { Box, Flex, Text } from "@chakra-ui/react";
 
 interface IDataGridProps {
-  data: IGridData[];
-  columns: ColumnDef<IGridData, any>[];
+  data: IExpense[];
+  columns: ColumnDef<IExpense, any>[];
   onChangeRowData?: (rowIndex: number, columnId: string, value: unknown) => void;
 }
 
