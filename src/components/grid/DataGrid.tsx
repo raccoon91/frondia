@@ -37,8 +37,10 @@ export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData })
       align="stretch"
       w="full"
       h="full"
+      bg="surface"
       border="1px solid"
       borderColor="border"
+      rounded="md"
     >
       <Flex ref={headerRef} overflow="hidden" bg="theader" borderBottom="1px solid" borderColor="border" zIndex="1">
         {table.getFlatHeaders().map(header => (
@@ -56,7 +58,7 @@ export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData })
         ))}
       </Flex>
 
-      <Box ref={bodyRef} overflow="auto" bg="surface" flex="1" onScroll={handleScrollBody}>
+      <Box ref={bodyRef} overflow="auto" flex="1" onScroll={handleScrollBody}>
         {table.getRowModel().rows.map(row => (
           <Flex key={row.id} _hover={{ bg: "tactive", ".cell": { bg: "tactive" } }}>
             {row.getAllCells().map(cell => (
