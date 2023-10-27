@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { supabase } from "../db";
 
 interface ICategoryStore {
-  categories: any[];
+  categories: ICategory[];
   getCategories: () => Promise<void>;
   getIncomeCategories: () => Promise<void>;
   getExpenseCategories: () => Promise<void>;
@@ -16,8 +16,6 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
     try {
       const { data } = await supabase.from("categories").select("*");
 
-      console.log(data);
-
       set({ categories: data ?? [] });
     } catch (err) {
       console.error(err);
@@ -26,8 +24,6 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
   getIncomeCategories: async () => {
     try {
       const { data } = await supabase.from("categories").select("*").eq("type", "income");
-
-      console.log(data);
 
       set({ categories: data ?? [] });
     } catch (err) {
@@ -38,8 +34,6 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
     try {
       const { data } = await supabase.from("categories").select("*").eq("type", "expense");
 
-      console.log(data);
-
       set({ categories: data ?? [] });
     } catch (err) {
       console.error(err);
@@ -49,8 +43,6 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
     try {
       const { data } = await supabase.from("categories").select("*").eq("type", "saving");
 
-      console.log(data);
-
       set({ categories: data ?? [] });
     } catch (err) {
       console.error(err);
@@ -59,8 +51,6 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
   getInvestmentCategories: async () => {
     try {
       const { data } = await supabase.from("categories").select("*").eq("type", "investment");
-
-      console.log(data);
 
       set({ categories: data ?? [] });
     } catch (err) {
