@@ -1,14 +1,13 @@
-import { chakra } from "@chakra-ui/react";
-import { FC, ReactNode } from "react";
+import { BoxProps, chakra } from "@chakra-ui/react";
+import { FC } from "react";
 
-interface ICardProps {
+interface ICardProps extends BoxProps {
   title?: string;
-  children?: ReactNode;
 }
 
-export const Card: FC<ICardProps> = ({ title, children }) => {
+export const Card: FC<ICardProps> = ({ title, children, ...props }) => {
   return (
-    <chakra.div border="1px solid" borderColor="border" rounded="md" shadow="md" bg="surface">
+    <chakra.div border="1px solid" borderColor="border" rounded="md" shadow="md" bg="surface" {...props}>
       {title ? (
         <chakra.div p="12px 24px" borderBottom="1px solid" borderColor="border" fontWeight="600">
           {title}

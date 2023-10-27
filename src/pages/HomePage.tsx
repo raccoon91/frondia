@@ -43,29 +43,29 @@ export const HomePage = () => {
         </VStack>
 
         <VStack align="stretch" spacing="30px" w="300px">
-          <Card>
-            <Flex as={Link} to="/today" align="center" justify="center" gap="16px" cursor="pointer">
+          <Card cursor="pointer">
+            <Flex as={Link} to="/today" align="center" justify="center" gap="16px">
               <Text fontSize="30px">💰</Text>
               <Text>오늘 내역 입력하기</Text>
             </Flex>
           </Card>
 
-          <Card>
-            <Flex align="center" justify="center" gap="16px" cursor="pointer">
+          <Card cursor="pointer">
+            <Flex align="center" justify="center" gap="16px">
               <Text fontSize="30px">💵</Text>
               <Text>고정 수입 추가하기</Text>
             </Flex>
           </Card>
 
-          <Card>
-            <Flex align="center" justify="center" gap="16px" cursor="pointer">
+          <Card cursor="pointer">
+            <Flex align="center" justify="center" gap="16px">
               <Text fontSize="30px">💳</Text>
               <Text>고정 지출 추가하기</Text>
             </Flex>
           </Card>
 
-          <Card>
-            <Flex align="center" justify="center" gap="16px" cursor="pointer">
+          <Card cursor="pointer">
+            <Flex align="center" justify="center" gap="16px">
               <Text fontSize="30px">🌏</Text>
               <Text>목표 설정</Text>
             </Flex>
