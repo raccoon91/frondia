@@ -62,7 +62,7 @@ export const TodayPage = () => {
           />
         ),
         header: "Category",
-        size: 160,
+        size: 200,
       }),
       columnHelper.accessor("price", {
         cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.price, textAlign: "right" }} />,
@@ -96,7 +96,7 @@ export const TodayPage = () => {
 
   return (
     <Flex w="full" h="full" p="50px" gap="60px">
-      <Flex overflow="hidden" flex="1" maxW="802px" direction="column" gap="30px">
+      <Flex overflow="hidden" flex="1" maxW="842px" direction="column" gap="30px">
         <Flex align="center" justify="space-between" gap="16px">
           <Flex align="center" gap="16px">
             <IconButton aria-label="previous day" variant="ghost" icon={<Icon as={FaChevronLeft} />} />
