@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { sortBy } from "lodash-es";
 import { create } from "zustand";
 import { supabase } from "../db";
+import { toast } from "../styles";
 
 interface IExpenseStore {
   expenses: IExpense[];
@@ -51,8 +52,8 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
       );
 
       set({ expenses: data ?? [] });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      toast.error(error as string);
     }
   },
   setExpenses: (expenses: IExpense[]) => {

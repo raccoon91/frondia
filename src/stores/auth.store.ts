@@ -1,6 +1,7 @@
 import { User } from "@supabase/supabase-js";
 import { create } from "zustand";
 import { supabase } from "../db";
+import { toast } from "../styles";
 
 interface IAuthStore {
   user: User | null;
@@ -25,7 +26,7 @@ export const useAuthStore = create<IAuthStore>(set => ({
 
       return { status: "ok" };
     } catch (error) {
-      console.log(error);
+      toast.error(error as string);
     }
   },
   login: async (email: string, password: string) => {
@@ -38,7 +39,7 @@ export const useAuthStore = create<IAuthStore>(set => ({
 
       return { status: "ok" };
     } catch (error) {
-      console.log(error);
+      toast.error(error as string);
     }
   },
   logout: async () => {
@@ -49,7 +50,7 @@ export const useAuthStore = create<IAuthStore>(set => ({
 
       return { status: "ok" };
     } catch (error) {
-      console.log(error);
+      toast.error(error as string);
     }
   },
 }));

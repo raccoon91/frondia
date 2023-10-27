@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { supabase } from "../db";
+import { toast } from "../styles";
 
 interface IExpenseTypeStore {
   expenseTypes: IExpenseType[];
@@ -13,8 +14,8 @@ export const useExpenseTypeStore = create<IExpenseTypeStore>(set => ({
       const { data } = await supabase.from("types").select("*");
 
       set({ expenseTypes: data ?? [] });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      toast.error(error as string);
     }
   },
 }));

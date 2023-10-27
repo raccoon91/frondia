@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HomePage, LoginPage, TodayPage } from "./pages";
 import { Layout } from "./layouts";
-import { theme } from "./styles";
+import { ToastContainer, theme } from "./styles";
 import { useCategoryStore, useExpenseTypeStore } from "./stores";
 
 export const App = () => {
@@ -27,6 +27,8 @@ export const App = () => {
 
   return (
     <ChakraProvider theme={theme}>
+      <ToastContainer />
+
       <Router>
         <Routes>
           <Route element={<Layout />}>
