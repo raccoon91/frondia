@@ -4,7 +4,7 @@ import { RowData, createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "../stores";
-import { DataGrid, SelectEditor, TextEditor } from "../components";
+import { Card, DataGrid, SelectEditor, TextEditor } from "../components";
 
 const columnHelper = createColumnHelper<IExpense>();
 
@@ -95,38 +95,53 @@ export const TodayPage = () => {
   };
 
   return (
-    <Flex direction="column" w="full" h="full" p="50px">
-      <Flex justify="space-between">
-        <Flex align="center" gap="16px">
-          <IconButton aria-label="previous day" variant="ghost" icon={<Icon as={FaChevronLeft} />} />
-          <Text fontSize="20px" fontWeight="bold">
-            {dayjs().format("YYYY-MM-DD")}
-          </Text>
-          <IconButton aria-label="next day" variant="ghost" icon={<Icon as={FaChevronRight} />} />
-        </Flex>
+    <Flex w="full" h="full" p="50px" gap="60px">
+      <Flex overflow="hidden" flex="1" maxW="802px" direction="column" gap="30px">
+        <Flex align="center" justify="space-between" gap="16px">
+          <Flex align="center" gap="16px">
+            <IconButton aria-label="previous day" variant="ghost" icon={<Icon as={FaChevronLeft} />} />
+            <Text fontSize="20px" fontWeight="bold">
+              {dayjs().format("YYYY-MM-DD")}
+            </Text>
+            <IconButton aria-label="next day" variant="ghost" icon={<Icon as={FaChevronRight} />} />
+          </Flex>
 
-        <Flex gap="8px">
-          <Button variant="outline" onClick={addIncome}>
-            💵 수입
-          </Button>
-          <Button variant="outline" onClick={addExpense}>
-            💳 지출
-          </Button>
-          <Button variant="outline" onClick={addSaving}>
-            🐷 저축
-          </Button>
-          <Button variant="outline" onClick={addInvestment}>
-            📈 투자
-          </Button>
           <Button variant="outline" colorScheme="green">
             💾 저장
           </Button>
         </Flex>
+
+        <Box overflow="auto" flex="1">
+          <DataGrid data={expenses} columns={columns} onChangeRowData={handleChangeRowData} />
+        </Box>
       </Flex>
 
-      <Box overflow="auto" flex="1" mt="30px">
-        <DataGrid data={expenses} columns={columns} onChangeRowData={handleChangeRowData} />
-      </Box>
+      <Flex direction="column" gap="30px" w="300px" mt="70px">
+        <Card cursor="pointer" onClick={addIncome}>
+          <Flex align="center" justify="center" gap="16px">
+            <Text fontSize="30px">💵</Text>
+            <Text>오늘의 수입</Text>
+          </Flex>
+        </Card>
+        <Card cursor="pointer" onClick={addExpense}>
+          <Flex align="center" justify="center" gap="16px">
+            <Text fontSize="30px">💳</Text>
+            <Text>오늘의 지출</Text>
+          </Flex>
+        </Card>
+        <Card cursor="pointer" onClick={addSaving}>
+          <Flex align="center" justify="center" gap="16px">
+            <Text fontSize="30px">🐷</Text>
+            <Text>오늘의 저축</Text>
+          </Flex>
+        </Card>
+        <Card cursor="pointer" onClick={addInvestment}>
+          <Flex align="center" justify="center" gap="16px">
+            <Text fontSize="30px">📈</Text>
+            <Text>오늘의 투자</Text>
+          </Flex>
+        </Card>
+      </Flex>
     </Flex>
   );
 };
