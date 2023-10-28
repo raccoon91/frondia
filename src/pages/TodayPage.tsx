@@ -1,7 +1,7 @@
-import dayjs from "dayjs";
 import { useEffect, useMemo } from "react";
 import { RowData, createColumnHelper } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
+import dayjs from "dayjs";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "@/stores";
 import { Card, DataGrid, SelectEditor, TextEditor } from "@/components";
@@ -16,17 +16,12 @@ export const TodayPage = () => {
     savingCategories: state.savingCategories,
     investmentCategories: state.investmentCategories,
   }));
-  const { expenses, getExpenses, setExpenses, addIncome, addExpense, addSaving, addInvestment } = useExpenseStore(
-    state => ({
-      expenses: state.expenses,
-      getExpenses: state.getExpenses,
-      setExpenses: state.setExpenses,
-      addIncome: state.addIncome,
-      addExpense: state.addExpense,
-      addSaving: state.addSaving,
-      addInvestment: state.addInvestment,
-    })
-  );
+  const { expenses, getDailyExpense, setExpenses, addExpense } = useExpenseStore(state => ({
+    expenses: state.expenses,
+    getDailyExpense: state.getDailyExpense,
+    setExpenses: state.setExpenses,
+    addExpense: state.addExpense,
+  }));
 
   const columns = useMemo(
     () => [
@@ -79,8 +74,24 @@ export const TodayPage = () => {
   );
 
   useEffect(() => {
-    getExpenses();
+    getDailyExpense();
   }, []);
+
+  const handleAddIncome = () => {
+    addExpense("incomes");
+  };
+
+  const handleAddExpense = () => {
+    addExpense("expenses");
+  };
+
+  const handleAddSaving = () => {
+    addExpense("savings");
+  };
+
+  const handleAddInvestment = () => {
+    addExpense("investments");
+  };
 
   const handleChangeRowData = (rowIndex: number, columnId: string, value: RowData) => {
     const newExpense = expenses.map((column, index) => {
@@ -117,25 +128,25 @@ export const TodayPage = () => {
       </Flex>
 
       <Flex direction="column" gap="30px" w="300px" mt="70px">
-        <Card cursor="pointer" onClick={addIncome}>
+        <Card cursor="pointer" onClick={handleAddIncome}>
           <Flex align="center" justify="center" gap="16px">
             <Text fontSize="30px">💵</Text>
             <Text>오늘의 수입</Text>
           </Flex>
         </Card>
-        <Card cursor="pointer" onClick={addExpense}>
+        <Card cursor="pointer" onClick={handleAddExpense}>
           <Flex align="center" justify="center" gap="16px">
             <Text fontSize="30px">💳</Text>
             <Text>오늘의 지출</Text>
           </Flex>
         </Card>
-        <Card cursor="pointer" onClick={addSaving}>
+        <Card cursor="pointer" onClick={handleAddSaving}>
           <Flex align="center" justify="center" gap="16px">
             <Text fontSize="30px">🐷</Text>
             <Text>오늘의 저축</Text>
           </Flex>
         </Card>
-        <Card cursor="pointer" onClick={addInvestment}>
+        <Card cursor="pointer" onClick={handleAddInvestment}>
           <Flex align="center" justify="center" gap="16px">
             <Text fontSize="30px">📈</Text>
             <Text>오늘의 투자</Text>
