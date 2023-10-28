@@ -18,6 +18,6 @@ interface IExpense {
   category_id: number | null;
   types?: IExpenseType;
   categories?: ICategory;
-  price: number | string;
+  price: number;
   note?: string | null;
 }

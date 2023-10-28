@@ -1,21 +1,15 @@
-import dayjs from "dayjs";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
+import dayjs from "dayjs";
 import { Card } from "@/components";
-import { useHomeStore } from "@/stores";
-import { useEffect } from "react";
+import { useStatisticsStore } from "@/stores";
 
 export const HomePage = () => {
-  const { incomePrice, savingPrice, investmentPrice, totalIncomePrice, expensePrice, getMonthlyExpense } = useHomeStore(
-    state => ({
-      incomePrice: state.incomePrice,
-      savingPrice: state.savingPrice,
-      investmentPrice: state.investmentPrice,
-      totalIncomePrice: state.totalIncomePrice,
-      expensePrice: state.expensePrice,
-      getMonthlyExpense: state.getMonthlyExpense,
-    })
-  );
+  const { price, getMonthlyExpense } = useStatisticsStore(state => ({
+    price: state.price,
+    getMonthlyExpense: state.getMonthlyExpense,
+  }));
 
   useEffect(() => {
     getMonthlyExpense();
@@ -33,15 +27,15 @@ export const HomePage = () => {
             <VStack align="stretch">
               <Flex justify="space-between">
                 <Text>현금</Text>
-                <Text>{incomePrice}원</Text>
+                <Text>{price?.income ?? "-"}원</Text>
               </Flex>
               <Flex justify="space-between">
                 <Text>적금</Text>
-                <Text>{savingPrice}원</Text>
+                <Text>{price?.saving ?? "-"}원</Text>
               </Flex>
               <Flex justify="space-between">
                 <Text>투자</Text>
-                <Text>{investmentPrice}원</Text>
+                <Text>{price?.investment ?? "-"}원</Text>
               </Flex>
             </VStack>
           </Card>
@@ -50,11 +44,11 @@ export const HomePage = () => {
             <VStack align="stretch">
               <Flex justify="space-between">
                 <Text>수입</Text>
-                <Text>{totalIncomePrice}원</Text>
+                <Text>{price?.totalIncome ?? "-"}원</Text>
               </Flex>
               <Flex justify="space-between">
                 <Text>지출</Text>
-                <Text>{expensePrice}원</Text>
+                <Text>{price?.expense ?? "-"}원</Text>
               </Flex>
             </VStack>
           </Card>
