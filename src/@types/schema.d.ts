@@ -20,7 +20,7 @@ interface IExpense {
   category_id: number | null;
   types?: IExpenseType;
   categories?: ICategory;
-  price: number;
+  price: number | null;
   note?: string | null;
-  date: string;
+  date?: string;
 }

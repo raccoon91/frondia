@@ -4,7 +4,7 @@ export const createEmptyExpense = (type?: IExpenseType): IExpense => {
     type_id: type?.id ?? null,
     types: type,
     category_id: null,
-    price: 0,
+    price: null,
     note: "",
   };
 };
