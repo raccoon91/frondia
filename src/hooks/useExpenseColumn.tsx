@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { SelectEditor, TextEditor } from "@/components";
+import { NumberEditor, SelectEditor, TextEditor } from "@/components";
 
 const columnHelper = createColumnHelper<IExpense>();
 
@@ -46,7 +46,7 @@ export const useExpenseColumn = (expenseTypes: IExpenseType[], category: Record<
             }),
             columnHelper.accessor("price", {
               cell: props => (
-                <TextEditor {...props} inputProps={{ value: props.row.original.price, textAlign: "right" }} />
+                <NumberEditor {...props} inputProps={{ value: props.row.original.price, textAlign: "right" }} />
               ),
               header: "Price",
               size: 200,
