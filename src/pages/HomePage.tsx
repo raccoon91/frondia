@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
 import dayjs from "dayjs";
-import { Card } from "@/components";
 import { useStatisticsStore } from "@/stores";
+import { Card, Price } from "@/components";
 
 export const HomePage = () => {
   const { price, getMonthlyExpense } = useStatisticsStore(state => ({
@@ -25,31 +25,16 @@ export const HomePage = () => {
         <VStack align="stretch" spacing="30px" w="300px">
           <Card title="계좌">
             <VStack align="stretch">
-              <Flex justify="space-between">
-                <Text>현금</Text>
-                <Text>{price?.income ?? "-"}원</Text>
-              </Flex>
-              <Flex justify="space-between">
-                <Text>적금</Text>
-                <Text>{price?.saving ?? "-"}원</Text>
-              </Flex>
-              <Flex justify="space-between">
-                <Text>투자</Text>
-                <Text>{price?.investment ?? "-"}원</Text>
-              </Flex>
+              <Price label="현금" price={price?.income} />
+              <Price label="적금" price={price?.saving} />
+              <Price label="투자" price={price?.investment} />
             </VStack>
           </Card>
 
           <Card title="종합">
             <VStack align="stretch">
-              <Flex justify="space-between">
-                <Text>수입</Text>
-                <Text>{price?.totalIncome ?? "-"}원</Text>
-              </Flex>
-              <Flex justify="space-between">
-                <Text>지출</Text>
-                <Text>{price?.expense ?? "-"}원</Text>
-              </Flex>
+              <Price label="수입" price={price?.totalIncome} />
+              <Price label="지출" price={price?.expense} />
             </VStack>
           </Card>
         </VStack>
