@@ -71,4 +71,11 @@ export const expenseApi = {
 
     return res.status;
   },
+  delete: async (expenses: IExpense[]) => {
+    for (const expense of expenses) {
+      const res = await supabase.from("expenses").delete().eq("id", expense.id);
+
+      if (res.error) throw new Error(res.error.message);
+    }
+  },
 };

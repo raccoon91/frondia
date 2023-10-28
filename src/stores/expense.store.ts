@@ -16,6 +16,7 @@ interface IExpenseStore {
   setExpenses: (expenses: IExpense[]) => void;
   addExpense: (type: IExpenseTypes) => void;
   saveExpenses: () => Promise<void>;
+  deleteExpenses: (selectedRows: Record<number, boolean>) => Promise<void>;
 }
 
 export const useExpenseStore = create<IExpenseStore>((set, get) => ({
@@ -103,6 +104,44 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
       const getDailyExpense = get().getDailyExpense;
 
       await getDailyExpense(date);
+    } catch (error) {
+      toast.error(error as string);
+    }
+  },
+  deleteExpenses: async (selectedRows: Record<number, boolean>) => {
+    try {
+      if (!Object.entries(selectedRows).length) return;
+
+      const expenses = get().expenses;
+
+      const { deleteRows, surviveRows } = expenses.reduce(
+        (acc, cur, index) => {
+          if (cur.id && selectedRows[index]) {
+            acc.deleteRows.push(cur);
+          } else if (!selectedRows[index] && (!isNil(cur.id) || !isNil(cur.types?.id) || !isNil(cur.categories?.id))) {
+            acc.surviveRows.push(cur);
+          }
+
+          return acc;
+        },
+        {
+          deleteRows: [] as IExpense[],
+          surviveRows: [] as IExpense[],
+        }
+      );
+
+      await expenseApi.delete(deleteRows);
+
+      set({
+        expenses: [
+          ...surviveRows,
+          createEmptyExpense(),
+          createEmptyExpense(),
+          createEmptyExpense(),
+          createEmptyExpense(),
+          createEmptyExpense(),
+        ],
+      });
     } catch (error) {
       toast.error(error as string);
     }

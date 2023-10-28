@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RowData } from "@tanstack/react-table";
-import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, IconButton, Text, Wrap } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "@/stores";
@@ -10,17 +10,28 @@ import { useExpenseColumn } from "@/hooks";
 export const TodayPage = () => {
   const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
   const { category } = useCategoryStore(state => ({ category: state.category }));
-  const { date, expenses, isEnableSave, getDailyExpense, moveDate, setExpenses, addExpense, saveExpenses } =
-    useExpenseStore(state => ({
-      date: state.date,
-      expenses: state.expenses,
-      isEnableSave: state.isEnableSave,
-      getDailyExpense: state.getDailyExpense,
-      moveDate: state.moveDate,
-      setExpenses: state.setExpenses,
-      addExpense: state.addExpense,
-      saveExpenses: state.saveExpenses,
-    }));
+  const {
+    date,
+    expenses,
+    isEnableSave,
+    getDailyExpense,
+    moveDate,
+    setExpenses,
+    addExpense,
+    saveExpenses,
+    deleteExpenses,
+  } = useExpenseStore(state => ({
+    date: state.date,
+    expenses: state.expenses,
+    isEnableSave: state.isEnableSave,
+    getDailyExpense: state.getDailyExpense,
+    moveDate: state.moveDate,
+    setExpenses: state.setExpenses,
+    addExpense: state.addExpense,
+    saveExpenses: state.saveExpenses,
+    deleteExpenses: state.deleteExpenses,
+  }));
+  const [selectedRows, setSelectedRows] = useState<Record<number, boolean>>({});
 
   const columns = useExpenseColumn(expenseTypes, category);
 
@@ -34,6 +45,12 @@ export const TodayPage = () => {
 
   const handleMoveNextDay = () => {
     moveDate("next");
+  };
+
+  const handleDeleteExpenses = async () => {
+    await deleteExpenses(selectedRows);
+
+    setSelectedRows({});
   };
 
   const handleSaveExpenses = () => {
@@ -70,8 +87,8 @@ export const TodayPage = () => {
 
   return (
     <Flex w="full" h="full" p="50px" gap="60px">
-      <Flex overflow="hidden" flex="1" maxW="802px" direction="column" gap="30px">
-        <Flex align="center" justify="space-between" gap="16px">
+      <Flex overflow="hidden" flex="1" maxW="846px" direction="column" gap="30px">
+        <Wrap align="center" spacing="16px">
           <Flex align="center" gap="16px">
             <IconButton
               aria-label="previous day"
@@ -91,13 +108,29 @@ export const TodayPage = () => {
             />
           </Flex>
 
-          <Button variant="outline" colorScheme="green" isDisabled={!isEnableSave} onClick={handleSaveExpenses}>
-            💾 저장
-          </Button>
-        </Flex>
+          <Flex justify="space-between" gap="8px" ml="auto">
+            <Button
+              variant="outline"
+              colorScheme="red"
+              isDisabled={!Object.entries(selectedRows).length}
+              onClick={handleDeleteExpenses}
+            >
+              🗑️ 삭제
+            </Button>
+            <Button variant="outline" colorScheme="green" isDisabled={!isEnableSave} onClick={handleSaveExpenses}>
+              💾 저장
+            </Button>
+          </Flex>
+        </Wrap>
 
         <Box overflow="auto" flex="1">
-          <DataGrid data={expenses} columns={columns} onChangeRowData={handleChangeRowData} />
+          <DataGrid
+            data={expenses}
+            columns={columns}
+            selectedRows={selectedRows}
+            setSelectedRows={setSelectedRows}
+            onChangeRowData={handleChangeRowData}
+          />
         </Box>
       </Flex>
 
