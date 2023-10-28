@@ -11,12 +11,15 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, unknown> & { inputPr
   const { value, ...restProps } = inputProps;
   const [cellData, setCellData] = useState<IGridText>(value);
 
-  const onBlur = () => {
-    table.options.meta?.updateData(row.index, column.id, cellData);
-  };
+  // const onBlur = () => {
+  //   table.options.meta?.updateData(row.index, column.id, cellData);
+  // };
 
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setCellData(e.target.value);
+    const value = e.target.value;
+
+    setCellData(value);
+    table.options.meta?.updateData(row.index, column.id, value);
   };
 
   return (
@@ -32,7 +35,6 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, unknown> & { inputPr
       }}
       value={cellData ?? ""}
       onChange={handleChangeInput}
-      onBlur={onBlur}
       {...restProps}
     />
   );

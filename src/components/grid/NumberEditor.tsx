@@ -13,9 +13,9 @@ export const NumberEditor: ColumnDefTemplate<CellContext<any, unknown> & { input
 
   const formattedValue = useMemo(() => cellData?.toLocaleString(), [cellData]);
 
-  const onBlur = () => {
-    table.options.meta?.updateData(row.index, column.id, cellData);
-  };
+  // const onBlur = () => {
+  //   table.options.meta?.updateData(row.index, column.id, cellData);
+  // };
 
   const handleChangeInput = (value: string) => {
     if (!value) {
@@ -24,11 +24,14 @@ export const NumberEditor: ColumnDefTemplate<CellContext<any, unknown> & { input
       return;
     }
 
-    setCellData(parseFloat(value.replace(/,/, "")));
+    const numberValue = parseFloat(value.replace(/,/, ""));
+
+    setCellData(numberValue);
+    table.options.meta?.updateData(row.index, column.id, numberValue);
   };
 
   return (
-    <NumberInput value={formattedValue ?? ""} onChange={handleChangeInput} onBlur={onBlur}>
+    <NumberInput value={formattedValue ?? ""} onChange={handleChangeInput}>
       <NumberInputField
         w={column.getSize()}
         minW={column.getSize()}
