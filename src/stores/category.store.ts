@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { supabase } from "@/db";
+import { categoryApi } from "@/api";
 import { toast } from "@/styles";
 
 interface ICategoryStore {
@@ -20,36 +20,36 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
   investmentCategories: [],
   getIncomeCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type_id", "7");
+      const incomeCategories = await categoryApi.gets(7);
 
-      set({ incomeCategories: data ?? [] });
+      set({ incomeCategories });
     } catch (error) {
       toast.error(error as string);
     }
   },
   getExpenseCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type_id", "8");
+      const expenseCategories = await categoryApi.gets(8);
 
-      set({ expenseCategories: data ?? [] });
+      set({ expenseCategories });
     } catch (error) {
       toast.error(error as string);
     }
   },
   getSavingCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type_id", "9");
+      const savingCategories = await categoryApi.gets(9);
 
-      set({ savingCategories: data ?? [] });
+      set({ savingCategories });
     } catch (error) {
       toast.error(error as string);
     }
   },
   getInvestmentCategories: async () => {
     try {
-      const { data } = await supabase.from("categories").select("*").eq("type_id", "10");
+      const investmentCategories = await categoryApi.gets(10);
 
-      set({ investmentCategories: data ?? [] });
+      set({ investmentCategories });
     } catch (error) {
       toast.error(error as string);
     }

@@ -13,7 +13,7 @@ export const Layout = () => {
 
     const res = await getUser();
 
-    if (res?.status === "ok") return;
+    if (res?.status === 200) return;
 
     navigate("/login");
   }, [user, getUser]);

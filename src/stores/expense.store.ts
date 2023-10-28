@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { sortBy } from "lodash-es";
 import { create } from "zustand";
-import { supabase } from "@/db";
+import { expenseApi } from "@/api";
 import { toast } from "@/styles";
 
 interface IExpenseStore {
@@ -18,32 +18,20 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
   expenses: [],
   getExpenses: async () => {
     try {
-      const today = dayjs().format("YYYY-MM-DD");
-      const { data: incomes } = await supabase
-        .from("incomes")
-        .select<string, IExpense>("*, types ( * ), categories ( * )")
-        .eq("date", today);
-      const { data: expenses } = await supabase
-        .from("expenses")
-        .select<string, IExpense>("*, types ( * ), categories ( * )")
-        .eq("date", today);
-      const { data: investments } = await supabase
-        .from("investments")
-        .select<string, IExpense>("*, types ( * ), categories ( * )")
-        .eq("date", today);
-      const { data: savings } = await supabase
-        .from("savings")
-        .select<string, IExpense>("*, types ( * ), categories ( * )")
-        .eq("date", today);
+      const query = "*, types ( * ), categories ( * )";
+      const date = { eq: dayjs().format("YYYY-MM-DD") };
+
+      const incomes = await expenseApi.gets("incomes", { query, date });
+      const savings = await expenseApi.gets("savings", { query, date });
+      const investments = await expenseApi.gets("investments", { query, date });
+      const expenses = await expenseApi.gets("expenses", { query, date });
 
       const data: IExpense[] = sortBy(
         [
           ...(incomes ?? []),
-          ...(expenses ?? []),
-          ...(investments ?? []),
           ...(savings ?? []),
-          { id: null, type_id: null, category_id: null, price: "", note: "" },
-          { id: null, type_id: null, category_id: null, price: "", note: "" },
+          ...(investments ?? []),
+          ...(expenses ?? []),
           { id: null, type_id: null, category_id: null, price: "", note: "" },
           { id: null, type_id: null, category_id: null, price: "", note: "" },
           { id: null, type_id: null, category_id: null, price: "", note: "" },

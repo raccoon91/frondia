@@ -1,54 +1,52 @@
 import { User } from "@supabase/supabase-js";
 import { create } from "zustand";
-import { supabase } from "@/db";
+import { authApi } from "@/api";
 import { toast } from "@/styles";
 
 interface IAuthStore {
   user: User | null;
-  getUser: () => Promise<{ status: string } | void>;
-  login: (email: string, password: string) => Promise<{ status: string } | void>;
-  logout: () => Promise<{ status: string } | void>;
+  getUser: () => Promise<{ status: number } | void>;
+  login: (email: string, password: string) => Promise<{ status: number } | void>;
+  logout: () => Promise<{ status: number } | void>;
 }
 
 export const useAuthStore = create<IAuthStore>(set => ({
   user: null,
   getUser: async () => {
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
+      const session = await authApi.getSession();
 
-      if (!sessionData.session) return;
+      if (!session) return;
 
-      const { data: userData } = await supabase.auth.getUser();
+      const user = await authApi.getUser();
 
-      if (!userData.user) return;
+      if (!user) return;
 
-      set({ user: userData.user });
+      set({ user });
 
-      return { status: "ok" };
+      return { status: 200 };
     } catch (error) {
       toast.error(error as string);
     }
   },
   login: async (email: string, password: string) => {
     try {
-      const { data } = await supabase.auth.signInWithPassword({ email, password });
+      const user = await authApi.login(email, password);
 
-      if (!data.user) return;
+      set({ user });
 
-      set({ user: data.user });
-
-      return { status: "ok" };
+      return { status: 200 };
     } catch (error) {
       toast.error(error as string);
     }
   },
   logout: async () => {
     try {
-      await supabase.auth.signOut();
+      await authApi.logout();
 
       set({ user: null });
 
-      return { status: "ok" };
+      return { status: 200 };
     } catch (error) {
       toast.error(error as string);
     }

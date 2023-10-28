@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { supabase } from "@/db";
+import { expenseTypeApi } from "@/api";
 import { toast } from "@/styles";
 
 interface IExpenseTypeStore {
@@ -11,9 +11,9 @@ export const useExpenseTypeStore = create<IExpenseTypeStore>(set => ({
   expenseTypes: [],
   getExpenseTypes: async () => {
     try {
-      const { data } = await supabase.from("types").select("*");
+      const expenseTypes = await expenseTypeApi.gets();
 
-      set({ expenseTypes: data ?? [] });
+      set({ expenseTypes });
     } catch (error) {
       toast.error(error as string);
     }

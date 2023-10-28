@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { create } from "zustand";
-import { supabase } from "@/db";
+import { expenseApi } from "@/api";
 import { toast } from "@/styles";
 
 interface IHomeStore {
@@ -20,29 +20,15 @@ export const useHomeStore = create<IHomeStore>(set => ({
   expensePrice: null,
   getMonthlyExpense: async () => {
     try {
-      const startDate = dayjs().startOf("month").format("YYYY-MM-DD");
-      const endDate = dayjs().endOf("month").format("YYYY-MM-DD");
+      const date = {
+        from: dayjs().startOf("month").format("YYYY-MM-DD"),
+        to: dayjs().endOf("month").format("YYYY-MM-DD"),
+      };
 
-      const { data: incomes } = await supabase
-        .from("incomes")
-        .select<string, IExpense>("*")
-        .gte("date", startDate)
-        .lte("date", endDate);
-      const { data: savings } = await supabase
-        .from("savings")
-        .select<string, IExpense>("*")
-        .gte("date", startDate)
-        .lte("date", endDate);
-      const { data: investments } = await supabase
-        .from("investments")
-        .select<string, IExpense>("*")
-        .gte("date", startDate)
-        .lte("date", endDate);
-      const { data: expenses } = await supabase
-        .from("expenses")
-        .select<string, IExpense>("*")
-        .gte("date", startDate)
-        .lte("date", endDate);
+      const incomes = await expenseApi.gets("incomes", { date });
+      const savings = await expenseApi.gets("savings", { date });
+      const investments = await expenseApi.gets("investments", { date });
+      const expenses = await expenseApi.gets("expenses", { date });
 
       const incomePrice =
         incomes?.reduce((acc, cur) => {

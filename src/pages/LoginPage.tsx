@@ -22,7 +22,7 @@ export const LoginPage = () => {
 
     const res = await login(email, password);
 
-    if (res?.status !== "ok") return;
+    if (res?.status !== 200) return;
 
     navigate("/");
   };
