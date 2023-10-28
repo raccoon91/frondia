@@ -60,10 +60,10 @@ export const DataGrid: FC<IDataGridProps> = ({ data, columns, onChangeRowData })
 
       <Box ref={bodyRef} overflow="auto" flex="1" onScroll={handleScrollBody}>
         {table.getRowModel().rows.map(row => (
-          <Flex key={row.id} _hover={{ bg: "tactive", cell: { bg: "tactive" } }}>
-            {row.getAllCells().map((cell, index) => (
+          <Flex key={row.id} _hover={{ bg: "tactive", ".cell": { bg: "tactive" } }}>
+            {row.getAllCells().map(cell => (
               <Box
-                key={index}
+                key={cell.id}
                 className="cell"
                 w={cell.column.getSize()}
                 minW={cell.column.getSize()}

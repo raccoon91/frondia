@@ -27,8 +27,8 @@ export const NumberEditor: ColumnDefTemplate<CellContext<any, unknown> & { input
   return (
     <NumberInput value={formattedValue ?? ""} onChange={handleChangeInput}>
       <NumberInputField
-        w={column.getSize()}
-        minW={column.getSize()}
+        w="full"
+        minW="full"
         border="transparent"
         rounded="none"
         cursor="cell"

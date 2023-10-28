@@ -18,8 +18,8 @@ export const TextEditor: ColumnDefTemplate<CellContext<any, unknown> & { inputPr
 
   return (
     <Input
-      w={column.getSize()}
-      minW={column.getSize()}
+      w="full"
+      minW="full"
       border="transparent"
       rounded="none"
       cursor="cell"

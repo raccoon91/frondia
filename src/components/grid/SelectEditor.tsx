@@ -28,8 +28,8 @@ export const SelectEditor: ColumnDefTemplate<
 
   return (
     <Dropdown
-      w={column.getSize()}
-      minW={column.getSize()}
+      w="full"
+      minW="full"
       border="transparent"
       rounded="none"
       cursor="cell"
