@@ -7,18 +7,21 @@ import { createEmptyExpense } from "@/utils";
 import { useExpenseTypeStore } from ".";
 
 interface IExpenseStore {
+  date: string;
   expenses: IExpense[];
-  getDailyExpense: () => Promise<void>;
+  getDailyExpense: (today: string) => Promise<void>;
+  moveDate: (type: "prev" | "next") => void;
   setExpenses: (expenses: IExpense[]) => void;
   addExpense: (type: IExpenseTeyps) => void;
 }
 
 export const useExpenseStore = create<IExpenseStore>((set, get) => ({
+  date: dayjs().format("YYYY-MM-DD"),
   expenses: [],
-  getDailyExpense: async () => {
+  getDailyExpense: async (today: string) => {
     try {
       const query = "*, types ( * ), categories ( * )";
-      const date = { eq: dayjs().format("YYYY-MM-DD") };
+      const date = { eq: today };
 
       const incomes = await expenseApi.gets("incomes", { query, date });
       const savings = await expenseApi.gets("savings", { query, date });
@@ -43,6 +46,15 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
       set({ expenses: data ?? [] });
     } catch (error) {
       toast.error(error as string);
+    }
+  },
+  moveDate: type => {
+    const date = get().date;
+
+    if (type === "prev") {
+      set({ date: dayjs(date).subtract(1, "day").format("YYYY-MM-DD") });
+    } else {
+      set({ date: dayjs(date).add(1, "day").format("YYYY-MM-DD") });
     }
   },
   setExpenses: (expenses: IExpense[]) => {

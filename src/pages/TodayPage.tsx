@@ -10,15 +10,12 @@ const columnHelper = createColumnHelper<IExpense>();
 
 export const TodayPage = () => {
   const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
-  const { incomeCategories, expenseCategories, savingCategories, investmentCategories } = useCategoryStore(state => ({
-    incomeCategories: state.incomeCategories,
-    expenseCategories: state.expenseCategories,
-    savingCategories: state.savingCategories,
-    investmentCategories: state.investmentCategories,
-  }));
-  const { expenses, getDailyExpense, setExpenses, addExpense } = useExpenseStore(state => ({
+  const { category } = useCategoryStore(state => ({ category: state.category }));
+  const { date, expenses, getDailyExpense, moveDate, setExpenses, addExpense } = useExpenseStore(state => ({
+    date: state.date,
     expenses: state.expenses,
     getDailyExpense: state.getDailyExpense,
+    moveDate: state.moveDate,
     setExpenses: state.setExpenses,
     addExpense: state.addExpense,
   }));
@@ -44,13 +41,13 @@ export const TodayPage = () => {
             displayValue={(option?: IGridOption) => option?.name}
             options={
               props.row.original.types?.id === 7
-                ? incomeCategories
+                ? category?.incomes ?? []
                 : props.row.original.types?.id === 8
-                ? expenseCategories
+                ? category?.expenses ?? []
                 : props.row.original.types?.id === 9
-                ? savingCategories
+                ? category?.savings ?? []
                 : props.row.original.types?.id === 10
-                ? investmentCategories
+                ? category?.investments ?? []
                 : []
             }
             inputProps={{ value: props.row.original.categories?.id }}
@@ -70,12 +67,20 @@ export const TodayPage = () => {
         size: 300,
       }),
     ],
-    [expenseTypes, incomeCategories, expenseCategories, savingCategories, investmentCategories]
+    [expenseTypes, category]
   );
 
   useEffect(() => {
-    getDailyExpense();
-  }, []);
+    getDailyExpense(date);
+  }, [date]);
+
+  const handleMovePrevDay = () => {
+    moveDate("prev");
+  };
+
+  const handleMoveNextDay = () => {
+    moveDate("next");
+  };
 
   const handleAddIncome = () => {
     addExpense("incomes");
@@ -110,11 +115,22 @@ export const TodayPage = () => {
       <Flex overflow="hidden" flex="1" maxW="842px" direction="column" gap="30px">
         <Flex align="center" justify="space-between" gap="16px">
           <Flex align="center" gap="16px">
-            <IconButton aria-label="previous day" variant="ghost" icon={<Icon as={FaChevronLeft} />} />
+            <IconButton
+              aria-label="previous day"
+              variant="ghost"
+              icon={<Icon as={FaChevronLeft} />}
+              onClick={handleMovePrevDay}
+            />
             <Text fontSize="20px" fontWeight="bold">
-              {dayjs().format("YYYY-MM-DD")}
+              {date}
             </Text>
-            <IconButton aria-label="next day" variant="ghost" icon={<Icon as={FaChevronRight} />} />
+            <IconButton
+              aria-label="next day"
+              variant="ghost"
+              icon={<Icon as={FaChevronRight} />}
+              isDisabled={dayjs().isSame(date, "day")}
+              onClick={handleMoveNextDay}
+            />
           </Flex>
 
           <Button variant="outline" colorScheme="green">
