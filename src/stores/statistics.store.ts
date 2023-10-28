@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { reduce } from "lodash-es";
 import dayjs from "dayjs";
 import { expenseApi } from "@/api";
 import { toast } from "@/styles";
@@ -24,19 +23,29 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
         to: dayjs().endOf("month").format("YYYY-MM-DD"),
       };
 
-      const incomes = await expenseApi.gets("incomes", { date });
-      const savings = await expenseApi.gets("savings", { date });
-      const investments = await expenseApi.gets("investments", { date });
-      const expenses = await expenseApi.gets("expenses", { date });
+      const expenses = await expenseApi.gets({ date });
 
-      const income = reduce(incomes, (acc, cur) => acc + cur.price, 0);
-      const saving = reduce(savings, (acc, cur) => acc + cur.price, 0);
-      const investment = reduce(investments, (acc, cur) => acc + cur.price, 0);
-      const expense = reduce(expenses, (acc, cur) => acc + cur.price, 0);
+      const price = expenses.reduce(
+        (acc, cur) => {
+          if (cur.type_id === 7) {
+            acc.income += cur.price;
+            acc.totalIncome += cur.price;
+          } else if (cur.type_id === 8) {
+            acc.expense += cur.price;
+          } else if (cur.type_id === 9) {
+            acc.saving += cur.price;
+            acc.totalIncome += cur.price;
+          } else if (cur.type_id === 10) {
+            acc.investment += cur.price;
+            acc.totalIncome += cur.price;
+          }
 
-      set({
-        price: { income, saving, investment, totalIncome: income + saving + investment, expense },
-      });
+          return acc;
+        },
+        { income: 0, saving: 0, investment: 0, totalIncome: 0, expense: 0 }
+      );
+
+      set({ price });
     } catch (error) {
       toast.error(error as string);
     }

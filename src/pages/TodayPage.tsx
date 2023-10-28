@@ -10,14 +10,17 @@ import { useExpenseColumn } from "@/hooks";
 export const TodayPage = () => {
   const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
   const { category } = useCategoryStore(state => ({ category: state.category }));
-  const { date, expenses, getDailyExpense, moveDate, setExpenses, addExpense } = useExpenseStore(state => ({
-    date: state.date,
-    expenses: state.expenses,
-    getDailyExpense: state.getDailyExpense,
-    moveDate: state.moveDate,
-    setExpenses: state.setExpenses,
-    addExpense: state.addExpense,
-  }));
+  const { date, expenses, isEnableSave, getDailyExpense, moveDate, setExpenses, addExpense, saveExpenses } =
+    useExpenseStore(state => ({
+      date: state.date,
+      expenses: state.expenses,
+      isEnableSave: state.isEnableSave,
+      getDailyExpense: state.getDailyExpense,
+      moveDate: state.moveDate,
+      setExpenses: state.setExpenses,
+      addExpense: state.addExpense,
+      saveExpenses: state.saveExpenses,
+    }));
 
   const columns = useExpenseColumn(expenseTypes, category);
 
@@ -31,6 +34,22 @@ export const TodayPage = () => {
 
   const handleMoveNextDay = () => {
     moveDate("next");
+  };
+
+  const handleSaveExpenses = () => {
+    saveExpenses();
+  };
+
+  const handleChangeRowData = (rowIndex: number, columnId: string, value: RowData) => {
+    const newExpense = expenses.map((column, index) => {
+      if (index === rowIndex) {
+        return { ...column, [columnId]: value };
+      }
+
+      return column;
+    });
+
+    setExpenses(newExpense);
   };
 
   const handleAddIncome = () => {
@@ -47,18 +66,6 @@ export const TodayPage = () => {
 
   const handleAddInvestment = () => {
     addExpense("investments");
-  };
-
-  const handleChangeRowData = (rowIndex: number, columnId: string, value: RowData) => {
-    const newExpense = expenses.map((column, index) => {
-      if (index === rowIndex) {
-        return { ...column, [columnId]: value };
-      }
-
-      return column;
-    });
-
-    setExpenses(newExpense);
   };
 
   return (
@@ -84,7 +91,7 @@ export const TodayPage = () => {
             />
           </Flex>
 
-          <Button variant="outline" colorScheme="green">
+          <Button variant="outline" colorScheme="green" isDisabled={!isEnableSave} onClick={handleSaveExpenses}>
             💾 저장
           </Button>
         </Flex>

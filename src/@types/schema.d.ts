@@ -14,7 +14,7 @@ interface ICategory {
 }
 
 interface IExpense {
-  id: number | null;
+  id?: number | null;
   user_id?: string;
   type_id: number | null;
   category_id: number | null;
@@ -22,4 +22,5 @@ interface IExpense {
   categories?: ICategory;
   price: number;
   note?: string | null;
+  date: string;
 }
