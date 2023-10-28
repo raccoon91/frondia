@@ -2,8 +2,25 @@ import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
 import { Card } from "@/components";
+import { useHomeStore } from "@/stores";
+import { useEffect } from "react";
 
 export const HomePage = () => {
+  const { incomePrice, savingPrice, investmentPrice, totalIncomePrice, expensePrice, getMonthlyExpense } = useHomeStore(
+    state => ({
+      incomePrice: state.incomePrice,
+      savingPrice: state.savingPrice,
+      investmentPrice: state.investmentPrice,
+      totalIncomePrice: state.totalIncomePrice,
+      expensePrice: state.expensePrice,
+      getMonthlyExpense: state.getMonthlyExpense,
+    })
+  );
+
+  useEffect(() => {
+    getMonthlyExpense();
+  }, []);
+
   return (
     <Box p="50px">
       <Text fontSize="20px" fontWeight="bold">
@@ -11,19 +28,34 @@ export const HomePage = () => {
       </Text>
 
       <Wrap mt="30px" spacing="30px">
-        <VStack align="stretch" spacing="30px" w="400px">
+        <VStack align="stretch" spacing="30px" w="300px">
           <Card title="계좌">
             <VStack align="stretch">
-              <Text>현금</Text>
-              <Text>적금</Text>
-              <Text>투자</Text>
+              <Flex justify="space-between">
+                <Text>현금</Text>
+                <Text>{incomePrice}원</Text>
+              </Flex>
+              <Flex justify="space-between">
+                <Text>적금</Text>
+                <Text>{savingPrice}원</Text>
+              </Flex>
+              <Flex justify="space-between">
+                <Text>투자</Text>
+                <Text>{investmentPrice}원</Text>
+              </Flex>
             </VStack>
           </Card>
 
-          <Card title="요약">
+          <Card title="종합">
             <VStack align="stretch">
-              <Text>수입</Text>
-              <Text>지출</Text>
+              <Flex justify="space-between">
+                <Text>수입</Text>
+                <Text>{totalIncomePrice}원</Text>
+              </Flex>
+              <Flex justify="space-between">
+                <Text>지출</Text>
+                <Text>{expensePrice}원</Text>
+              </Flex>
             </VStack>
           </Card>
         </VStack>
