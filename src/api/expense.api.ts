@@ -3,7 +3,7 @@ import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 export const expenseApi = {
   gets: async (
-    type: "incomes" | "expenses" | "savings" | "investments",
+    type: IExpenseTeyps,
     {
       query,
       relation,

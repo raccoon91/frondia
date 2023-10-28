@@ -1,7 +1,9 @@
+type IExpenseTeyps = "incomes" | "expenses" | "savings" | "investments";
+
 interface IExpenseType {
   id: number;
   name: string;
-  type: string;
+  type: IExpenseTeyps;
 }
 
 interface ICategory {
