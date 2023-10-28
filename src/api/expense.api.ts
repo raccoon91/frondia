@@ -48,21 +48,42 @@ export const expenseApi = {
   upsert: async (user: User | null, date: string, expenses: Omit<IExpense, "type_id" | "category_id">[]) => {
     if (!user) return;
 
-    const res = await supabase.from("expenses").upsert(
-      expenses.map(expense => ({
-        user_id: user.id,
-        type_id: expense.types?.id ?? null,
-        category_id: expense.categories?.id ?? null,
-        price: expense.price,
-        note: expense.note,
-        date: date,
-      })),
-      { defaultToNull: false }
+    const { update, create } = expenses.reduce(
+      (acc, cur) => {
+        if (!cur.types?.id || !cur.categories?.id) return acc;
+
+        const body = {
+          user_id: user.id,
+          type_id: cur.types.id,
+          category_id: cur.categories.id,
+          price: cur.price,
+          note: cur.note,
+          date: date,
+        };
+
+        if (cur.id) {
+          acc.update.push({
+            id: cur.id,
+            ...body,
+          });
+        } else {
+          acc.create.push(body);
+        }
+
+        return acc;
+      },
+      { update: [] as IExpense[], create: [] as IExpense[] }
     );
 
-    if (res.error) throw new Error(res.error.message);
+    const updateRes = await supabase.from("expenses").upsert(update);
 
-    return res.status;
+    if (updateRes.error) throw new Error(updateRes.error.message);
+
+    const createRes = await supabase.from("expenses").insert(create);
+
+    if (createRes.error) throw new Error(createRes.error.message);
+
+    return 200;
   },
   delete: async (expenses: IExpense[]) => {
     for (const expense of expenses) {
