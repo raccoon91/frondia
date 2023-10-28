@@ -49,22 +49,15 @@ export const expenseApi = {
     if (!user) return;
 
     const res = await supabase.from("expenses").upsert(
-      expenses.map(expense => {
-        const body: IExpense = {
-          user_id: user.id,
-          type_id: expense.types?.id ?? null,
-          category_id: expense.categories?.id ?? null,
-          price: expense.price,
-          note: expense.note,
-          date: date,
-        };
-
-        if (expense.id) {
-          body.id = expense.id;
-        }
-
-        return body;
-      })
+      expenses.map(expense => ({
+        user_id: user.id,
+        type_id: expense.types?.id ?? null,
+        category_id: expense.categories?.id ?? null,
+        price: expense.price,
+        note: expense.note,
+        date: date,
+      })),
+      { defaultToNull: false }
     );
 
     if (res.error) throw new Error(res.error.message);
