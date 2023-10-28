@@ -98,9 +98,6 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
         expense => expense.types?.id && expense.categories?.id && expense.price
       );
 
-      console.log(differenceExpenses);
-      console.log(filteredExpenses);
-
       await expenseApi.upsert(user, date, filteredExpenses);
 
       const getDailyExpense = get().getDailyExpense;
