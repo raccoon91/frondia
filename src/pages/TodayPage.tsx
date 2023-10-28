@@ -1,12 +1,11 @@
-import { useEffect, useMemo } from "react";
-import { RowData, createColumnHelper } from "@tanstack/react-table";
+import { useEffect } from "react";
+import { RowData } from "@tanstack/react-table";
 import { Box, Button, Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "@/stores";
-import { Card, DataGrid, SelectEditor, TextEditor } from "@/components";
-
-const columnHelper = createColumnHelper<IExpense>();
+import { Card, DataGrid } from "@/components";
+import { useExpenseColumn } from "@/hooks";
 
 export const TodayPage = () => {
   const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
@@ -20,55 +19,7 @@ export const TodayPage = () => {
     addExpense: state.addExpense,
   }));
 
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor("types", {
-        cell: props => (
-          <SelectEditor
-            {...props}
-            displayValue={(option?: IGridOption) => option?.name}
-            options={expenseTypes}
-            inputProps={{ value: props.row.original.types?.id }}
-          />
-        ),
-        header: "Type",
-        size: 140,
-      }),
-      columnHelper.accessor("categories", {
-        cell: props => (
-          <SelectEditor
-            {...props}
-            displayValue={(option?: IGridOption) => option?.name}
-            options={
-              props.row.original.types?.id === 7
-                ? category?.incomes ?? []
-                : props.row.original.types?.id === 8
-                ? category?.expenses ?? []
-                : props.row.original.types?.id === 9
-                ? category?.savings ?? []
-                : props.row.original.types?.id === 10
-                ? category?.investments ?? []
-                : []
-            }
-            inputProps={{ value: props.row.original.categories?.id }}
-          />
-        ),
-        header: "Category",
-        size: 200,
-      }),
-      columnHelper.accessor("price", {
-        cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.price, textAlign: "right" }} />,
-        header: "Price",
-        size: 200,
-      }),
-      columnHelper.accessor("note", {
-        cell: props => <TextEditor {...props} inputProps={{ value: props.row.original.note }} />,
-        header: "Note",
-        size: 300,
-      }),
-    ],
-    [expenseTypes, category]
-  );
+  const columns = useExpenseColumn(expenseTypes, category);
 
   useEffect(() => {
     getDailyExpense(date);
