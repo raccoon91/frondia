@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CellContext, ColumnDefTemplate } from "@tanstack/react-table";
 import { NumberInput, NumberInputField } from "@chakra-ui/react";
 
@@ -9,24 +9,18 @@ export const NumberEditor: ColumnDefTemplate<CellContext<any, unknown> & { input
   inputProps,
 }) => {
   const { value, ...restProps } = inputProps;
-  const [cellData, setCellData] = useState<IGridText>(value);
 
-  const formattedValue = useMemo(() => cellData?.toLocaleString(), [cellData]);
-
-  // const onBlur = () => {
-  //   table.options.meta?.updateData(row.index, column.id, cellData);
-  // };
+  const formattedValue = useMemo(() => value?.toLocaleString(), [value]);
 
   const handleChangeInput = (value: string) => {
     if (!value) {
-      setCellData(0);
+      table.options.meta?.updateData(row.index, column.id, 0);
 
       return;
     }
 
     const numberValue = parseFloat(value.replace(/,/, ""));
 
-    setCellData(numberValue);
     table.options.meta?.updateData(row.index, column.id, numberValue);
   };
 
