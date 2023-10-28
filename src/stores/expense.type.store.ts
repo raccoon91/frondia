@@ -15,7 +15,7 @@ export const useExpenseTypeStore = create<IExpenseTypeStore>(set => ({
 
       set({ expenseTypes });
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
 }));

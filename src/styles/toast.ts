@@ -21,12 +21,21 @@ const toast = {
       status: "warning",
       position: "top",
     }),
-  error: (message: string) =>
+  error: (error: string | Error | unknown) => {
+    let message = "";
+
+    if (error instanceof Error) {
+      message = error.message;
+    } else if (typeof error === "string") {
+      message = error;
+    }
+
     baseToast({
       title: message,
       status: "error",
       position: "top",
-    }),
+    });
+  },
 };
 
 export { ToastContainer, toast };

@@ -45,7 +45,7 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
 
       set({ originExpenses: cloneDeep(data), expenses: data, isEnableSave: false });
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
   moveDate: type => {
@@ -105,7 +105,7 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
 
       await getDailyExpense(date);
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
   deleteExpenses: async (selectedRows: Record<number, boolean>) => {
@@ -143,7 +143,7 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
         ],
       });
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
 }));

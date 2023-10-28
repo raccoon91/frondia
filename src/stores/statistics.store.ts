@@ -27,6 +27,8 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
 
       const price = expenses.reduce(
         (acc, cur) => {
+          if (!cur.price) return acc;
+
           if (cur.type_id === 7) {
             acc.income += cur.price;
             acc.totalIncome += cur.price;
@@ -47,7 +49,7 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
 
       set({ price });
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
 }));

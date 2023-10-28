@@ -26,7 +26,7 @@ export const useAuthStore = create<IAuthStore>(set => ({
 
       return { status: 200 };
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
   login: async (email: string, password: string) => {
@@ -37,7 +37,7 @@ export const useAuthStore = create<IAuthStore>(set => ({
 
       return { status: 200 };
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
   logout: async () => {
@@ -48,7 +48,7 @@ export const useAuthStore = create<IAuthStore>(set => ({
 
       return { status: 200 };
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
 }));

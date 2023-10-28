@@ -23,7 +23,7 @@ export const useCategoryStore = create<ICategoryStore>(set => ({
 
       set({ category: { incomes, expenses, savings, investments } });
     } catch (error) {
-      toast.error(error as string);
+      toast.error(error);
     }
   },
 }));
