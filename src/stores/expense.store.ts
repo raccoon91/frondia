@@ -12,7 +12,7 @@ interface IExpenseStore {
   getDailyExpense: (today: string) => Promise<void>;
   moveDate: (type: "prev" | "next") => void;
   setExpenses: (expenses: IExpense[]) => void;
-  addExpense: (type: IExpenseTeyps) => void;
+  addExpense: (type: IExpenseTypes) => void;
 }
 
 export const useExpenseStore = create<IExpenseStore>((set, get) => ({
@@ -60,7 +60,7 @@ export const useExpenseStore = create<IExpenseStore>((set, get) => ({
   setExpenses: (expenses: IExpense[]) => {
     set({ expenses });
   },
-  addExpense: (type: IExpenseTeyps) => {
+  addExpense: (type: IExpenseTypes) => {
     const expenses = get().expenses;
     const expenseTypes = useExpenseTypeStore.getState().expenseTypes;
     const expenseType = expenseTypes.find(expenseType => expenseType.type === type);
