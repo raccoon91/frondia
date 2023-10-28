@@ -42,7 +42,7 @@ export const useExpenseColumn = (expenseTypes: IExpenseType[], category: Record<
                 />
               ),
               header: "Category",
-              size: 200,
+              size: 160,
             }),
             columnHelper.accessor("price", {
               cell: props => (
