@@ -5,17 +5,20 @@ import { toast } from "@/styles";
 
 interface IStatisticsStore {
   price: {
-    income: number | null;
-    saving: number | null;
-    investment: number | null;
-    totalIncome: number | null;
-    expense: number | null;
+    income: number;
+    saving: number;
+    investment: number;
+    expense: number;
+    totalIncome: number;
+    remain: number;
   } | null;
+  category: Record<IExpenseTypes, Record<string, number>> | null;
   getMonthlyExpense: () => Promise<void>;
 }
 
 export const useStatisticsStore = create<IStatisticsStore>(set => ({
   price: null,
+  category: null,
   getMonthlyExpense: async () => {
     try {
       const date = {
@@ -23,31 +26,53 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
         to: dayjs().endOf("month").format("YYYY-MM-DD"),
       };
 
-      const expenses = await expenseApi.gets({ date });
+      const expenses = await expenseApi.gets({ query: "*, types ( * ), categories ( * )", date });
 
-      const price = expenses.reduce(
+      const { price, category } = expenses.reduce(
         (acc, cur) => {
           if (!cur.price) return acc;
 
-          if (cur.type_id === 7) {
-            acc.income += cur.price;
-            acc.totalIncome += cur.price;
-          } else if (cur.type_id === 8) {
-            acc.expense += cur.price;
-          } else if (cur.type_id === 9) {
-            acc.saving += cur.price;
-            acc.totalIncome += cur.price;
-          } else if (cur.type_id === 10) {
-            acc.investment += cur.price;
-            acc.totalIncome += cur.price;
+          if (cur.types?.name === "수입") {
+            acc.price.income += cur.price;
+            acc.price.totalIncome += cur.price;
+            acc.price.remain += cur.price;
+          } else if (cur.types?.name === "지출") {
+            acc.price.expense += cur.price;
+            acc.price.remain -= cur.price;
+          } else if (cur.types?.name === "저축") {
+            acc.price.saving += cur.price;
+            acc.price.totalIncome += cur.price;
+            acc.price.remain -= cur.price;
+          } else if (cur.types?.name === "투자") {
+            acc.price.investment += cur.price;
+            acc.price.totalIncome += cur.price;
+            acc.price.remain -= cur.price;
           }
+
+          if (!cur.types?.name || !cur.categories?.name) return acc;
+
+          if (!acc.category[cur.types.type]) acc.category[cur.types.type] = {};
+          if (!acc.category[cur.types.type]?.[cur.categories.name])
+            acc.category[cur.types.type][cur.categories.name] = 0;
+
+          acc.category[cur.types.type][cur.categories.name] += cur.price;
 
           return acc;
         },
-        { income: 0, saving: 0, investment: 0, totalIncome: 0, expense: 0 }
+        {
+          price: {
+            income: 0,
+            saving: 0,
+            investment: 0,
+            expense: 0,
+            totalIncome: 0,
+            remain: 0,
+          },
+          category: {} as Record<IExpenseTypes, Record<string, number>>,
+        }
       );
 
-      set({ price });
+      set({ price, category });
     } catch (error) {
       toast.error(error);
     }

@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
+import { Box, Divider, Flex, Progress, Text, VStack, Wrap } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useStatisticsStore } from "@/stores";
 import { Card, Price } from "@/components";
 
 export const HomePage = () => {
-  const { price, getMonthlyExpense } = useStatisticsStore(state => ({
+  const { price, category, getMonthlyExpense } = useStatisticsStore(state => ({
     price: state.price,
+    category: state.category,
     getMonthlyExpense: state.getMonthlyExpense,
   }));
 
@@ -22,34 +23,86 @@ export const HomePage = () => {
       </Text>
 
       <Wrap mt="30px" spacing="30px">
-        <VStack align="stretch" spacing="30px" w="300px">
-          <Card title="계좌">
+        <Box w="300px">
+          <Card title="이번 달">
             <VStack align="stretch">
-              <Price label="현금" price={price?.income} />
+              <Price label="수입" price={price?.income} />
               <Price label="적금" price={price?.saving} />
               <Price label="투자" price={price?.investment} />
-            </VStack>
-          </Card>
-
-          <Card title="종합">
-            <VStack align="stretch">
-              <Price label="수입" price={price?.totalIncome} />
               <Price label="지출" price={price?.expense} />
+              <Divider />
+              <Price label="남은 금액" price={price?.remain} />
             </VStack>
           </Card>
-        </VStack>
+        </Box>
 
-        <VStack w="600px">
+        <VStack w="600px" align="stretch">
           <Card title="이번 달">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates vitae illo assumenda deserunt earum nam
-            placeat perferendis laborum cum. Deleniti natus ducimus perspiciatis quibusdam tempore. Distinctio atque sit
-            deserunt vel. Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias officia? Ducimus
-            molestiae, eligendi quos, facilis repudiandae aliquid voluptas, sed totam voluptatem ad laboriosam enim
-            quaerat quidem rerum placeat possimus. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Provident
-            placeat, aspernatur dolorum eveniet harum inventore consectetur modi possimus laboriosam quos officia iste
-            labore nostrum quibusdam, amet, odio reiciendis voluptatum cumque. Lorem ipsum dolor sit amet consectetur,
-            adipisicing elit. Reprehenderit odio commodi nesciunt dolorem voluptas ex perspiciatis est quia ea rerum
-            architecto, vero, debitis numquam quos, dolorum culpa totam aut accusantium.
+            <VStack align="stretch" gap="8px" divider={<Divider />}>
+              <VStack align="stretch">
+                <Text fontWeight="semibold">지출</Text>
+                <VStack align="stretch">
+                  {Object.entries(category?.expenses ?? {}).map(([name, value], index) => (
+                    <Flex key={index} gap="16px">
+                      <Text color="sub">{name}</Text>
+                      <Progress
+                        flex="1"
+                        rounded="md"
+                        value={price?.expense ? (value / price.expense) * 100 : undefined}
+                      />
+                    </Flex>
+                  ))}
+                </VStack>
+              </VStack>
+
+              <VStack align="stretch">
+                <Text fontWeight="semibold">수입</Text>
+                <VStack align="stretch">
+                  {Object.entries(category?.incomes ?? {}).map(([name, value], index) => (
+                    <Flex key={index} gap="16px">
+                      <Text color="sub">{name}</Text>
+                      <Progress
+                        flex="1"
+                        rounded="md"
+                        value={price?.totalIncome ? (value / price.totalIncome) * 100 : undefined}
+                      />
+                    </Flex>
+                  ))}
+                </VStack>
+              </VStack>
+
+              <VStack align="stretch">
+                <Text fontWeight="semibold">저축</Text>
+                <VStack align="stretch">
+                  {Object.entries(category?.savings ?? {}).map(([name, value], index) => (
+                    <Flex key={index} gap="16px">
+                      <Text color="sub">{name}</Text>
+                      <Progress
+                        flex="1"
+                        rounded="md"
+                        value={price?.totalIncome ? (value / price.totalIncome) * 100 : undefined}
+                      />
+                    </Flex>
+                  ))}
+                </VStack>
+              </VStack>
+
+              <VStack align="stretch">
+                <Text fontWeight="semibold">투자</Text>
+                <VStack align="stretch">
+                  {Object.entries(category?.investments ?? {}).map(([name, value], index) => (
+                    <Flex key={index} gap="16px">
+                      <Text color="sub">{name}</Text>
+                      <Progress
+                        flex="1"
+                        rounded="md"
+                        value={price?.totalIncome ? (value / price.totalIncome) * 100 : undefined}
+                      />
+                    </Flex>
+                  ))}
+                </VStack>
+              </VStack>
+            </VStack>
           </Card>
         </VStack>
 
