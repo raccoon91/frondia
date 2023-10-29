@@ -7,7 +7,7 @@ export const UnEditable: ColumnDefTemplate<CellContext<any, unknown> & { inputPr
   return (
     <Flex align="center" w="full" h="full" px="16px" bg="blackAlpha.50" cursor="not-allowed">
       {inputProps?.value ? (
-        <Text fontSize="14px" color="gray.400">
+        <Text fontSize="14px" color="sub">
           {inputProps.value}
         </Text>
       ) : null}
