@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Divider, Flex, Progress, Text, VStack, Wrap } from "@chakra-ui/react";
+import { Box, Divider, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useStatisticsStore } from "@/stores";
-import { Card, Price } from "@/components";
+import { Card, ExpenseProgress, Price } from "@/components";
 
 export const HomePage = () => {
-  const { price, category, getMonthlyExpense } = useStatisticsStore(state => ({
+  const { isFetched, price, category, getMonthlyExpense } = useStatisticsStore(state => ({
+    isFetched: state.isFetched,
     price: state.price,
     category: state.category,
     getMonthlyExpense: state.getMonthlyExpense,
@@ -26,12 +27,12 @@ export const HomePage = () => {
         <Box w="300px">
           <Card title="이번 달">
             <VStack align="stretch">
-              <Price label="수입" price={price?.income} />
-              <Price label="적금" price={price?.saving} />
-              <Price label="투자" price={price?.investment} />
-              <Price label="지출" price={price?.expense} />
+              <Price isLoaded={isFetched} label="수입" price={price?.income} />
+              <Price isLoaded={isFetched} label="적금" price={price?.saving} />
+              <Price isLoaded={isFetched} label="투자" price={price?.investment} />
+              <Price isLoaded={isFetched} label="지출" price={price?.expense} />
               <Divider />
-              <Price label="남은 금액" price={price?.remain} />
+              <Price isLoaded={isFetched} label="남은 금액" price={price?.remain} />
             </VStack>
           </Card>
         </Box>
@@ -41,66 +42,26 @@ export const HomePage = () => {
             <VStack align="stretch" gap="8px" divider={<Divider />}>
               <VStack align="stretch">
                 <Text fontWeight="semibold">지출</Text>
-                <VStack align="stretch">
-                  {Object.entries(category?.expenses ?? {}).map(([name, value], index) => (
-                    <Flex key={index} gap="16px">
-                      <Text color="sub">{name}</Text>
-                      <Progress
-                        flex="1"
-                        rounded="md"
-                        value={price?.expense ? (value / price.expense) * 100 : undefined}
-                      />
-                    </Flex>
-                  ))}
-                </VStack>
+                <ExpenseProgress isLoaded={isFetched} expenses={category?.expenses} totalPrice={price?.expense} />
               </VStack>
 
               <VStack align="stretch">
                 <Text fontWeight="semibold">수입</Text>
-                <VStack align="stretch">
-                  {Object.entries(category?.incomes ?? {}).map(([name, value], index) => (
-                    <Flex key={index} gap="16px">
-                      <Text color="sub">{name}</Text>
-                      <Progress
-                        flex="1"
-                        rounded="md"
-                        value={price?.totalIncome ? (value / price.totalIncome) * 100 : undefined}
-                      />
-                    </Flex>
-                  ))}
-                </VStack>
+                <ExpenseProgress isLoaded={isFetched} expenses={category?.incomes} totalPrice={price?.totalIncome} />
               </VStack>
 
               <VStack align="stretch">
                 <Text fontWeight="semibold">저축</Text>
-                <VStack align="stretch">
-                  {Object.entries(category?.savings ?? {}).map(([name, value], index) => (
-                    <Flex key={index} gap="16px">
-                      <Text color="sub">{name}</Text>
-                      <Progress
-                        flex="1"
-                        rounded="md"
-                        value={price?.totalIncome ? (value / price.totalIncome) * 100 : undefined}
-                      />
-                    </Flex>
-                  ))}
-                </VStack>
+                <ExpenseProgress isLoaded={isFetched} expenses={category?.savings} totalPrice={price?.totalIncome} />
               </VStack>
 
               <VStack align="stretch">
                 <Text fontWeight="semibold">투자</Text>
-                <VStack align="stretch">
-                  {Object.entries(category?.investments ?? {}).map(([name, value], index) => (
-                    <Flex key={index} gap="16px">
-                      <Text color="sub">{name}</Text>
-                      <Progress
-                        flex="1"
-                        rounded="md"
-                        value={price?.totalIncome ? (value / price.totalIncome) * 100 : undefined}
-                      />
-                    </Flex>
-                  ))}
-                </VStack>
+                <ExpenseProgress
+                  isLoaded={isFetched}
+                  expenses={category?.investments}
+                  totalPrice={price?.totalIncome}
+                />
               </VStack>
             </VStack>
           </Card>

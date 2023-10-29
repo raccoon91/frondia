@@ -4,6 +4,8 @@ import { expenseApi } from "@/api";
 import { toast } from "@/styles";
 
 interface IStatisticsStore {
+  isFetched: boolean;
+  isLoaded: boolean;
   price: {
     income: number;
     saving: number;
@@ -17,10 +19,14 @@ interface IStatisticsStore {
 }
 
 export const useStatisticsStore = create<IStatisticsStore>(set => ({
+  isFetched: false,
+  isLoaded: false,
   price: null,
   category: null,
   getMonthlyExpense: async () => {
     try {
+      set({ isLoaded: false });
+
       const date = {
         from: dayjs().startOf("month").format("YYYY-MM-DD"),
         to: dayjs().endOf("month").format("YYYY-MM-DD"),
@@ -72,7 +78,7 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
         }
       );
 
-      set({ price, category });
+      set({ isFetched: true, isLoaded: true, price, category });
     } catch (error) {
       toast.error(error);
     }
