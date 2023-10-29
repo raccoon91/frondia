@@ -87,7 +87,7 @@ export const TodayPage = () => {
 
   return (
     <Flex w="full" h="full" p="50px" gap="60px">
-      <Flex overflow="hidden" flex="1" maxW="846px" direction="column" gap="30px">
+      <Flex overflow="hidden" flex="1" maxW="846px" direction="column" gap="30px" m="-16px" p="16px">
         <Wrap align="center" spacing="16px">
           <Flex align="center" gap="16px">
             <IconButton
@@ -123,7 +123,7 @@ export const TodayPage = () => {
           </Flex>
         </Wrap>
 
-        <Box overflow="auto" flex="1">
+        <Box flex="1" minH="300px">
           <DataGrid
             data={expenses}
             columns={columns}

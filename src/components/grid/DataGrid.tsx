@@ -50,6 +50,7 @@ export const DataGrid: FC<IDataGridProps> = ({
       border="1px solid"
       borderColor="border"
       rounded="md"
+      shadow="md"
     >
       <Flex ref={headerRef} overflow="hidden" bg="theader" borderBottom="1px solid" borderColor="border" zIndex="1">
         {table.getFlatHeaders().map(header => (
