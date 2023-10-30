@@ -8,6 +8,7 @@ export type IStatisticsCategory = Record<string, { value: number; color: string 
 interface IStatisticsStore {
   isFetched: boolean;
   isLoaded: boolean;
+  date: string;
   price: {
     income: number;
     saving: number;
@@ -17,21 +18,23 @@ interface IStatisticsStore {
     remain: number;
   } | null;
   category: Record<IExpenseTypes, IStatisticsCategory> | null;
-  getMonthlyExpense: () => Promise<void>;
+  getMonthlyExpense: (today: string) => Promise<void>;
+  moveDate: (type: "prev" | "next") => void;
 }
 
-export const useStatisticsStore = create<IStatisticsStore>(set => ({
+export const useStatisticsStore = create<IStatisticsStore>((set, get) => ({
   isFetched: false,
   isLoaded: false,
+  date: dayjs().format("YYYY-MM-DD"),
   price: null,
   category: null,
-  getMonthlyExpense: async () => {
+  getMonthlyExpense: async today => {
     try {
       set({ isLoaded: false });
 
       const date = {
-        from: dayjs().startOf("month").format("YYYY-MM-DD"),
-        to: dayjs().endOf("month").format("YYYY-MM-DD"),
+        from: dayjs(today).startOf("month").format("YYYY-MM-DD"),
+        to: dayjs(today).endOf("month").format("YYYY-MM-DD"),
       };
 
       const expenses = await expenseApi.gets({ query: "*, types ( * ), categories ( * )", date });
@@ -77,6 +80,15 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
       set({ isFetched: true, isLoaded: true, price, category });
     } catch (error) {
       toast.error(error);
+    }
+  },
+  moveDate: type => {
+    const date = get().date;
+
+    if (type === "prev") {
+      set({ date: dayjs(date).subtract(1, "month").format("YYYY-MM-DD") });
+    } else {
+      set({ date: dayjs(date).add(1, "month").format("YYYY-MM-DD") });
     }
   },
 }));

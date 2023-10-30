@@ -1,27 +1,53 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Divider, Flex, Text, VStack, Wrap } from "@chakra-ui/react";
+import { Box, Divider, Flex, Icon, IconButton, Text, VStack, Wrap } from "@chakra-ui/react";
 import dayjs from "dayjs";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useStatisticsStore } from "@/stores";
 import { Card, ExpenseProgress, Price } from "@/components";
 
 export const HomePage = () => {
-  const { isFetched, price, category, getMonthlyExpense } = useStatisticsStore(state => ({
+  const { isFetched, date, price, category, getMonthlyExpense, moveDate } = useStatisticsStore(state => ({
     isFetched: state.isFetched,
+    date: state.date,
     price: state.price,
     category: state.category,
     getMonthlyExpense: state.getMonthlyExpense,
+    moveDate: state.moveDate,
   }));
 
   useEffect(() => {
-    getMonthlyExpense();
-  }, []);
+    getMonthlyExpense(date);
+  }, [date]);
+
+  const handleMovePrevMonth = () => {
+    moveDate("prev");
+  };
+
+  const handleMoveNextMonth = () => {
+    moveDate("next");
+  };
 
   return (
     <Box p="50px">
-      <Text fontSize="20px" fontWeight="bold">
-        {dayjs().format("YYYY-MM-DD")}
-      </Text>
+      <Flex align="center" gap="16px">
+        <IconButton
+          aria-label="previous day"
+          variant="ghost"
+          icon={<Icon as={FaChevronLeft} />}
+          onClick={handleMovePrevMonth}
+        />
+        <Text fontSize="20px" fontWeight="bold">
+          {dayjs(date).format("YYYY년 MM월")}
+        </Text>
+        <IconButton
+          aria-label="next day"
+          variant="ghost"
+          icon={<Icon as={FaChevronRight} />}
+          isDisabled={dayjs().isSame(date, "day")}
+          onClick={handleMoveNextMonth}
+        />
+      </Flex>
 
       <Wrap mt="30px" spacing="30px">
         <Box w="300px">

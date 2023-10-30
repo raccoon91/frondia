@@ -97,7 +97,7 @@ export const TodayPage = () => {
               onClick={handleMovePrevDay}
             />
             <Text fontSize="20px" fontWeight="bold">
-              {date}
+              {dayjs(date).format("YYYY년 MM월 DD일")}
             </Text>
             <IconButton
               aria-label="next day"
