@@ -11,6 +11,7 @@ interface ICategory {
   type_id: number;
   types?: IExpenseType;
   name: string;
+  color: string | null;
 }
 
 interface IExpense {

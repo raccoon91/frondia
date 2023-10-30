@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 import { expenseApi } from "@/api";
 import { toast } from "@/styles";
 
+export type IStatisticsCategory = Record<string, { value: number; color: string | null }>;
+
 interface IStatisticsStore {
   isFetched: boolean;
   isLoaded: boolean;
@@ -14,7 +16,7 @@ interface IStatisticsStore {
     totalIncome: number;
     remain: number;
   } | null;
-  category: Record<IExpenseTypes, Record<string, number>> | null;
+  category: Record<IExpenseTypes, IStatisticsCategory> | null;
   getMonthlyExpense: () => Promise<void>;
 }
 
@@ -58,23 +60,17 @@ export const useStatisticsStore = create<IStatisticsStore>(set => ({
           if (!cur.types?.name || !cur.categories?.name) return acc;
 
           if (!acc.category[cur.types.type]) acc.category[cur.types.type] = {};
-          if (!acc.category[cur.types.type]?.[cur.categories.name])
-            acc.category[cur.types.type][cur.categories.name] = 0;
 
-          acc.category[cur.types.type][cur.categories.name] += cur.price;
+          if (!acc.category[cur.types.type]?.[cur.categories.name])
+            acc.category[cur.types.type][cur.categories.name] = { value: 0, color: cur.categories.color };
+
+          acc.category[cur.types.type][cur.categories.name].value += cur.price;
 
           return acc;
         },
         {
-          price: {
-            income: 0,
-            saving: 0,
-            investment: 0,
-            expense: 0,
-            totalIncome: 0,
-            remain: 0,
-          },
-          category: {} as Record<IExpenseTypes, Record<string, number>>,
+          price: { income: 0, saving: 0, investment: 0, expense: 0, totalIncome: 0, remain: 0 },
+          category: {} as Record<IExpenseTypes, IStatisticsCategory>,
         }
       );
 
