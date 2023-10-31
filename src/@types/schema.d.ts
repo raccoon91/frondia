@@ -25,3 +25,12 @@ interface IExpense {
   note?: string | null;
   date?: string;
 }
+
+interface ISchedule {
+  id?: number | null;
+  date: number;
+  name: string;
+  price: number;
+  type: IExpenseTypes;
+  user_id: string;
+}
