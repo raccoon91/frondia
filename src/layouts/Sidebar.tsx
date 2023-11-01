@@ -1,5 +1,5 @@
 import { VStack } from "@chakra-ui/react";
-import { AiFillHome, AiFillBook } from "react-icons/ai";
+import { AiFillHome } from "react-icons/ai";
 import { TbMoneybag } from "react-icons/tb";
 import { BsCreditCardFill } from "react-icons/bs";
 import { FaEarthAsia } from "react-icons/fa6";
@@ -10,7 +10,7 @@ export const Sidebar = () => {
     <VStack justify="center" spacing="24px" w="60px">
       <Menu to="/" name="Home" icon={AiFillHome} />
       <Menu to="/today" name="Today" icon={TbMoneybag} />
-      <Menu to="/schedule" name="Schedule" icon={AiFillBook} />
+      {/* <Menu to="/schedule" name="Schedule" icon={AiFillBook} /> */}
       <Menu to="/expenses" name="Expense" icon={BsCreditCardFill} />
       <Menu to="/goal" name="Goal" icon={FaEarthAsia} />
     </VStack>
