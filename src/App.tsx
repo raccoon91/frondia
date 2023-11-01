@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useCategoryStore, useExpenseTypeStore } from "@/stores";
 import { ToastContainer, theme } from "@/styles";
 import { Layout } from "@/layouts";
-import { HomePage, LoginPage, TodayPage } from "@/pages";
+import { ExpensePage, HomePage, LoginPage, TodayPage } from "@/pages";
 
 export const App = () => {
   const { getExpenseTypes } = useExpenseTypeStore(state => ({ getExpenseTypes: state.getExpenseTypes }));
@@ -25,6 +25,7 @@ export const App = () => {
             <Route index element={<HomePage />} />
             <Route path="today" element={<TodayPage />} />
             {/* <Route path="schedule" element={<SchedulePage />} /> */}
+            <Route path="expenses" element={<ExpensePage />} />
           </Route>
 
           <Route path="login" element={<LoginPage />} />
