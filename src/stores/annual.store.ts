@@ -3,20 +3,21 @@ import dayjs from "dayjs";
 import { expenseApi } from "@/api";
 import { toast } from "@/styles";
 
-export type IAnnualCategory = Record<string, { value: number; color: string | null }>;
-
 interface IAnnualStore {
   isFetched: boolean;
   isLoaded: boolean;
+  date: string | null;
   labels: string[] | null;
   price: { incomes: IExpense[]; expenses: IExpense[]; savings: IExpense[]; investments: IExpense[] } | null;
-  category: Record<string, Record<string, IAnnualCategory>> | null;
+  category: Record<string, Record<string, { value: number; color: string | null }>> | null;
   getAnualExpense: () => Promise<void>;
+  setDate: (date: string | null) => void;
 }
 
 export const useAnnualStore = create<IAnnualStore>(set => ({
   isFetched: false,
   isLoaded: false,
+  date: null,
   labels: null,
   price: null,
   category: null,
@@ -35,6 +36,8 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
         (acc, cur) => {
           if (!cur.price) return acc;
 
+          if (!cur.types?.name || !cur.categories?.name) return acc;
+
           const date = dayjs(cur.date).format("YYYY-MM");
 
           acc.labels.add(date);
@@ -51,14 +54,10 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
             acc.price.investments.push(cur);
           }
 
-          if (!cur.types?.name || !cur.categories?.name) return acc;
+          if (!acc.category[date][cur.categories.name])
+            acc.category[date][cur.categories.name] = { value: 0, color: cur.categories.color };
 
-          if (!acc.category[date][cur.types.type]) acc.category[date][cur.types.type] = {};
-
-          if (!acc.category[date][cur.types.type]?.[cur.categories.name])
-            acc.category[date][cur.types.type][cur.categories.name] = { value: 0, color: cur.categories.color };
-
-          acc.category[date][cur.types.type][cur.categories.name].value += cur.price;
+          acc.category[date][cur.categories.name].value += cur.price;
 
           return acc;
         },
@@ -70,7 +69,7 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
             savings: IExpense[];
             investments: IExpense[];
           },
-          category: {} as Record<string, Record<string, IAnnualCategory>>,
+          category: {} as Record<string, Record<string, { value: number; color: string | null }>>,
         }
       );
 
@@ -78,5 +77,8 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
     } catch (error) {
       toast.error(error);
     }
+  },
+  setDate(date) {
+    set({ date });
   },
 }));
