@@ -7,8 +7,7 @@ interface IAnnualStore {
   isFetched: boolean;
   isLoaded: boolean;
   date: string | null;
-  labels: string[] | null;
-  price: { incomes: IExpense[]; expenses: IExpense[]; savings: IExpense[]; investments: IExpense[] } | null;
+  annual: Record<string, Record<string, number>> | null;
   category: Record<string, Record<string, { value: number; color: string | null }>> | null;
   getAnualExpense: () => Promise<void>;
   setDate: (date: string | null) => void;
@@ -18,8 +17,7 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
   isFetched: false,
   isLoaded: false,
   date: null,
-  labels: null,
-  price: null,
+  annual: null,
   category: null,
   getAnualExpense: async () => {
     try {
@@ -32,7 +30,7 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
 
       const expenses = await expenseApi.gets({ query: "*, types ( * ), categories ( * )", date });
 
-      const { labels, price, category } = expenses.reduce(
+      const { annual, category } = expenses.reduce(
         (acc, cur) => {
           if (!cur.price) return acc;
 
@@ -40,18 +38,18 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
 
           const date = dayjs(cur.date).format("YYYY-MM");
 
-          acc.labels.add(date);
+          if (!acc.annual[date]) acc.annual[date] = { incomes: 0, expenses: 0, savings: 0, investments: 0 };
 
           if (!acc.category?.[date]) acc.category[date] = {};
 
           if (cur.types?.name === "수입") {
-            acc.price.incomes.push(cur);
+            acc.annual[date].incomes += cur.price;
           } else if (cur.types?.name === "지출") {
-            acc.price.expenses.push(cur);
+            acc.annual[date].expenses += cur.price;
           } else if (cur.types?.name === "저축") {
-            acc.price.savings.push(cur);
+            acc.annual[date].savings += cur.price;
           } else if (cur.types?.name === "투자") {
-            acc.price.investments.push(cur);
+            acc.annual[date].investments += cur.price;
           }
 
           if (!acc.category[date][cur.categories.name])
@@ -62,18 +60,12 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
           return acc;
         },
         {
-          labels: new Set() as Set<string>,
-          price: { incomes: [], expenses: [], savings: [], investments: [] } as {
-            incomes: IExpense[];
-            expenses: IExpense[];
-            savings: IExpense[];
-            investments: IExpense[];
-          },
+          annual: {} as Record<string, Record<string, number>>,
           category: {} as Record<string, Record<string, { value: number; color: string | null }>>,
         }
       );
 
-      set({ isFetched: true, isLoaded: true, labels: [...labels], price, category });
+      set({ isFetched: true, isLoaded: true, annual, category });
     } catch (error) {
       toast.error(error);
     }
