@@ -112,11 +112,7 @@ export const ExpensePage = () => {
 
     if (!label) return;
 
-    if (label === date) {
-      setDate(null);
-    } else {
-      setDate(label);
-    }
+    setDate(label);
   };
 
   return (
