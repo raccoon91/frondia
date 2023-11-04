@@ -1,18 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Center, Flex, Text, VStack } from "@chakra-ui/react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-} from "recharts";
-import { Card } from "@/components";
+import { Bar } from "recharts";
+import { BarChart, BarChartEvent, Card, PieChart } from "@/components";
 import { useAnnualStore } from "@/stores";
 
 export const ExpensePage = () => {
@@ -39,6 +28,7 @@ export const ExpensePage = () => {
     return Object.entries(category[date]).map(([type, data]) => ({
       name: type,
       value: data.value,
+      color: data.color,
     }));
   }, [date, category]);
 
@@ -46,51 +36,36 @@ export const ExpensePage = () => {
     getAnualExpense();
   }, []);
 
-  const handleClickExpenseChart = (state: { activeLabel?: string }) => {
-    if (!state.activeLabel) return;
+  const handleClickExpenseChart = (e: BarChartEvent) => {
+    if (!e.activeLabel) return;
 
-    setDate(state.activeLabel);
+    setDate(e.activeLabel);
   };
 
   return (
-    <ResponsiveContainer>
-      <VStack align="stretch" spacing="30px" p="50px">
-        <Card h="400px">
-          <BarChart
-            width={500}
-            height={300}
-            data={annualExpenseData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            onClick={handleClickExpenseChart}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="incomes" fill="rgba(255, 99, 132, 0.7)" />
-            <Bar dataKey="savings" stackId="group" fill="rgba(255, 159, 64, 0.7)" />
-            <Bar dataKey="investments" stackId="group" fill="rgba(153, 102, 255, 0.7)" />
-            <Bar dataKey="expenses" fill="rgba(255, 206, 86, 0.7)" />
-          </BarChart>
-        </Card>
+    <VStack align="stretch" spacing="30px" p="50px">
+      <Card>
+        <BarChart width="100%" height="400px" data={annualExpenseData} onClick={handleClickExpenseChart}>
+          <Bar dataKey="incomes" fill="rgba(255, 99, 132, 0.7)" />
+          <Bar dataKey="savings" stackId="group" fill="rgba(255, 159, 64, 0.7)" />
+          <Bar dataKey="investments" stackId="group" fill="rgba(153, 102, 255, 0.7)" />
+          <Bar dataKey="expenses" fill="rgba(255, 206, 86, 0.7)" />
+        </BarChart>
+      </Card>
 
-        <Card>
-          {date ? (
-            <Flex align="stretch" gap="8px">
-              <PieChart width={400} height={400}>
-                <Pie data={categoryData} dataKey="value" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" />
-              </PieChart>
-            </Flex>
-          ) : (
-            <Center h="200px">
-              <Text fontSize="14px" fontWeight="semibold">
-                월간 소비 차트를 클릭해주세요
-              </Text>
-            </Center>
-          )}
-        </Card>
-      </VStack>
-    </ResponsiveContainer>
+      <Card>
+        {date ? (
+          <Flex align="stretch" gap="8px">
+            <PieChart width="100%" height="400px" data={categoryData} />
+          </Flex>
+        ) : (
+          <Center h="200px">
+            <Text fontSize="14px" fontWeight="semibold">
+              월간 소비 차트를 클릭해주세요
+            </Text>
+          </Center>
+        )}
+      </Card>
+    </VStack>
   );
 };
