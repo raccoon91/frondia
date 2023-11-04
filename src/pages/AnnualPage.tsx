@@ -4,12 +4,12 @@ import { Bar } from "recharts";
 import { BarChart, BarChartEvent, Card, PieChart } from "@/components";
 import { useAnnualStore } from "@/stores";
 
-export const ExpensePage = () => {
-  const { date, annual, category, getAnualExpense, setDate } = useAnnualStore(state => ({
+export const AnnualPage = () => {
+  const { date, annual, category, getAnnualExpense, setDate } = useAnnualStore(state => ({
     date: state.date,
     annual: state.annual,
     category: state.category,
-    getAnualExpense: state.getAnualExpense,
+    getAnnualExpense: state.getAnnualExpense,
     setDate: state.setDate,
   }));
 
@@ -33,7 +33,7 @@ export const ExpensePage = () => {
   }, [date, category]);
 
   useEffect(() => {
-    getAnualExpense();
+    getAnnualExpense();
   }, []);
 
   const handleClickExpenseChart = (e: BarChartEvent) => {

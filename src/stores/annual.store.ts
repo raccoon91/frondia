@@ -9,7 +9,7 @@ interface IAnnualStore {
   date: string | null;
   annual: Record<string, Record<string, number>> | null;
   category: Record<string, Record<string, { value: number; color: string | null }>> | null;
-  getAnualExpense: () => Promise<void>;
+  getAnnualExpense: () => Promise<void>;
   setDate: (date: string | null) => void;
 }
 
@@ -19,7 +19,7 @@ export const useAnnualStore = create<IAnnualStore>(set => ({
   date: null,
   annual: null,
   category: null,
-  getAnualExpense: async () => {
+  getAnnualExpense: async () => {
     try {
       set({ isLoaded: false });
 

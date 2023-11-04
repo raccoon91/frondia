@@ -1,8 +1,7 @@
 import { VStack } from "@chakra-ui/react";
 import { AiFillHome } from "react-icons/ai";
 import { TbMoneybag } from "react-icons/tb";
-import { BsCreditCardFill } from "react-icons/bs";
-import { FaEarthAsia } from "react-icons/fa6";
+import { FaChartSimple, FaEarthAsia } from "react-icons/fa6";
 import { Menu } from "./Menu";
 
 export const Sidebar = () => {
@@ -11,7 +10,7 @@ export const Sidebar = () => {
       <Menu to="/" name="Home" icon={AiFillHome} />
       <Menu to="/daily" name="Daily" icon={TbMoneybag} />
       {/* <Menu to="/schedule" name="Schedule" icon={AiFillBook} /> */}
-      <Menu to="/expenses" name="Expense" icon={BsCreditCardFill} />
+      <Menu to="/annual" name="Annual" icon={FaChartSimple} />
       <Menu to="/goal" name="Goal" icon={FaEarthAsia} />
     </VStack>
   );
