@@ -56,6 +56,14 @@ export const BarChart: FC<PropsWithChildren<IBarChartProps>> = ({
     return data;
   }, []);
 
+  const tooltipFormatter = useCallback((data: string | number) => {
+    if (typeof data === "number") {
+      return data.toLocaleString();
+    }
+
+    return data;
+  }, []);
+
   return (
     <ResponsiveContainer width={width} minHeight={height}>
       <BarChartWrapper data={data} barSize={20} margin={{ top: 50, right: 5, left: 5, bottom: 0 }} onClick={onClick}>
@@ -63,7 +71,7 @@ export const BarChart: FC<PropsWithChildren<IBarChartProps>> = ({
         <XAxis dataKey="name" tick={{ fontSize: "14px" }} />
         <YAxis tick={{ fontSize: "14px" }} tickFormatter={yAxisFormatter} />
         <Legend wrapperStyle={{ top: 0 }} formatter={legendFormatter} />
-        <Tooltip />
+        <Tooltip formatter={tooltipFormatter} />
 
         {children}
       </BarChartWrapper>
