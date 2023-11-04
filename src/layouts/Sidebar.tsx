@@ -9,7 +9,7 @@ export const Sidebar = () => {
   return (
     <VStack justify="center" spacing="24px" w="60px">
       <Menu to="/" name="Home" icon={AiFillHome} />
-      <Menu to="/today" name="Today" icon={TbMoneybag} />
+      <Menu to="/daily" name="Daily" icon={TbMoneybag} />
       {/* <Menu to="/schedule" name="Schedule" icon={AiFillBook} /> */}
       <Menu to="/expenses" name="Expense" icon={BsCreditCardFill} />
       <Menu to="/goal" name="Goal" icon={FaEarthAsia} />

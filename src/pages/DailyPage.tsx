@@ -7,7 +7,7 @@ import { useCategoryStore, useExpenseStore, useExpenseTypeStore } from "@/stores
 import { Card, DataGrid } from "@/components";
 import { useExpenseColumn } from "@/hooks";
 
-export const TodayPage = () => {
+export const DailyPage = () => {
   const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
   const { category } = useCategoryStore(state => ({ category: state.category }));
   const {
