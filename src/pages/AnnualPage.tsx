@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Box, Center, Text, VStack } from "@chakra-ui/react";
+import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import { Bar } from "recharts";
 import { BarChart, BarChartEvent, Card, PieChart } from "@/components";
 import { useAnnualStore } from "@/stores";
@@ -53,19 +53,19 @@ export const AnnualPage = () => {
         </BarChart>
       </Card>
 
-      <Card title="월간 소비 카테고리">
-        {date ? (
-          <Box w="600px">
+      <HStack spacing="30px">
+        <Card title="월간 소비 카테고리" flex="1" minW="600px">
+          {date ? (
             <PieChart width="100%" height="400px" data={categoryData} />
-          </Box>
-        ) : (
-          <Center h="200px">
-            <Text fontSize="14px" fontWeight="semibold">
-              연간 소비 차트를 클릭해주세요
-            </Text>
-          </Center>
-        )}
-      </Card>
+          ) : (
+            <Center h="200px">
+              <Text fontSize="14px" fontWeight="semibold">
+                연간 소비 차트를 클릭해주세요
+              </Text>
+            </Center>
+          )}
+        </Card>
+      </HStack>
     </VStack>
   );
 };
