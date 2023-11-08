@@ -5,3 +5,4 @@ export * from "./expense.store";
 export * from "./statistics.store";
 export * from "./schedule.store";
 export * from "./annual.store";
+export * from "./goal.store";

@@ -34,3 +34,12 @@ interface ISchedule {
   type: IExpenseTypes;
   user_id: string;
 }
+
+interface IGoal {
+  id?: number | null;
+  name: string;
+  price: number;
+  description: string | null;
+  date: string | null;
+  user_id: string;
+}
