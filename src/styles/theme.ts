@@ -52,6 +52,18 @@ export const theme = extendTheme(
           },
         },
       },
+      NumberInput: {
+        variants: {
+          outline: {
+            field: {
+              _focusVisible: {
+                borderColor: baseTheme.colors.yellow[500],
+                boxShadow: `0 0 0 2px ${baseTheme.colors.yellow[500]}`,
+              },
+            },
+          },
+        },
+      },
     },
   },
   withDefaultColorScheme({ colorScheme: "brand" })

@@ -38,7 +38,7 @@ interface ISchedule {
 interface IGoal {
   id?: number | null;
   name: string;
-  price: number;
+  price: number | string;
   description: string | null;
   date: string | null;
   user_id: string;

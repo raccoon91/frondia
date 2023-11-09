@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import { goalApi } from "@/api";
 import { toast } from "@/styles";
+import { useAuthStore } from ".";
 
 interface IGoalStore {
   goals: IGoal[];
   getGoals: () => Promise<void>;
-  postGoal: (goal: IGoal) => Promise<void>;
+  postGoal: (goal: Omit<IGoal, "user_id">) => Promise<number | void>;
 }
 
 export const useGoalStore = create<IGoalStore>(set => ({
@@ -19,9 +20,18 @@ export const useGoalStore = create<IGoalStore>(set => ({
       toast.error(error);
     }
   },
-  postGoal: async (goal: IGoal) => {
+  postGoal: async goal => {
     try {
-      await goalApi.create(goal);
+      const user = useAuthStore.getState().user;
+
+      if (!user) return;
+
+      const res = await goalApi.create({
+        ...goal,
+        user_id: user.id,
+      });
+
+      return res;
     } catch (error) {
       toast.error(error);
     }
