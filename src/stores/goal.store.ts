@@ -7,6 +7,7 @@ interface IGoalStore {
   goals: IGoal[];
   getGoals: () => Promise<void>;
   postGoal: (goal: Omit<IGoal, "user_id">) => Promise<number | void>;
+  deleteGoal: (goalId: number) => Promise<void>;
 }
 
 export const useGoalStore = create<IGoalStore>(set => ({
@@ -32,6 +33,13 @@ export const useGoalStore = create<IGoalStore>(set => ({
       });
 
       return res;
+    } catch (error) {
+      toast.error(error);
+    }
+  },
+  deleteGoal: async goalId => {
+    try {
+      await goalApi.delete(goalId);
     } catch (error) {
       toast.error(error);
     }
