@@ -10,9 +10,10 @@ interface IScheduleStore {
     investments: ISchedule[];
   } | null;
   getSchedules: () => Promise<void>;
+  addSchdule: (type: string) => void;
 }
 
-export const useScheduleStore = create<IScheduleStore>(set => ({
+export const useScheduleStore = create<IScheduleStore>((set, get) => ({
   schedules: null,
   getSchedules: async () => {
     try {
@@ -45,5 +46,25 @@ export const useScheduleStore = create<IScheduleStore>(set => ({
     } catch (error) {
       toast.error(error);
     }
+  },
+  addSchdule(type: string) {
+    const schedules = get().schedules;
+
+    if (!schedules) return;
+
+    set({
+      schedules: {
+        ...schedules,
+        [type]: [
+          ...schedules[type],
+          {
+            date: null,
+            name: "",
+            price: 0,
+            type,
+          },
+        ],
+      },
+    });
   },
 }));

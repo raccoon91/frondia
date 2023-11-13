@@ -5,16 +5,27 @@ import { Card, Schedule } from "..";
 
 interface IScheduleCardProps {
   title: string;
+  type: string;
   schedules?: ISchedule[];
+  onAddSchedule: (params: { type: string }) => void;
 }
 
-export const ScheduleCard: FC<IScheduleCardProps> = ({ title, schedules }) => {
+export const ScheduleCard: FC<IScheduleCardProps> = ({ title, type, schedules, onAddSchedule }) => {
+  const handleClickAddSchedule = () => {
+    onAddSchedule({ type });
+  };
+
   return (
     <Card w="400px">
       <Flex align="center" justify="space-between">
         <Text fontWeight="semibold">{title}</Text>
 
-        <IconButton aria-label="add fixed income" variant="ghost" icon={<Icon as={FaPlus} />} />
+        <IconButton
+          aria-label="add fixed income"
+          variant="ghost"
+          icon={<Icon as={FaPlus} />}
+          onClick={handleClickAddSchedule}
+        />
       </Flex>
 
       <Flex direction="column" gap="16px" mt="20px">

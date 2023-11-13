@@ -1,38 +1,45 @@
-import { Flex, Icon, IconButton, Text, Wrap } from "@chakra-ui/react";
-import { FaPlus } from "react-icons/fa6";
-import { Card, Schedule, ScheduleCard } from "@/components";
 import { useEffect } from "react";
+import { Button, Flex, VStack, Wrap } from "@chakra-ui/react";
+import { ScheduleCard } from "@/components";
 import { useScheduleStore } from "@/stores";
 
 export const SchedulePage = () => {
-  const { schedules, getSchedules } = useScheduleStore(state => ({
+  const { schedules, getSchedules, addSchdule } = useScheduleStore(state => ({
     schedules: state.schedules,
     getSchedules: state.getSchedules,
+    addSchdule: state.addSchdule,
   }));
 
   useEffect(() => {
     getSchedules();
   }, []);
 
+  const handleAddSchedule = ({ type }: { type: string }) => {
+    addSchdule(type);
+  };
+
   return (
-    <Wrap spacing="30px" p="50px">
-      <Card w="400px">
-        <Flex align="center" justify="space-between">
-          <Text fontWeight="semibold">수입</Text>
+    <VStack align="stretch" spacing="30px" p="50px">
+      <Flex justify="end">
+        <Button variant="outline" colorScheme="green">
+          💾 저장
+        </Button>
+      </Flex>
 
-          <IconButton aria-label="add fixed income" variant="ghost" icon={<Icon as={FaPlus} />} />
-        </Flex>
+      <Wrap spacing="30px">
+        <ScheduleCard title="수입" type="incomes" schedules={schedules?.incomes} onAddSchedule={handleAddSchedule} />
 
-        <Flex direction="column" gap="16px" mt="20px">
-          <Schedule date={1} name="월급" price={100000} />
-        </Flex>
-      </Card>
+        <ScheduleCard title="지출" type="expenses" schedules={schedules?.expenses} onAddSchedule={handleAddSchedule} />
 
-      <ScheduleCard title="지출" schedules={schedules?.expenses} />
+        <ScheduleCard title="저축" type="savings" schedules={schedules?.savings} onAddSchedule={handleAddSchedule} />
 
-      <ScheduleCard title="저축" schedules={schedules?.savings} />
-
-      <ScheduleCard title="투자" schedules={schedules?.investments} />
-    </Wrap>
+        <ScheduleCard
+          title="투자"
+          type="investments"
+          schedules={schedules?.investments}
+          onAddSchedule={handleAddSchedule}
+        />
+      </Wrap>
+    </VStack>
   );
 };

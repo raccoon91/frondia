@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useCategoryStore, useExpenseTypeStore } from "@/stores";
 import { ToastContainer, theme } from "@/styles";
 import { Layout } from "@/layouts";
-import { AnnualPage, DailyPage, GoalPage, HomePage, LoginPage } from "@/pages";
+import { AnnualPage, DailyPage, GoalPage, HomePage, LoginPage, SchedulePage } from "@/pages";
 
 export const App = () => {
   const { getExpenseTypes } = useExpenseTypeStore(state => ({ getExpenseTypes: state.getExpenseTypes }));
@@ -24,7 +24,7 @@ export const App = () => {
           <Route element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="daily" element={<DailyPage />} />
-            {/* <Route path="schedule" element={<SchedulePage />} /> */}
+            <Route path="schedule" element={<SchedulePage />} />
             <Route path="annual" element={<AnnualPage />} />
             <Route path="goal" element={<GoalPage />} />
           </Route>

@@ -32,7 +32,7 @@ interface ISchedule {
   name: string;
   price: number;
   type: IExpenseTypes;
-  user_id: string;
+  user_id?: string;
 }
 
 interface IGoal {
