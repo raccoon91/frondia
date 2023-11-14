@@ -3,14 +3,10 @@ import { scheduleApi } from "@/api";
 import { toast } from "@/styles";
 
 interface IScheduleStore {
-  schedules: {
-    incomes: ISchedule[];
-    expenses: ISchedule[];
-    savings: ISchedule[];
-    investments: ISchedule[];
-  } | null;
+  schedules: Record<IExpenseTypes, ISchedule[]> | null;
   getSchedules: () => Promise<void>;
-  addSchdule: (type: string) => void;
+  addSchdule: (type: IExpenseTypes) => void;
+  changeSchedule: (index: number, type: IExpenseTypes, data: { name: string; value: string | number }) => void;
 }
 
 export const useScheduleStore = create<IScheduleStore>((set, get) => ({
@@ -35,11 +31,11 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
             return acc;
           },
           {
-            incomes: [] as ISchedule[],
-            expenses: [] as ISchedule[],
-            savings: [] as ISchedule[],
-            investments: [] as ISchedule[],
-          }
+            incomes: [],
+            expenses: [],
+            savings: [],
+            investments: [],
+          } as Record<IExpenseTypes, ISchedule[]>
         ) ?? null;
 
       set({ schedules });
@@ -47,7 +43,7 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
       toast.error(error);
     }
   },
-  addSchdule(type: string) {
+  addSchdule(type) {
     const schedules = get().schedules;
 
     if (!schedules) return;
@@ -55,16 +51,24 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
     set({
       schedules: {
         ...schedules,
-        [type]: [
-          ...schedules[type],
-          {
-            date: null,
-            name: "",
-            price: 0,
-            type,
-          },
-        ],
+        [type]: [...schedules[type], { date: null, name: "", price: 0, type }],
       },
     });
+  },
+  changeSchedule(index, type, data) {
+    const schedules = get().schedules;
+
+    if (!schedules) return;
+
+    const schedule = schedules[type];
+    const filteredSchedule = schedule.map((scheduleData, scheduleIndex) => {
+      if (scheduleIndex === index) {
+        return { ...scheduleData, [data.name]: data.value };
+      }
+
+      return scheduleData;
+    });
+
+    set({ schedules: { ...schedules, [type]: filteredSchedule } });
   },
 }));

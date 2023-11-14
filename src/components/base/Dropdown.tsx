@@ -14,7 +14,7 @@ import {
 import { Box, Flex, Input, InputProps, LayoutProps, Modal, ModalContent } from "@chakra-ui/react";
 
 interface IDropdownProps extends Omit<InputProps, "display"> {
-  display?: string;
+  display?: string | null;
   menuHeight?: LayoutProps["h"];
 }
 

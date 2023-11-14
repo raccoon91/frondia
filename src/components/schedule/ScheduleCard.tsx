@@ -2,17 +2,27 @@ import { FC } from "react";
 import { Flex, Icon, IconButton, Text } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa6";
 import { Card, Schedule } from "..";
+import { useScheduleStore } from "@/stores";
 
 interface IScheduleCardProps {
   title: string;
-  type: string;
+  type: IExpenseTypes;
   schedules?: ISchedule[];
-  onAddSchedule: (params: { type: string }) => void;
 }
 
-export const ScheduleCard: FC<IScheduleCardProps> = ({ title, type, schedules, onAddSchedule }) => {
+export const ScheduleCard: FC<IScheduleCardProps> = ({ title, type, schedules }) => {
+  const { addSchdule, changeSchedule } = useScheduleStore(state => ({
+    addSchdule: state.addSchdule,
+    changeSchedule: state.changeSchedule,
+  }));
+
   const handleClickAddSchedule = () => {
-    onAddSchedule({ type });
+    addSchdule(type);
+  };
+
+  const handleChangeSchedule = (index: number) => (name: string, value: string | number) => {
+    console.log(name, value);
+    changeSchedule(index, type, { name, value });
   };
 
   return (
@@ -29,8 +39,14 @@ export const ScheduleCard: FC<IScheduleCardProps> = ({ title, type, schedules, o
       </Flex>
 
       <Flex direction="column" gap="16px" mt="20px">
-        {schedules?.map(schedule => (
-          <Schedule key={schedule.id} date={schedule.date} name={schedule.name} price={schedule.price} />
+        {schedules?.map((schedule, index) => (
+          <Schedule
+            key={index}
+            date={schedule.date}
+            name={schedule.name}
+            price={schedule.price}
+            onChange={handleChangeSchedule(index)}
+          />
         ))}
       </Flex>
     </Card>
