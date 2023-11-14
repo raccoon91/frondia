@@ -50,6 +50,14 @@ export const theme = extendTheme(
               },
             },
           },
+          flushed: {
+            field: {
+              _focusVisible: {
+                borderColor: baseTheme.colors.yellow[500],
+                boxShadow: `0 1px 0 0 ${baseTheme.colors.yellow[500]}`,
+              },
+            },
+          },
         },
       },
       NumberInput: {
@@ -59,6 +67,14 @@ export const theme = extendTheme(
               _focusVisible: {
                 borderColor: baseTheme.colors.yellow[500],
                 boxShadow: `0 0 0 2px ${baseTheme.colors.yellow[500]}`,
+              },
+            },
+          },
+          flushed: {
+            field: {
+              _focusVisible: {
+                borderColor: baseTheme.colors.yellow[500],
+                boxShadow: `0 1px 0 0 ${baseTheme.colors.yellow[500]}`,
               },
             },
           },
