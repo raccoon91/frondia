@@ -1,4 +1,5 @@
 import { supabase } from "@/db";
+import { User } from "@supabase/supabase-js";
 
 export const scheduleApi = {
   gets: async () => {
@@ -9,5 +10,42 @@ export const scheduleApi = {
     if (res.status === 204) throw new Error("No Content");
 
     return res.data ?? [];
+  },
+  upsert: async (user: User | null, schedules: ISchedule[]) => {
+    if (!user) return;
+
+    const { update, create } = schedules.reduce(
+      (acc, cur) => {
+        const body = {
+          user_id: user.id,
+          date: cur.date,
+          name: cur.name,
+          price: cur.price,
+          type: cur.type,
+        };
+
+        if (cur.id) {
+          acc.update.push({
+            id: cur.id,
+            ...body,
+          });
+        } else {
+          acc.create.push(body);
+        }
+
+        return acc;
+      },
+      { update: [] as ISchedule[], create: [] as ISchedule[] }
+    );
+
+    const updateRes = await supabase.from("schedules").upsert(update);
+
+    if (updateRes.error) throw new Error(updateRes.error.message);
+
+    const createRes = await supabase.from("schedules").insert(create);
+
+    if (createRes.error) throw new Error(createRes.error.message);
+
+    return 200;
   },
 };
