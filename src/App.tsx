@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useCategoryStore, useExpenseTypeStore } from "@/stores";
+import { useCategoryStore, useExpenseTypeStore, useScheduleStore } from "@/stores";
 import { ToastContainer, theme } from "@/styles";
 import { Layout } from "@/layouts";
 import { AnnualPage, DailyPage, GoalPage, HomePage, LoginPage, SchedulePage } from "@/pages";
@@ -9,10 +9,12 @@ import { AnnualPage, DailyPage, GoalPage, HomePage, LoginPage, SchedulePage } fr
 export const App = () => {
   const { getExpenseTypes } = useExpenseTypeStore(state => ({ getExpenseTypes: state.getExpenseTypes }));
   const { getCategories } = useCategoryStore(state => ({ getCategories: state.getCategories }));
+  const { getTodaySchedule } = useScheduleStore(state => ({ getTodaySchedule: state.getTodaySchedule }));
 
   useEffect(() => {
     getExpenseTypes();
     getCategories();
+    getTodaySchedule();
   }, []);
 
   return (

@@ -1,9 +1,17 @@
 import { supabase } from "@/db";
-import { User } from "@supabase/supabase-js";
+import { PostgrestSingleResponse, User } from "@supabase/supabase-js";
 
 export const scheduleApi = {
-  gets: async () => {
-    const res = await supabase.from("schedules").select<string, ISchedule>("*");
+  gets: async (date?: { eq?: string | number; from?: string | number; to?: string | number }) => {
+    let res: PostgrestSingleResponse<ISchedule[]>;
+
+    if (date?.eq) {
+      res = await supabase.from("schedules").select<string, ISchedule>("*").eq("date", date.eq);
+    } else if (date?.from && date?.to) {
+      res = await supabase.from("schedules").select<string, ISchedule>("*").gte("date", date.from).lte("date", date.to);
+    } else {
+      res = await supabase.from("schedules").select<string, ISchedule>("*");
+    }
 
     if (res.error) throw new Error(res.error.message);
 

@@ -1,13 +1,15 @@
 import { create } from "zustand";
 import { cloneDeep, differenceWith, flatMap, isEqual, isNil } from "lodash-es";
-import { scheduleApi } from "@/api";
+import { expenseApi, scheduleApi } from "@/api";
 import { toast } from "@/styles";
 import { useAuthStore } from ".";
+import dayjs from "dayjs";
 
 interface IScheduleStore {
   isEnableSave: boolean;
   originSchedules: Record<IExpenseTypes, ISchedule[]> | null;
   schedules: Record<IExpenseTypes, ISchedule[]> | null;
+  getTodaySchedule: () => Promise<void>;
   getSchedules: () => Promise<void>;
   addSchdule: (type: IExpenseTypes) => void;
   setSchedules: (schedules: Record<IExpenseTypes, ISchedule[]>) => void;
@@ -18,6 +20,46 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
   isEnableSave: false,
   originSchedules: null,
   schedules: null,
+  getTodaySchedule: async () => {
+    try {
+      const today = dayjs();
+
+      const todaySchedule = sessionStorage.getItem(today.format("MM-DD"));
+
+      if (todaySchedule) return;
+
+      const date = today.get("date");
+
+      console.log(date);
+
+      const schedules = await scheduleApi.gets({ eq: date });
+
+      console.log(schedules);
+
+      if (schedules.length) {
+        const user = useAuthStore.getState().user;
+
+        console.log(user);
+
+        if (!user) {
+          throw new Error("Unauthorized");
+        }
+
+        // await expenseApi.upsert(
+        //   user,
+        //   today.format("MM-DD"),
+        //   schedules.map(schedule => ({
+        //     type_id: cur.types.id,
+        //     category_id: cur.categories.id,
+        //     price: schedule.price,
+        //     note: schedule.name,
+        //   }))
+        // );
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+  },
   getSchedules: async () => {
     try {
       const res = await scheduleApi.gets();
