@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Button, Flex, VStack, Wrap } from "@chakra-ui/react";
 import { ScheduleCard } from "@/components";
-import { useScheduleStore } from "@/stores";
+import { useCategoryStore, useExpenseTypeStore, useScheduleStore } from "@/stores";
 
 export const SchedulePage = () => {
+  const { expenseTypes } = useExpenseTypeStore(state => ({ expenseTypes: state.expenseTypes }));
+  const { category } = useCategoryStore(state => ({ category: state.category }));
   const { isEnableSave, schedules, getSchedules, addSchdule, setSchedules, saveSchedules } = useScheduleStore(
     state => ({
       isEnableSave: state.isEnableSave,
@@ -19,7 +21,12 @@ export const SchedulePage = () => {
     getSchedules();
   }, []);
 
-  const handleChangeSchedule = (type: IExpenseTypes, index: number, name: string, value: string | number) => {
+  const handleChangeSchedule = (
+    type: IExpenseTypes,
+    index: number,
+    name: string,
+    value: string | number | ICategory
+  ) => {
     if (!schedules) return;
 
     const newSchedules = {
@@ -45,37 +52,18 @@ export const SchedulePage = () => {
       </Flex>
 
       <Wrap spacing="30px">
-        <ScheduleCard
-          title="수입"
-          type="incomes"
-          schedules={schedules?.incomes}
-          onAddSchedule={addSchdule}
-          onChangeSchedule={handleChangeSchedule}
-        />
-
-        <ScheduleCard
-          title="지출"
-          type="expenses"
-          schedules={schedules?.expenses}
-          onAddSchedule={addSchdule}
-          onChangeSchedule={handleChangeSchedule}
-        />
-
-        <ScheduleCard
-          title="저축"
-          type="savings"
-          schedules={schedules?.savings}
-          onAddSchedule={addSchdule}
-          onChangeSchedule={handleChangeSchedule}
-        />
-
-        <ScheduleCard
-          title="투자"
-          type="investments"
-          schedules={schedules?.investments}
-          onAddSchedule={addSchdule}
-          onChangeSchedule={handleChangeSchedule}
-        />
+        {expenseTypes.map(expenseType => (
+          <ScheduleCard
+            key={expenseType.id}
+            title={expenseType.name}
+            type={expenseType.type}
+            expenseType={expenseType}
+            categories={category?.[expenseType.type]}
+            schedules={schedules?.[expenseType.type]}
+            onAddSchedule={addSchdule}
+            onChangeSchedule={handleChangeSchedule}
+          />
+        ))}
       </Wrap>
     </VStack>
   );

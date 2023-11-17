@@ -31,8 +31,11 @@ interface ISchedule {
   date: number;
   name: string;
   price: number;
-  type: IExpenseTypes;
   user_id?: string;
+  type_id?: number | null;
+  category_id?: number | null;
+  types?: IExpenseType;
+  categories?: ICategory;
 }
 
 interface IGoal {

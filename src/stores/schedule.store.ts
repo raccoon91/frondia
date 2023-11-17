@@ -11,7 +11,7 @@ interface IScheduleStore {
   schedules: Record<IExpenseTypes, ISchedule[]> | null;
   getTodaySchedule: () => Promise<void>;
   getSchedules: () => Promise<void>;
-  addSchdule: (type: IExpenseTypes) => void;
+  addSchdule: (type: IExpenseType) => void;
   setSchedules: (schedules: Record<IExpenseTypes, ISchedule[]>) => void;
   saveSchedules: () => Promise<void>;
 }
@@ -23,38 +23,36 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
   getTodaySchedule: async () => {
     try {
       const today = dayjs();
-
       const todaySchedule = sessionStorage.getItem(today.format("MM-DD"));
 
       if (todaySchedule) return;
 
-      const date = today.get("date");
+      const query = "*, types ( * ), categories ( * )";
+      const date = { eq: today.get("date") };
 
-      console.log(date);
-
-      const schedules = await scheduleApi.gets({ eq: date });
-
-      console.log(schedules);
+      const schedules = await scheduleApi.gets({ query, date });
 
       if (schedules.length) {
         const user = useAuthStore.getState().user;
-
-        console.log(user);
 
         if (!user) {
           throw new Error("Unauthorized");
         }
 
-        // await expenseApi.upsert(
-        //   user,
-        //   today.format("MM-DD"),
-        //   schedules.map(schedule => ({
-        //     type_id: cur.types.id,
-        //     category_id: cur.categories.id,
-        //     price: schedule.price,
-        //     note: schedule.name,
-        //   }))
-        // );
+        const res = await expenseApi.upsert(
+          user,
+          today.format("YYYY-MM-DD"),
+          schedules.map(schedule => ({
+            price: schedule.price,
+            note: schedule.name,
+            types: schedule.types,
+            categories: schedule.categories,
+          }))
+        );
+
+        if (res === 200) {
+          sessionStorage.setItem(today.format("MM-DD"), "true");
+        }
       }
     } catch (error) {
       toast.error(error);
@@ -62,18 +60,20 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
   },
   getSchedules: async () => {
     try {
-      const res = await scheduleApi.gets();
+      const query = "*, types ( * ), categories ( * )";
+
+      const res = await scheduleApi.gets({ query });
 
       const schedules =
         res?.reduce(
           (acc, cur) => {
-            if (cur.type === "incomes") {
+            if (cur.type_id === 7) {
               acc.incomes.push(cur);
-            } else if (cur.type === "expenses") {
+            } else if (cur.type_id === 8) {
               acc.expenses.push(cur);
-            } else if (cur.type === "savings") {
+            } else if (cur.type_id === 9) {
               acc.savings.push(cur);
-            } else if (cur.type === "investments") {
+            } else if (cur.type_id === 10) {
               acc.investments.push(cur);
             }
 
@@ -100,7 +100,17 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
     set({
       schedules: {
         ...schedules,
-        [type]: [...schedules[type], { date: null, name: "", price: 0, type }],
+        [type.name]: [
+          ...schedules[type.name as IExpenseTypes],
+          {
+            date: null,
+            name: "",
+            price: 0,
+            type_id: type.id,
+            types: type,
+            category_id: null,
+          },
+        ],
       },
     });
   },

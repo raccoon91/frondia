@@ -6,22 +6,35 @@ import { Card, Schedule } from "..";
 interface IScheduleCardProps {
   title: string;
   type: IExpenseTypes;
+  expenseType?: IExpenseType;
+  categories?: ICategory[];
   schedules?: ISchedule[];
-  onAddSchedule: (type: IExpenseTypes) => void;
-  onChangeSchedule: (type: IExpenseTypes, index: number, name: string, value: string | number) => void;
+  onAddSchedule: (type: IExpenseType) => void;
+  onChangeSchedule: (type: IExpenseTypes, index: number, name: string, value: string | number | ICategory) => void;
 }
 
-export const ScheduleCard: FC<IScheduleCardProps> = ({ title, type, schedules, onAddSchedule, onChangeSchedule }) => {
+export const ScheduleCard: FC<IScheduleCardProps> = ({
+  title,
+  type,
+  expenseType,
+  categories,
+  schedules,
+  onAddSchedule,
+  onChangeSchedule,
+}) => {
   const handleClickAddSchedule = () => {
-    onAddSchedule(type);
+    if (!expenseType?.id) return;
+
+    onAddSchedule(expenseType);
   };
 
-  const handleChangeSchedule = (type: IExpenseTypes, index: number) => (name: string, value: string | number) => {
-    onChangeSchedule(type, index, name, value);
-  };
+  const handleChangeSchedule =
+    (type: IExpenseTypes, index: number) => (name: string, value: string | number | ICategory) => {
+      onChangeSchedule(type, index, name, value);
+    };
 
   return (
-    <Card w="400px">
+    <Card w="500px">
       <Flex align="center" justify="space-between">
         <Text fontWeight="semibold">{title}</Text>
 
@@ -40,6 +53,8 @@ export const ScheduleCard: FC<IScheduleCardProps> = ({ title, type, schedules, o
             date={schedule.date}
             name={schedule.name}
             price={schedule.price}
+            categoryId={schedule.category_id}
+            categories={categories}
             onChange={handleChangeSchedule(type, index)}
           />
         ))}
