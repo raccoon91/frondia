@@ -101,19 +101,19 @@ export const HomePage = () => {
             </Flex>
           </Card>
 
-          {/* <Card cursor="pointer">
-            <Flex align="center" justify="center" gap="16px">
+          <Card cursor="pointer">
+            <Flex as={Link} to="/schedule" align="center" justify="center" gap="16px">
               <Text fontSize="30px">💵</Text>
               <Text>고정 수입 추가하기</Text>
             </Flex>
           </Card>
 
           <Card cursor="pointer">
-            <Flex align="center" justify="center" gap="16px">
+            <Flex as={Link} to="/schedule" align="center" justify="center" gap="16px">
               <Text fontSize="30px">💳</Text>
               <Text>고정 지출 추가하기</Text>
             </Flex>
-          </Card> */}
+          </Card>
 
           <Card cursor="pointer">
             <Flex as={Link} to="/goal" align="center" justify="center" gap="16px">
