@@ -100,10 +100,7 @@ export const GoalPage = () => {
 
       <GoalDrawer isOpen={isOpenDrawer} onClose={handleCloseDrawer} onCreate={handleCreateGoal} />
 
-      <Flex justify="end" gap="16px">
-        <Button colorScheme="orange" onClick={handleOpenDrawer}>
-          소비 설정하기
-        </Button>
+      <Flex justify="end">
         <Button onClick={handleOpenDrawer}>목표 추가하기</Button>
       </Flex>
 
