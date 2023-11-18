@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { cloneDeep, differenceWith, flatMap, isEqual, isNil } from "lodash-es";
 import { expenseApi, scheduleApi } from "@/api";
 import { toast } from "@/styles";
-import { useAuthStore } from ".";
+import { useAuthStore, useExpenseTypeStore } from ".";
 import dayjs from "dayjs";
 
 interface IScheduleStore {
@@ -64,18 +64,16 @@ export const useScheduleStore = create<IScheduleStore>((set, get) => ({
 
       const res = await scheduleApi.gets({ query });
 
+      const expenseTypes = useExpenseTypeStore.getState().expenseTypes;
+
       const schedules =
         res?.reduce(
           (acc, cur) => {
-            if (cur.type_id === 7) {
-              acc.incomes.push(cur);
-            } else if (cur.type_id === 8) {
-              acc.expenses.push(cur);
-            } else if (cur.type_id === 9) {
-              acc.savings.push(cur);
-            } else if (cur.type_id === 10) {
-              acc.investments.push(cur);
-            }
+            expenseTypes.forEach(expenseType => {
+              if (cur.types?.type === expenseType.type) {
+                acc[expenseType.type].push(cur);
+              }
+            });
 
             return acc;
           },

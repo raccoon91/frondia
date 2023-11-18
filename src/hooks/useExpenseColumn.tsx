@@ -51,24 +51,20 @@ export const useExpenseColumn = (expenseTypes: IExpenseType[], category: Record<
               size: 140,
             }),
             columnHelper.accessor("categories", {
-              cell: props => (
-                <SelectEditor
-                  {...props}
-                  displayValue={(option?: IGridOption) => option?.name}
-                  options={
-                    props.row.original.types?.id === 7
-                      ? category.incomes
-                      : props.row.original.types?.id === 8
-                      ? category.expenses
-                      : props.row.original.types?.id === 9
-                      ? category.savings
-                      : props.row.original.types?.id === 10
-                      ? category.investments
-                      : []
-                  }
-                  inputProps={{ value: props.row.original.categories?.id }}
-                />
-              ),
+              cell: props => {
+                const type = expenseTypes.find(expenseType => expenseType.type === props.row.original.types?.type)
+                  ?.type;
+                const options = type ? category?.[type] ?? [] : [];
+
+                return (
+                  <SelectEditor
+                    {...props}
+                    displayValue={(option?: IGridOption) => option?.name}
+                    options={options}
+                    inputProps={{ value: props.row.original.categories?.id }}
+                  />
+                );
+              },
               header: () => <Header name="Category" />,
               size: 160,
             }),

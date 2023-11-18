@@ -18,8 +18,10 @@ export const SchedulePage = () => {
   );
 
   useEffect(() => {
+    if (!expenseTypes.length) return;
+
     getSchedules();
-  }, []);
+  }, [expenseTypes]);
 
   const handleChangeSchedule = (
     type: IExpenseTypes,
