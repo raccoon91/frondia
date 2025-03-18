@@ -18,9 +18,10 @@ interface TransactionState {
   getTransactions: () => Promise<void>;
 
   addTransaction: () => void;
+  editTransaction: (rowIndex: number) => void;
   changeTransaction: (rowIndex: number, columnName: string, value: number | string) => void;
 
-  createTransaction: (rowIndex: number) => Promise<void>;
+  upsertTransaction: (rowIndex: number) => Promise<void>;
 }
 
 export const useTransactionStore = create<TransactionState>()(
@@ -87,10 +88,9 @@ export const useTransactionStore = create<TransactionState>()(
       const currencies = get().currencies;
       const transactionTypes = get().transactionTypes;
       const categories = get().categories;
-      const transactionDatasets = get().transactionDatasets;
 
       set(
-        {
+        (prev) => ({
           transactionDatasets: [
             {
               id: dayjs().unix(),
@@ -103,14 +103,45 @@ export const useTransactionStore = create<TransactionState>()(
               transactionTypes,
               categories,
             },
-            ...transactionDatasets,
+            ...prev.transactionDatasets,
           ],
-        },
+        }),
         false,
         "addTransaction",
       );
     },
+    editTransaction: (rowIndex: number) => {
+      const currencies = get().currencies;
+      const transactionTypes = get().transactionTypes;
+      const categories = get().categories;
 
+      set(
+        (prev) => ({
+          transactionDatasets: prev.transactionDatasets.map((transactionDataset, index) => {
+            if (index === rowIndex) {
+              return {
+                id: transactionDataset.id,
+                status: "edit",
+                date: transactionDataset.date,
+                currency: transactionDataset.currency,
+                transactionType: transactionDataset.transactionType,
+                category: transactionDataset.category,
+                amount: transactionDataset.amount,
+                memo: transactionDataset.memo,
+
+                currencies,
+                transactionTypes,
+                categories,
+              };
+            }
+
+            return transactionDataset;
+          }),
+        }),
+        false,
+        "addTransaction",
+      );
+    },
     changeTransaction: (rowIndex: number, columnName: string, value: number | string) => {
       set(
         (prev) => ({
@@ -142,23 +173,25 @@ export const useTransactionStore = create<TransactionState>()(
       );
     },
 
-    createTransaction: async (rowIndex: number) => {
+    upsertTransaction: async (rowIndex: number) => {
       try {
         const transaction = get().transactionDatasets?.[rowIndex];
 
-        if (!transaction) return;
+        console.log(transaction);
 
-        if (!transaction.date || !transaction.transactionType || !transaction.category || !transaction.currency) return;
-
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) return;
+        if (
+          !transaction ||
+          !transaction.date ||
+          !transaction.transactionType ||
+          !transaction.category ||
+          !transaction.currency
+        )
+          return;
 
         const { data: newTransaction } = await supabase
           .from("transactions")
-          .insert({
+          .upsert({
+            id: transaction.status === "new" ? undefined : transaction.id,
             date: transaction.date,
             type_id: transaction.transactionType.id,
             category_id: transaction.category.id,

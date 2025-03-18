@@ -11,6 +11,7 @@ declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
     changeInput: (rowIndex: number, columnName: string, value: string | number) => void;
     changeSelect: (rowIndex: number, columnName: string, value: string | number) => void;
+    clickEdit: (rowIndex: number) => void;
     clickSave: (rowIndex: number) => void;
   }
 }
@@ -24,7 +25,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const date = row.getValue<string>("date");
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
           table.options.meta?.changeInput(row.index, "date", e.target.value);
         };
@@ -49,7 +50,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const transactionType = row.getValue<TransactionType>("transactionType");
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const transactionTypes = row.original.transactionTypes;
 
         const handleChange = (value: string) => {
@@ -57,7 +58,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select defaultValue={transactionType?.name} onValueChange={handleChange}>
+          <Select defaultValue={`${transactionType?.id}`} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
               <SelectValue placeholder="Transaction Type" />
             </SelectTrigger>
@@ -84,7 +85,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const category = row.getValue<Category>("category");
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const categories = row.original.categories;
 
         const handleChange = (value: string) => {
@@ -92,7 +93,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select defaultValue={category?.name} onValueChange={handleChange}>
+          <Select defaultValue={`${category?.id}`} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -119,7 +120,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const memo = row.getValue<string | null>("memo");
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
           table.options.meta?.changeInput(row.index, "memo", e.target.value);
         };
@@ -144,7 +145,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const currency = row.getValue<Currency>("currency");
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const currencies = row.original.currencies;
 
         const handleChange = (value: string) => {
@@ -152,7 +153,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select defaultValue={currency?.code} onValueChange={handleChange}>
+          <Select defaultValue={`${currency?.id}`} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
               <SelectValue placeholder="Currency" />
             </SelectTrigger>
@@ -180,9 +181,9 @@ export const columns: ColumnDef<TransactionData>[] = [
       const currency = row.getValue<Currency>("currency");
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(row.index, "memo", e.target.value);
+          table.options.meta?.changeInput(row.index, "amount", e.target.value);
         };
 
         return (
@@ -206,7 +207,7 @@ export const columns: ColumnDef<TransactionData>[] = [
     cell: ({ row, table }) => {
       const status = row.original.status;
 
-      if (status === "new") {
+      if (status === "new" || status === "edit") {
         const handleClickSave = () => {
           table.options.meta?.clickSave(row.index);
         };
@@ -218,8 +219,12 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
+      const handleClickEdit = () => {
+        table.options.meta?.clickEdit(row.index);
+      };
+
       return (
-        <Button size="icon">
+        <Button size="icon" onClick={handleClickEdit}>
           <Edit />
         </Button>
       );
@@ -230,10 +235,11 @@ export const columns: ColumnDef<TransactionData>[] = [
 interface TransactionTableProps {
   data: TransactionData[];
   onChange: (rowIndex: number, columnName: string, value: string | number) => void;
-  onCreate: (rowIndex: number) => Promise<void>;
+  onEdit: (rowIndex: number) => void;
+  onSave: (rowIndex: number) => Promise<void>;
 }
 
-export const TransactionTable: FC<TransactionTableProps> = ({ data, onChange, onCreate }) => {
+export const TransactionTable: FC<TransactionTableProps> = ({ data, onChange, onEdit, onSave }) => {
   const table = useReactTable({
     columns,
     data,
@@ -244,8 +250,11 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onChange, on
       changeSelect: (rowIndex: number, columnName: string, value: string | number) => {
         onChange(rowIndex, columnName, value);
       },
+      clickEdit: (rowIndex: number) => {
+        onEdit(rowIndex);
+      },
       clickSave: (rowIndex: number) => {
-        onCreate(rowIndex);
+        onSave(rowIndex);
       },
     },
     getCoreRowModel: getCoreRowModel(),

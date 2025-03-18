@@ -14,8 +14,9 @@ const TransactionPage = () => {
     getCategories,
     getTransactions,
     addTransaction,
+    editTransaction,
     changeTransaction,
-    createTransaction,
+    upsertTransaction,
   } = useTransactionStore(
     useShallow((state) => ({
       transactionDatasets: state.transactionDatasets,
@@ -24,8 +25,9 @@ const TransactionPage = () => {
       getCategories: state.getCategories,
       getTransactions: state.getTransactions,
       addTransaction: state.addTransaction,
+      editTransaction: state.editTransaction,
       changeTransaction: state.changeTransaction,
-      createTransaction: state.createTransaction,
+      upsertTransaction: state.upsertTransaction,
     })),
   );
 
@@ -46,7 +48,12 @@ const TransactionPage = () => {
         <Button onClick={addTransaction}>Add</Button>
       </div>
 
-      <TransactionTable data={transactionDatasets} onChange={changeTransaction} onCreate={createTransaction} />
+      <TransactionTable
+        data={transactionDatasets}
+        onChange={changeTransaction}
+        onEdit={editTransaction}
+        onSave={upsertTransaction}
+      />
     </div>
   );
 };
