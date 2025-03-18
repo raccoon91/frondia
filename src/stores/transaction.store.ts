@@ -19,6 +19,7 @@ interface TransactionState {
 
   addTransaction: () => void;
   editTransaction: (rowIndex: number) => void;
+  checkTransaction: (rowIndex: number, value: boolean) => void;
   changeTransaction: (rowIndex: number, columnName: string, value: number | string) => void;
 
   upsertTransaction: (rowIndex: number) => Promise<void>;
@@ -70,6 +71,7 @@ export const useTransactionStore = create<TransactionState>()(
           data?.map((transaction) => ({
             id: transaction.id,
             status: "done",
+            checked: false,
             date: transaction.date,
             transactionType: transaction.transactionType,
             category: transaction.category,
@@ -95,6 +97,7 @@ export const useTransactionStore = create<TransactionState>()(
             {
               id: dayjs().unix(),
               status: "new",
+              checked: false,
               date: dayjs().format("YYYY-MM-DD HH:mm"),
               amount: 0,
               memo: null,
@@ -122,6 +125,7 @@ export const useTransactionStore = create<TransactionState>()(
               return {
                 id: transactionDataset.id,
                 status: "edit",
+                checked: transactionDataset.checked,
                 date: transactionDataset.date,
                 currency: transactionDataset.currency,
                 transactionType: transactionDataset.transactionType,
@@ -139,7 +143,20 @@ export const useTransactionStore = create<TransactionState>()(
           }),
         }),
         false,
-        "addTransaction",
+        "editTransaction",
+      );
+    },
+    checkTransaction: (rowIndex: number, value: boolean) => {
+      set(
+        (prev) => ({
+          transactionDatasets: prev.transactionDatasets.map((data, dataIndex) => {
+            if (dataIndex !== rowIndex) return data;
+
+            return { ...data, checked: value };
+          }),
+        }),
+        false,
+        "checkTransaction",
       );
     },
     changeTransaction: (rowIndex: number, columnName: string, value: number | string) => {
@@ -177,8 +194,6 @@ export const useTransactionStore = create<TransactionState>()(
       try {
         const transaction = get().transactionDatasets?.[rowIndex];
 
-        console.log(transaction);
-
         if (
           !transaction ||
           !transaction.date ||
@@ -204,24 +219,29 @@ export const useTransactionStore = create<TransactionState>()(
 
         if (!newTransaction) return;
 
-        set((prev) => ({
-          transactionDatasets: prev.transactionDatasets.map((data, index) => {
-            if (rowIndex === index) {
-              return {
-                id: newTransaction.id,
-                status: "done",
-                date: newTransaction.date,
-                transactionType: newTransaction.transactionType,
-                category: newTransaction.category,
-                currency: newTransaction.currency,
-                memo: newTransaction.memo,
-                amount: newTransaction.amount,
-              };
-            }
+        set(
+          (prev) => ({
+            transactionDatasets: prev.transactionDatasets.map((data, index) => {
+              if (rowIndex === index) {
+                return {
+                  id: newTransaction.id,
+                  status: "done",
+                  checked: false,
+                  date: newTransaction.date,
+                  transactionType: newTransaction.transactionType,
+                  category: newTransaction.category,
+                  currency: newTransaction.currency,
+                  memo: newTransaction.memo,
+                  amount: newTransaction.amount,
+                };
+              }
 
-            return data;
+              return data;
+            }),
           }),
-        }));
+          false,
+          "upsertTransaction",
+        );
       } catch (error) {
         console.error(error);
       }

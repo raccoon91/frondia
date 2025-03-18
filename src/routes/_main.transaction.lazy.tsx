@@ -15,6 +15,7 @@ const TransactionPage = () => {
     getTransactions,
     addTransaction,
     editTransaction,
+    checkTransaction,
     changeTransaction,
     upsertTransaction,
   } = useTransactionStore(
@@ -26,6 +27,7 @@ const TransactionPage = () => {
       getTransactions: state.getTransactions,
       addTransaction: state.addTransaction,
       editTransaction: state.editTransaction,
+      checkTransaction: state.checkTransaction,
       changeTransaction: state.changeTransaction,
       upsertTransaction: state.upsertTransaction,
     })),
@@ -44,12 +46,17 @@ const TransactionPage = () => {
 
   return (
     <div className="flex flex-col gap-4 p-8">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
         <Button onClick={addTransaction}>Add</Button>
+
+        <Button variant="destructive" onClick={addTransaction}>
+          Delete
+        </Button>
       </div>
 
       <TransactionTable
         data={transactionDatasets}
+        onCheck={checkTransaction}
         onChange={changeTransaction}
         onEdit={editTransaction}
         onSave={upsertTransaction}

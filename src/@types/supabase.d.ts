@@ -40,7 +40,8 @@ interface Transaction {
 
 interface TransactionData {
   id: number;
-  status?: string;
+  status: string;
+  checked: boolean;
   date: string | null;
   transactionType?: TransactionType;
   category?: Category;

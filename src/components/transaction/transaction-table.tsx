@@ -1,14 +1,16 @@
 import { ChangeEvent, FC } from "react";
 import { ColumnDef, flexRender, getCoreRowModel, RowData, useReactTable } from "@tanstack/react-table";
+import { Edit, Save } from "lucide-react";
 import dayjs from "dayjs";
 
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "../ui/button";
-import { Edit, Save } from "lucide-react";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
+    check: (rowIndex: number, value: boolean) => void;
     changeInput: (rowIndex: number, columnName: string, value: string | number) => void;
     changeSelect: (rowIndex: number, columnName: string, value: string | number) => void;
     clickEdit: (rowIndex: number) => void;
@@ -17,6 +19,19 @@ declare module "@tanstack/react-table" {
 }
 
 export const columns: ColumnDef<TransactionData>[] = [
+  {
+    id: "check",
+    size: 40,
+    cell: ({ row, table }) => {
+      const checked = row.original.checked ?? false;
+
+      const handleCheck = (checked: boolean) => {
+        table.options.meta?.check(row.index, checked);
+      };
+
+      return <Checkbox checked={checked} onCheckedChange={handleCheck} />;
+    },
+  },
   {
     accessorKey: "date",
     header: "Date",
@@ -234,16 +249,20 @@ export const columns: ColumnDef<TransactionData>[] = [
 
 interface TransactionTableProps {
   data: TransactionData[];
+  onCheck: (rowIndex: number, value: boolean) => void;
   onChange: (rowIndex: number, columnName: string, value: string | number) => void;
   onEdit: (rowIndex: number) => void;
   onSave: (rowIndex: number) => Promise<void>;
 }
 
-export const TransactionTable: FC<TransactionTableProps> = ({ data, onChange, onEdit, onSave }) => {
+export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onChange, onEdit, onSave }) => {
   const table = useReactTable({
     columns,
     data,
     meta: {
+      check: (rowIndex: number, value: boolean) => {
+        onCheck(rowIndex, value);
+      },
       changeInput: (rowIndex: number, columnName: string, value: string | number) => {
         onChange(rowIndex, columnName, value);
       },
