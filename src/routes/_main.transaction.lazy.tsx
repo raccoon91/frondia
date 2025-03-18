@@ -49,9 +49,11 @@ const TransactionPage = () => {
   return (
     <div className="flex flex-col gap-4 p-8">
       <div className="flex justify-end gap-2">
-        <Button onClick={addTransaction}>Add</Button>
+        <Button size="sm" onClick={addTransaction}>
+          Add
+        </Button>
 
-        <Button variant="destructive" onClick={deleteTransaction}>
+        <Button size="sm" variant="destructive" onClick={deleteTransaction}>
           Delete
         </Button>
       </div>

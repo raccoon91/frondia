@@ -29,7 +29,11 @@ export const columns: ColumnDef<TransactionData>[] = [
         table.options.meta?.check(row.index, checked);
       };
 
-      return <Checkbox checked={checked} onCheckedChange={handleCheck} />;
+      return (
+        <div className="flex items-center justify-center">
+          <Checkbox checked={checked} onCheckedChange={handleCheck} />
+        </div>
+      );
     },
   },
   {
@@ -47,14 +51,14 @@ export const columns: ColumnDef<TransactionData>[] = [
 
         return (
           <input
-            className="w-full h-8 p-2 border border-muted-foreground rounded-sm outline-none"
+            className="w-full h-8 p-2 border border-input-foreground rounded-sm outline-none"
             defaultValue={date}
             onChange={handleChange}
           />
         );
       }
 
-      return <p className="p-2">{dayjs(date).format("YYYY-MM-DD HH:mm")}</p>;
+      return <p className="h-8 p-2">{dayjs(date).format("YYYY-MM-DD HH:mm")}</p>;
     },
   },
   {
@@ -74,7 +78,7 @@ export const columns: ColumnDef<TransactionData>[] = [
 
         return (
           <Select defaultValue={`${transactionType?.id}`} onValueChange={handleChange}>
-            <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
+            <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Transaction Type" />
             </SelectTrigger>
 
@@ -89,7 +93,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="p-2">{transactionType?.name}</p>;
+      return <p className="h-8 p-2">{transactionType?.name}</p>;
     },
   },
   {
@@ -109,7 +113,7 @@ export const columns: ColumnDef<TransactionData>[] = [
 
         return (
           <Select defaultValue={`${category?.id}`} onValueChange={handleChange}>
-            <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
+            <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
 
@@ -124,7 +128,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="p-2">{category?.name}</p>;
+      return <p className="h-8 p-2">{category?.name}</p>;
     },
   },
   {
@@ -142,14 +146,14 @@ export const columns: ColumnDef<TransactionData>[] = [
 
         return (
           <input
-            className="w-full h-8 p-2 border border-muted-foreground rounded-sm outline-none"
+            className="w-full h-8 p-2 border border-input-foreground rounded-sm outline-none"
             defaultValue={memo ?? ""}
             onChange={handleChange}
           />
         );
       }
 
-      return <p className="p-2">{memo}</p>;
+      return <p className="h-8 p-2">{memo}</p>;
     },
   },
   {
@@ -169,7 +173,7 @@ export const columns: ColumnDef<TransactionData>[] = [
 
         return (
           <Select defaultValue={`${currency?.id}`} onValueChange={handleChange}>
-            <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
+            <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Currency" />
             </SelectTrigger>
 
@@ -184,7 +188,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="p-2">{currency?.code}</p>;
+      return <p className="h-8 p-2">{currency?.code}</p>;
     },
   },
   {
@@ -204,16 +208,16 @@ export const columns: ColumnDef<TransactionData>[] = [
         return (
           <input
             type="number"
-            className="w-full h-8 p-2 border border-muted-foreground rounded-sm outline-none"
+            className="w-full h-8 p-2 border border-input-foreground rounded-sm outline-none"
             defaultValue={amount}
             onChange={handleChange}
           />
         );
       }
 
-      if (!currency) return <p className="p-2">{amount}</p>;
+      if (!currency) return <p className="h-8 p-2">{amount}</p>;
 
-      return <p className="p-2">{`${amount} ${currency?.symbol}`}</p>;
+      return <p className="h-8 p-2">{`${amount} ${currency?.symbol}`}</p>;
     },
   },
   {
@@ -228,7 +232,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Button size="icon" onClick={handleClickSave}>
+          <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickSave}>
             <Save />
           </Button>
         );
@@ -239,7 +243,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       };
 
       return (
-        <Button size="icon" onClick={handleClickEdit}>
+        <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickEdit}>
           <Edit />
         </Button>
       );
