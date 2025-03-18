@@ -26,9 +26,6 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.47.12
         version: 2.49.1
-      '@tailwindcss/vite':
-        specifier: ^4.0.14
-        version: 4.0.14(vite@4.5.9(@types/node@22.13.10)(lightningcss@1.29.2))
       '@tanstack/react-router':
         specifier: ^1.95.1
         version: 1.114.23(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -75,6 +72,9 @@ importers:
       '@eslint/js':
         specifier: ^9.17.0
         version: 9.22.0
+      '@tailwindcss/postcss':
+        specifier: ^4.0.14
+        version: 4.0.14
       '@tanstack/react-router-devtools':
         specifier: ^1.114.23
         version: 1.114.23(@tanstack/react-router@1.114.23(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.114.23)(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tiny-invariant@1.3.3)
@@ -108,6 +108,9 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.16
         version: 0.4.19(eslint@9.22.0(jiti@2.4.2))
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.3
       prettier:
         specifier: ^3.4.2
         version: 3.5.3
@@ -122,6 +125,10 @@ importers:
         version: 4.5.9(@types/node@22.13.10)(lightningcss@1.29.2)
 
 packages:
+
+  '@alloc/quick-lru@5.2.0':
+    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
+    engines: {node: '>=10'}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -992,10 +999,8 @@ packages:
     resolution: {integrity: sha512-M8VCNyO/NBi5vJ2cRcI9u8w7Si+i76a7o1vveoGtbbjpEYJZYiyc7f2VGps/DqawO56l3tImIbq2OT/533jcrA==}
     engines: {node: '>= 10'}
 
-  '@tailwindcss/vite@4.0.14':
-    resolution: {integrity: sha512-y69ztPTRFy+13EPS/7dEFVl7q2Goh1pQueVO8IfGeyqSpcx/joNJXFk0lLhMgUbF0VFJotwRSb9ZY7Xoq3r26Q==}
-    peerDependencies:
-      vite: ^5.2.0 || ^6
+  '@tailwindcss/postcss@4.0.14':
+    resolution: {integrity: sha512-+uIR6KtKhla1XeIanF27KtrfYy+PX+R679v5LxbkmEZlhQe3g8rk+wKj7Xgt++rWGRuFLGMXY80Ek8JNn+kN/g==}
 
   '@tanstack/history@1.114.22':
     resolution: {integrity: sha512-CNwKraj/Xa8H7DUyzrFBQC3wL96JzIxT4i9CW0hxqFNNmLDyUcMJr8264iqqfxC0u1lFSG96URad08T2Qhadpw==}
@@ -2036,6 +2041,8 @@ packages:
 
 snapshots:
 
+  '@alloc/quick-lru@5.2.0': {}
+
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
@@ -2754,13 +2761,14 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.0.14
       '@tailwindcss/oxide-win32-x64-msvc': 4.0.14
 
-  '@tailwindcss/vite@4.0.14(vite@4.5.9(@types/node@22.13.10)(lightningcss@1.29.2))':
+  '@tailwindcss/postcss@4.0.14':
     dependencies:
+      '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.0.14
       '@tailwindcss/oxide': 4.0.14
       lightningcss: 1.29.2
+      postcss: 8.5.3
       tailwindcss: 4.0.14
-      vite: 4.5.9(@types/node@22.13.10)(lightningcss@1.29.2)
 
   '@tanstack/history@1.114.22': {}
 
