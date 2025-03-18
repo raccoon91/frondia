@@ -1,9 +1,11 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 
+import { TransactionTable } from "@/components/transaction/transaction-table";
+
 const TransactionPage = () => {
   return (
-    <div>
-      <p>Transaction Page</p>
+    <div className="w-full h-full p-4">
+      <TransactionTable />
     </div>
   );
 };
