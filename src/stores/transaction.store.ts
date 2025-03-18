@@ -65,7 +65,8 @@ export const useTransactionStore = create<TransactionState>()(
       try {
         const { data } = await supabase
           .from("transactions")
-          .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)");
+          .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)")
+          .order("date", { ascending: false });
 
         const transactionDatasets =
           data?.map((transaction) => ({
