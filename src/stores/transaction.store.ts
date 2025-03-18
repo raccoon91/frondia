@@ -18,10 +18,11 @@ interface TransactionState {
   getTransactions: () => Promise<void>;
 
   addTransaction: () => void;
+  deleteTransaction: () => Promise<void>;
+
   editTransaction: (rowIndex: number) => void;
   checkTransaction: (rowIndex: number, value: boolean) => void;
   changeTransaction: (rowIndex: number, columnName: string, value: number | string) => void;
-
   upsertTransaction: (rowIndex: number) => Promise<void>;
 }
 
@@ -114,6 +115,44 @@ export const useTransactionStore = create<TransactionState>()(
         "addTransaction",
       );
     },
+    deleteTransaction: async () => {
+      try {
+        const transactionDatasets = get().transactionDatasets;
+
+        const { deleted, filtered } = transactionDatasets.reduce<{
+          deleted: TransactionData[];
+          filtered: TransactionData[];
+        }>(
+          (acc, cur) => {
+            if (cur.status === "new" && cur.checked) return acc;
+
+            if (cur.checked) {
+              acc.deleted.push(cur);
+            } else {
+              acc.filtered.push(cur);
+            }
+
+            return acc;
+          },
+          { deleted: [], filtered: [] },
+        );
+
+        if (deleted.length) {
+          await supabase
+            .from("transactions")
+            .delete()
+            .in(
+              "id",
+              deleted.map((datasets) => datasets.id),
+            );
+        }
+
+        set({ transactionDatasets: filtered }, false, "deleteTransaction");
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     editTransaction: (rowIndex: number) => {
       const currencies = get().currencies;
       const transactionTypes = get().transactionTypes;
@@ -190,7 +229,6 @@ export const useTransactionStore = create<TransactionState>()(
         "changeTransaction",
       );
     },
-
     upsertTransaction: async (rowIndex: number) => {
       try {
         const transaction = get().transactionDatasets?.[rowIndex];

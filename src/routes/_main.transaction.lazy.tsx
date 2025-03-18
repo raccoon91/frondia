@@ -14,6 +14,7 @@ const TransactionPage = () => {
     getCategories,
     getTransactions,
     addTransaction,
+    deleteTransaction,
     editTransaction,
     checkTransaction,
     changeTransaction,
@@ -26,6 +27,7 @@ const TransactionPage = () => {
       getCategories: state.getCategories,
       getTransactions: state.getTransactions,
       addTransaction: state.addTransaction,
+      deleteTransaction: state.deleteTransaction,
       editTransaction: state.editTransaction,
       checkTransaction: state.checkTransaction,
       changeTransaction: state.changeTransaction,
@@ -49,7 +51,7 @@ const TransactionPage = () => {
       <div className="flex justify-end gap-2">
         <Button onClick={addTransaction}>Add</Button>
 
-        <Button variant="destructive" onClick={addTransaction}>
+        <Button variant="destructive" onClick={deleteTransaction}>
           Delete
         </Button>
       </div>
