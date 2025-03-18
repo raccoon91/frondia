@@ -1,48 +1,253 @@
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { ChangeEvent, FC } from "react";
+import { ColumnDef, flexRender, getCoreRowModel, RowData, useReactTable } from "@tanstack/react-table";
+import dayjs from "dayjs";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "../ui/button";
+import { Edit, Save } from "lucide-react";
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    changeInput: (rowIndex: number, columnName: string, value: string | number) => void;
+    changeSelect: (rowIndex: number, columnName: string, value: string | number) => void;
+    clickSave: (rowIndex: number) => void;
+  }
+}
 
-export const payments: Payment[] = [
+export const columns: ColumnDef<TransactionData>[] = [
   {
-    id: "728ed52f",
-    amount: 100,
-    status: "pending",
-    email: "m@example.com",
+    accessorKey: "date",
+    header: "Date",
+    size: 140,
+    cell: ({ row, table }) => {
+      const date = row.getValue<string>("date");
+      const status = row.original.status;
+
+      if (status === "new") {
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+          table.options.meta?.changeInput(row.index, "date", e.target.value);
+        };
+
+        return (
+          <input
+            className="w-full h-8 p-2 border border-muted-foreground rounded-sm outline-none"
+            defaultValue={date}
+            onChange={handleChange}
+          />
+        );
+      }
+
+      return <p className="p-2">{dayjs(date).format("YYYY-MM-DD HH:mm")}</p>;
+    },
   },
   {
-    id: "489e1d42",
-    amount: 125,
-    status: "processing",
-    email: "example@gmail.com",
-  },
-];
+    accessorKey: "transactionType",
+    header: "Type",
+    size: 160,
+    cell: ({ row, table }) => {
+      const transactionType = row.getValue<TransactionType>("transactionType");
+      const status = row.original.status;
 
-export const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: "status",
-    header: "Status",
+      if (status === "new") {
+        const transactionTypes = row.original.transactionTypes;
+
+        const handleChange = (value: string) => {
+          table.options.meta?.changeInput(row.index, "transactionType", value);
+        };
+
+        return (
+          <Select defaultValue={transactionType?.name} onValueChange={handleChange}>
+            <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
+              <SelectValue placeholder="Transaction Type" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {transactionTypes?.map((transactionType) => (
+                <SelectItem key={transactionType.id} value={`${transactionType.id}`}>
+                  {transactionType.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      }
+
+      return <p className="p-2">{transactionType?.name}</p>;
+    },
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "category",
+    header: "Category",
+    size: 200,
+    cell: ({ row, table }) => {
+      const category = row.getValue<Category>("category");
+      const status = row.original.status;
+
+      if (status === "new") {
+        const categories = row.original.categories;
+
+        const handleChange = (value: string) => {
+          table.options.meta?.changeInput(row.index, "category", value);
+        };
+
+        return (
+          <Select defaultValue={category?.name} onValueChange={handleChange}>
+            <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {categories?.map((category) => (
+                <SelectItem key={category.id} value={`${category.id}`}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      }
+
+      return <p className="p-2">{category?.name}</p>;
+    },
+  },
+  {
+    accessorKey: "memo",
+    header: "Memo",
+    size: 200,
+    cell: ({ row, table }) => {
+      const memo = row.getValue<string | null>("memo");
+      const status = row.original.status;
+
+      if (status === "new") {
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+          table.options.meta?.changeInput(row.index, "memo", e.target.value);
+        };
+
+        return (
+          <input
+            className="w-full h-8 p-2 border border-muted-foreground rounded-sm outline-none"
+            defaultValue={memo ?? ""}
+            onChange={handleChange}
+          />
+        );
+      }
+
+      return <p className="p-2">{memo}</p>;
+    },
+  },
+  {
+    accessorKey: "currency",
+    header: "Currency",
+    size: 120,
+    cell: ({ row, table }) => {
+      const currency = row.getValue<Currency>("currency");
+      const status = row.original.status;
+
+      if (status === "new") {
+        const currencies = row.original.currencies;
+
+        const handleChange = (value: string) => {
+          table.options.meta?.changeInput(row.index, "currency", value);
+        };
+
+        return (
+          <Select defaultValue={currency?.code} onValueChange={handleChange}>
+            <SelectTrigger size="sm" className="w-full p-2 border-muted-foreground rounded-sm">
+              <SelectValue placeholder="Currency" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {currencies?.map((currency) => (
+                <SelectItem key={currency.id} value={`${currency.id}`}>
+                  {currency.code}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      }
+
+      return <p className="p-2">{currency?.code}</p>;
+    },
   },
   {
     accessorKey: "amount",
     header: "Amount",
+    size: 160,
+    cell: ({ row, table }) => {
+      const amount = row.getValue<number>("amount");
+      const currency = row.getValue<Currency>("currency");
+      const status = row.original.status;
+
+      if (status === "new") {
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+          table.options.meta?.changeInput(row.index, "memo", e.target.value);
+        };
+
+        return (
+          <input
+            type="number"
+            className="w-full h-8 p-2 border border-muted-foreground rounded-sm outline-none"
+            defaultValue={amount}
+            onChange={handleChange}
+          />
+        );
+      }
+
+      if (!currency) return <p className="p-2">{amount}</p>;
+
+      return <p className="p-2">{`${amount} ${currency?.symbol}`}</p>;
+    },
+  },
+  {
+    id: "actions",
+    size: 60,
+    cell: ({ row, table }) => {
+      const status = row.original.status;
+
+      if (status === "new") {
+        const handleClickSave = () => {
+          table.options.meta?.clickSave(row.index);
+        };
+
+        return (
+          <Button size="icon" onClick={handleClickSave}>
+            <Save />
+          </Button>
+        );
+      }
+
+      return (
+        <Button size="icon">
+          <Edit />
+        </Button>
+      );
+    },
   },
 ];
 
-export const TransactionTable = () => {
+interface TransactionTableProps {
+  data: TransactionData[];
+  onChange: (rowIndex: number, columnName: string, value: string | number) => void;
+  onCreate: (rowIndex: number) => Promise<void>;
+}
+
+export const TransactionTable: FC<TransactionTableProps> = ({ data, onChange, onCreate }) => {
   const table = useReactTable({
     columns,
-    data: payments,
+    data,
+    meta: {
+      changeInput: (rowIndex: number, columnName: string, value: string | number) => {
+        onChange(rowIndex, columnName, value);
+      },
+      changeSelect: (rowIndex: number, columnName: string, value: string | number) => {
+        onChange(rowIndex, columnName, value);
+      },
+      clickSave: (rowIndex: number) => {
+        onCreate(rowIndex);
+      },
+    },
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -53,29 +258,30 @@ export const TransactionTable = () => {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} style={{ width: header.getSize() }} className="font-bold px-3 h-10">
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id} className="p-1">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  No Transaction Data
                 </TableCell>
               </TableRow>
             )}
