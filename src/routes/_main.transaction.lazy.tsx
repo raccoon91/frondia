@@ -2,9 +2,10 @@ import { useCallback, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 
-import { TransactionTable } from "@/components/transaction/transaction-table";
+import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { Button } from "@/components/ui/button";
+import { TransactionTable } from "@/components/transaction/transaction-table";
 
 const TransactionPage = () => {
   const {
@@ -69,6 +70,6 @@ const TransactionPage = () => {
   );
 };
 
-export const Route = createLazyFileRoute("/_main/transaction")({
+export const Route = createLazyFileRoute(TRANSACTION_FILE_ROUTE)({
   component: TransactionPage,
 });

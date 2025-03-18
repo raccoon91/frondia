@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { loginFormSchema } from "@/schema/auth.schema";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
@@ -24,7 +25,7 @@ const LoginPage = () => {
   const handleSubmitLogin = async (formdata: z.infer<typeof loginFormSchema>) => {
     const { data } = await supabase.auth.signInWithPassword({ email: formdata.email, password: formdata.password });
 
-    if (data.user) navigate({ to: "/" });
+    if (data.user) navigate({ to: ROUTE.HOME });
   };
 
   return (
@@ -91,6 +92,6 @@ const LoginPage = () => {
   );
 };
 
-export const Route = createLazyFileRoute("/_auth/login")({
+export const Route = createLazyFileRoute(LOGIN_FILE_ROUTE)({
   component: LoginPage,
 });
