@@ -30,10 +30,12 @@ export const useTransactionStore = create<TransactionStore>()(
 
         getTransactions: async () => {
           try {
-            const { data } = await supabase
+            const { data, error } = await supabase
               .from("transactions")
               .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)")
               .order("date", { ascending: false });
+
+            if (error) throw error;
 
             const datasets =
               data?.map((transaction) => ({
