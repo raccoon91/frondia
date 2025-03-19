@@ -6,30 +6,34 @@ import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { Button } from "@/components/ui/button";
 import { TransactionTable } from "@/components/transaction/transaction-table";
+import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const TransactionPage = () => {
+  const { getCurrencies, getTransactionTypes, getCategories } = useTransactionOptionStore(
+    useShallow((state) => ({
+      getCurrencies: state.getCurrencies,
+      getTransactionTypes: state.getTransactionTypes,
+      getCategories: state.getCategories,
+    })),
+  );
   const {
     transactionDatasets,
-    getCurrencies,
-    getTransactionTypes,
-    getCategories,
     getTransactions,
     addTransaction,
     deleteTransaction,
     editTransaction,
+    cancelEditTransaction,
     checkTransaction,
     changeTransaction,
     upsertTransaction,
   } = useTransactionStore(
     useShallow((state) => ({
       transactionDatasets: state.transactionDatasets,
-      getCurrencies: state.getCurrencies,
-      getTransactionTypes: state.getTransactionTypes,
-      getCategories: state.getCategories,
       getTransactions: state.getTransactions,
       addTransaction: state.addTransaction,
       deleteTransaction: state.deleteTransaction,
       editTransaction: state.editTransaction,
+      cancelEditTransaction: state.cancelEditTransaction,
       checkTransaction: state.checkTransaction,
       changeTransaction: state.changeTransaction,
       upsertTransaction: state.upsertTransaction,
@@ -37,9 +41,7 @@ const TransactionPage = () => {
   );
 
   const getData = useCallback(async () => {
-    await getCurrencies();
-    await getTransactionTypes();
-    await getCategories();
+    await Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
     await getTransactions();
   }, []);
 
@@ -64,6 +66,7 @@ const TransactionPage = () => {
         onCheck={checkTransaction}
         onChange={changeTransaction}
         onEdit={editTransaction}
+        onCancel={cancelEditTransaction}
         onSave={upsertTransaction}
       />
     </div>

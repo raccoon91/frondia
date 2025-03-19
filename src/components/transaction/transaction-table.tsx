@@ -1,7 +1,6 @@
 import { ChangeEvent, FC } from "react";
 import { ColumnDef, flexRender, getCoreRowModel, RowData, useReactTable } from "@tanstack/react-table";
-import { Edit, Save } from "lucide-react";
-import dayjs from "dayjs";
+import { Edit, Save, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,23 +9,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
-    check: (rowIndex: number, value: boolean) => void;
-    changeInput: (rowIndex: number, columnName: string, value: string | number) => void;
-    changeSelect: (rowIndex: number, columnName: string, value: string | number) => void;
-    clickEdit: (rowIndex: number) => void;
-    clickSave: (rowIndex: number) => void;
+    check: (rowId: number, value: boolean) => void;
+    changeInput: (rowId: number, columnName: string, value: string | number) => void;
+    changeSelect: (rowId: number, columnName: string, value: string | number) => void;
+    clickEdit: (rowId: number) => void;
+    clickCancel: (rowId: number) => void;
+    clickSave: (rowId: number) => void;
   }
 }
 
 export const columns: ColumnDef<TransactionData>[] = [
   {
     id: "check",
-    size: 40,
+    minSize: 40,
+    maxSize: 40,
     cell: ({ row, table }) => {
+      const id = row.original.id;
       const checked = row.original.checked ?? false;
 
       const handleCheck = (checked: boolean) => {
-        table.options.meta?.check(row.index, checked);
+        table.options.meta?.check(id, checked);
       };
 
       return (
@@ -39,41 +41,44 @@ export const columns: ColumnDef<TransactionData>[] = [
   {
     accessorKey: "date",
     header: "Date",
-    size: 140,
+    minSize: 160,
+    maxSize: 160,
     cell: ({ row, table }) => {
-      const date = row.getValue<string>("date");
+      const id = row.original.id;
+      const date = row.original.date ?? "";
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(row.index, "date", e.target.value);
+          table.options.meta?.changeInput(id, "date", e.target.value);
         };
 
         return (
           <input
-            className="w-full h-8 p-2 border border-input-foreground rounded-sm outline-none"
+            className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
             defaultValue={date}
             onChange={handleChange}
           />
         );
       }
 
-      return <p className="h-8 p-2">{dayjs(date).format("YYYY-MM-DD HH:mm")}</p>;
+      return <p className="h-8 p-2 leading-4">{date}</p>;
     },
   },
   {
     accessorKey: "transactionType",
     header: "Type",
-    size: 160,
+    minSize: 140,
+    maxSize: 140,
     cell: ({ row, table }) => {
-      const transactionType = row.getValue<TransactionType>("transactionType");
+      const id = row.original.id;
+      const transactionTypes = row.original.transactionTypes;
+      const transactionType = row.original.transactionType;
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
-        const transactionTypes = row.original.transactionTypes;
-
         const handleChange = (value: string) => {
-          table.options.meta?.changeInput(row.index, "transactionType", value);
+          table.options.meta?.changeInput(id, "transactionType", value);
         };
 
         return (
@@ -93,22 +98,23 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="h-8 p-2">{transactionType?.name}</p>;
+      return <p className="h-8 p-2 leading-4">{transactionType?.name}</p>;
     },
   },
   {
     accessorKey: "category",
     header: "Category",
-    size: 200,
+    minSize: 160,
+    maxSize: 160,
     cell: ({ row, table }) => {
-      const category = row.getValue<Category>("category");
+      const id = row.original.id;
+      const categories = row.original.categories;
+      const category = row.original.category;
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
-        const categories = row.original.categories;
-
         const handleChange = (value: string) => {
-          table.options.meta?.changeInput(row.index, "category", value);
+          table.options.meta?.changeInput(id, "category", value);
         };
 
         return (
@@ -128,47 +134,48 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="h-8 p-2">{category?.name}</p>;
+      return <p className="h-8 p-2 leading-4">{category?.name}</p>;
     },
   },
   {
     accessorKey: "memo",
     header: "Memo",
-    size: 200,
     cell: ({ row, table }) => {
-      const memo = row.getValue<Nullable<string>>("memo");
+      const id = row.original.id;
+      const memo = row.original.memo;
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(row.index, "memo", e.target.value);
+          table.options.meta?.changeInput(id, "memo", e.target.value);
         };
 
         return (
           <input
-            className="w-full h-8 p-2 border border-input-foreground rounded-sm outline-none"
+            className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
             defaultValue={memo ?? ""}
             onChange={handleChange}
           />
         );
       }
 
-      return <p className="h-8 p-2">{memo}</p>;
+      return <p className="h-8 p-2 leading-4">{memo}</p>;
     },
   },
   {
     accessorKey: "currency",
     header: "Currency",
-    size: 120,
+    minSize: 120,
+    maxSize: 120,
     cell: ({ row, table }) => {
-      const currency = row.getValue<Currency>("currency");
+      const id = row.original.id;
+      const currencies = row.original.currencies;
+      const currency = row.original.currency;
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
-        const currencies = row.original.currencies;
-
         const handleChange = (value: string) => {
-          table.options.meta?.changeInput(row.index, "currency", value);
+          table.options.meta?.changeInput(id, "currency", value);
         };
 
         return (
@@ -188,64 +195,80 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="h-8 p-2">{currency?.code}</p>;
+      return <p className="h-8 p-2 leading-4">{currency?.code}</p>;
     },
   },
   {
     accessorKey: "amount",
     header: "Amount",
-    size: 160,
+    minSize: 160,
+    maxSize: 160,
     cell: ({ row, table }) => {
-      const amount = row.getValue<number>("amount");
-      const currency = row.getValue<Currency>("currency");
+      const id = row.original.id;
+      const amount = row.original.amount;
+      const currency = row.original.currency;
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(row.index, "amount", e.target.value);
+          table.options.meta?.changeInput(id, "amount", e.target.value);
         };
 
         return (
           <input
             type="number"
-            className="w-full h-8 p-2 border border-input-foreground rounded-sm outline-none"
+            className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
             defaultValue={amount}
             onChange={handleChange}
           />
         );
       }
 
-      if (!currency) return <p className="h-8 p-2">{amount}</p>;
+      if (!currency) return <p className="h-8 p-2 leading-4">{amount}</p>;
 
-      return <p className="h-8 p-2">{`${amount} ${currency?.symbol}`}</p>;
+      return <p className="h-8 p-2 leading-4">{`${amount} ${currency?.symbol}`}</p>;
     },
   },
   {
     id: "actions",
-    size: 60,
+    minSize: 80,
+    maxSize: 80,
     cell: ({ row, table }) => {
+      const id = row.original.id;
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
-        const handleClickSave = () => {
-          table.options.meta?.clickSave(row.index);
-        };
+      const handleClickEdit = () => {
+        table.options.meta?.clickEdit(id);
+      };
 
+      const handleClickCancel = () => {
+        table.options.meta?.clickCancel(id);
+      };
+
+      const handleClickSave = () => {
+        table.options.meta?.clickSave(id);
+      };
+
+      if (status === "new" || status === "edit") {
         return (
-          <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickSave}>
-            <Save />
-          </Button>
+          <div className="flex justify-end gap-1">
+            <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickSave}>
+              <Save />
+            </Button>
+
+            <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickCancel}>
+              <X />
+            </Button>
+          </div>
         );
       }
 
-      const handleClickEdit = () => {
-        table.options.meta?.clickEdit(row.index);
-      };
-
       return (
-        <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickEdit}>
-          <Edit />
-        </Button>
+        <div className="flex justify-end">
+          <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickEdit}>
+            <Edit />
+          </Button>
+        </div>
       );
     },
   },
@@ -253,31 +276,35 @@ export const columns: ColumnDef<TransactionData>[] = [
 
 interface TransactionTableProps {
   data: TransactionData[];
-  onCheck: (rowIndex: number, value: boolean) => void;
-  onChange: (rowIndex: number, columnName: string, value: string | number) => void;
-  onEdit: (rowIndex: number) => void;
-  onSave: (rowIndex: number) => Promise<void>;
+  onCheck: (rowId: number, value: boolean) => void;
+  onChange: (rowId: number, columnName: string, value: string | number) => void;
+  onEdit: (rowId: number) => void;
+  onCancel: (rowId: number) => void;
+  onSave: (rowId: number) => Promise<void>;
 }
 
-export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onChange, onEdit, onSave }) => {
+export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onChange, onEdit, onCancel, onSave }) => {
   const table = useReactTable({
     columns,
     data,
     meta: {
-      check: (rowIndex: number, value: boolean) => {
-        onCheck(rowIndex, value);
+      check: (rowId: number, value: boolean) => {
+        onCheck(rowId, value);
       },
-      changeInput: (rowIndex: number, columnName: string, value: string | number) => {
-        onChange(rowIndex, columnName, value);
+      changeInput: (rowId: number, columnName: string, value: string | number) => {
+        onChange(rowId, columnName, value);
       },
-      changeSelect: (rowIndex: number, columnName: string, value: string | number) => {
-        onChange(rowIndex, columnName, value);
+      changeSelect: (rowId: number, columnName: string, value: string | number) => {
+        onChange(rowId, columnName, value);
       },
-      clickEdit: (rowIndex: number) => {
-        onEdit(rowIndex);
+      clickEdit: (rowId: number) => {
+        onEdit(rowId);
       },
-      clickSave: (rowIndex: number) => {
-        onSave(rowIndex);
+      clickCancel: (rowId: number) => {
+        onCancel(rowId);
+      },
+      clickSave: (rowId: number) => {
+        onSave(rowId);
       },
     },
     getCoreRowModel: getCoreRowModel(),
@@ -285,16 +312,26 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
 
   return (
     <div className="w-full h-full">
-      <div className="rounded-md border">
+      <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} style={{ width: header.getSize() }} className="font-bold px-3 h-10">
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="font-bold px-3 h-10"
+                      style={{
+                        width: header.column.columnDef.size,
+                        minWidth: header.column.columnDef.minSize,
+                        maxWidth: header.column.columnDef.maxSize,
+                      }}
+                    >
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -302,7 +339,7 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow key={row.original.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-1">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -312,7 +349,7 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-32 text-center">
                   No Transaction Data
                 </TableCell>
               </TableRow>

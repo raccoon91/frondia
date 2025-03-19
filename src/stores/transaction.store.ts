@@ -3,66 +3,30 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
 import { supabase } from "@/lib/supabase/client";
+import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface TransactionStore {
-  currencies: Currency[];
-  transactionTypes: TransactionType[];
-  categories: Category[];
-
   transactionDatasets: TransactionData[];
-
-  getCurrencies: () => Promise<void>;
-  getTransactionTypes: () => Promise<void>;
-  getCategories: () => Promise<void>;
+  editableTransaction: Record<number, TransactionData>;
 
   getTransactions: () => Promise<void>;
 
   addTransaction: () => void;
   deleteTransaction: () => Promise<void>;
 
-  editTransaction: (rowIndex: number) => void;
-  checkTransaction: (rowIndex: number, value: boolean) => void;
-  changeTransaction: (rowIndex: number, columnName: string, value: number | string) => void;
-  upsertTransaction: (rowIndex: number) => Promise<void>;
+  editTransaction: (rowId: number) => void;
+  cancelEditTransaction: (rowId: number) => void;
+  checkTransaction: (rowId: number, value: boolean) => void;
+  changeTransaction: (rowId: number, columnName: string, value: number | string) => void;
+  upsertTransaction: (rowId: number) => Promise<void>;
 }
 
 export const useTransactionStore = create<TransactionStore>()(
   devtools(
     persist(
       (set, get) => ({
-        currencies: [],
-        transactionTypes: [],
-        categories: [],
-
         transactionDatasets: [],
-
-        getCurrencies: async () => {
-          try {
-            const { data } = await supabase.from("currencies").select("*");
-
-            set({ currencies: data ?? [] }, false, "getCurrencies");
-          } catch (error) {
-            console.error(error);
-          }
-        },
-        getTransactionTypes: async () => {
-          try {
-            const { data } = await supabase.from("transaction_types").select("*");
-
-            set({ transactionTypes: data ?? [] }, false, "getTransactionTypes");
-          } catch (error) {
-            console.error(error);
-          }
-        },
-        getCategories: async () => {
-          try {
-            const { data } = await supabase.from("categories").select("*");
-
-            set({ categories: data ?? [] }, false, "getCategories");
-          } catch (error) {
-            console.error(error);
-          }
-        },
+        editableTransaction: {},
 
         getTransactions: async () => {
           try {
@@ -71,82 +35,74 @@ export const useTransactionStore = create<TransactionStore>()(
               .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)")
               .order("date", { ascending: false });
 
-            const transactionDatasets =
+            const datasets =
               data?.map((transaction) => ({
                 id: transaction.id,
                 status: "done",
                 checked: false,
-                date: transaction.date,
-                transactionType: transaction.transactionType,
-                category: transaction.category,
-                currency: transaction.currency,
+                date: transaction.date ? dayjs(transaction.date).format("YYYY-MM-DD HH:mm") : "",
                 memo: transaction.memo,
                 amount: transaction.amount,
+
+                currency: transaction.currency,
+                transactionType: transaction.transactionType,
+                category: transaction.category,
               })) ?? [];
 
-            set({ transactionDatasets }, false, "getTransactions");
+            set({ transactionDatasets: datasets }, false, "getTransactions");
           } catch (error) {
             console.error(error);
           }
         },
 
         addTransaction: () => {
-          const currencies = get().currencies;
-          const transactionTypes = get().transactionTypes;
-          const categories = get().categories;
+          const currencies = useTransactionOptionStore.getState().currencies;
+          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+          const categories = useTransactionOptionStore.getState().categories;
 
-          set(
-            (prev) => ({
-              transactionDatasets: [
-                {
-                  id: dayjs().unix(),
-                  status: "new",
-                  checked: false,
-                  date: dayjs().format("YYYY-MM-DD HH:mm"),
-                  amount: 0,
-                  memo: null,
+          const datasets = [
+            {
+              id: dayjs().unix(),
+              status: "new",
+              checked: false,
+              date: dayjs().format("YYYY-MM-DD HH:mm"),
+              amount: 0,
+              memo: null,
 
-                  currencies,
-                  transactionTypes,
-                  categories,
-                },
-                ...prev.transactionDatasets,
-              ],
-            }),
-            false,
-            "addTransaction",
-          );
+              currency: undefined,
+              transactionType: undefined,
+              category: undefined,
+
+              currencies,
+              transactionTypes,
+              categories,
+            },
+            ...(get().transactionDatasets ?? []),
+          ];
+
+          set({ transactionDatasets: datasets }, false, "addTransaction");
         },
         deleteTransaction: async () => {
           try {
-            const transactionDatasets = get().transactionDatasets;
+            const datasets = get().transactionDatasets;
 
-            const { deleted, filtered } = transactionDatasets.reduce<{
-              deleted: TransactionData[];
-              filtered: TransactionData[];
-            }>(
+            const { filtered, deleteIds } = datasets.reduce<{ filtered: TransactionData[]; deleteIds: number[] }>(
               (acc, cur) => {
                 if (cur.status === "new" && cur.checked) return acc;
 
                 if (cur.checked) {
-                  acc.deleted.push(cur);
+                  acc.deleteIds.push(cur.id);
                 } else {
                   acc.filtered.push(cur);
                 }
 
                 return acc;
               },
-              { deleted: [], filtered: [] },
+              { filtered: [], deleteIds: [] },
             );
 
-            if (deleted.length) {
-              await supabase
-                .from("transactions")
-                .delete()
-                .in(
-                  "id",
-                  deleted.map((datasets) => datasets.id),
-                );
+            if (deleteIds.length) {
+              await supabase.from("transactions").delete().in("id", deleteIds);
             }
 
             set({ transactionDatasets: filtered }, false, "deleteTransaction");
@@ -155,134 +111,144 @@ export const useTransactionStore = create<TransactionStore>()(
           }
         },
 
-        editTransaction: (rowIndex: number) => {
-          const currencies = get().currencies;
-          const transactionTypes = get().transactionTypes;
-          const categories = get().categories;
+        editTransaction: (rowId: number) => {
+          const currencies = useTransactionOptionStore.getState().currencies;
+          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+          const categories = useTransactionOptionStore.getState().categories;
 
-          set(
-            (prev) => ({
-              transactionDatasets: prev.transactionDatasets.map((transactionDataset, index) => {
-                if (index === rowIndex) {
-                  return {
-                    id: transactionDataset.id,
-                    status: "edit",
-                    checked: transactionDataset.checked,
-                    date: transactionDataset.date,
-                    currency: transactionDataset.currency,
-                    transactionType: transactionDataset.transactionType,
-                    category: transactionDataset.category,
-                    amount: transactionDataset.amount,
-                    memo: transactionDataset.memo,
+          const editableTransaction = get().editableTransaction;
 
-                    currencies,
-                    transactionTypes,
-                    categories,
-                  };
-                }
+          const datasets = get().transactionDatasets.map((dataset) => {
+            if (dataset.id !== rowId) return dataset;
 
-                return transactionDataset;
-              }),
-            }),
-            false,
-            "editTransaction",
-          );
+            editableTransaction[dataset.id] = dataset;
+
+            return {
+              id: dataset.id,
+              status: "edit",
+              checked: dataset.checked,
+              date: dataset.date,
+              amount: dataset.amount,
+              memo: dataset.memo,
+
+              currency: dataset.currency,
+              transactionType: dataset.transactionType,
+              category: dataset.category,
+
+              currencies,
+              transactionTypes,
+              categories,
+            };
+          });
+
+          set({ transactionDatasets: datasets, editableTransaction }, false, "editTransaction");
         },
-        checkTransaction: (rowIndex: number, value: boolean) => {
-          set(
-            (prev) => ({
-              transactionDatasets: prev.transactionDatasets.map((data, dataIndex) => {
-                if (dataIndex !== rowIndex) return data;
+        cancelEditTransaction: (rowId: number) => {
+          const editableTransaction = get().editableTransaction;
 
-                return { ...data, checked: value };
-              }),
-            }),
-            false,
-            "checkTransaction",
-          );
+          const originDataset = editableTransaction[rowId];
+
+          if (!originDataset) return;
+
+          const datasets = get().transactionDatasets.map((dataset) => {
+            if (dataset.id !== rowId) return dataset;
+
+            delete editableTransaction[rowId];
+
+            return {
+              id: originDataset.id,
+              status: "done",
+              checked: originDataset.checked,
+              date: originDataset.date,
+              amount: originDataset.amount,
+              memo: originDataset.memo,
+
+              currency: originDataset.currency,
+              transactionType: originDataset.transactionType,
+              category: originDataset.category,
+            };
+          });
+
+          set({ transactionDatasets: datasets, editableTransaction }, false, "cancelEditTransaction");
         },
-        changeTransaction: (rowIndex: number, columnName: string, value: number | string) => {
-          set(
-            (prev) => ({
-              transactionDatasets: prev.transactionDatasets.map((data, dataIndex) => {
-                if (dataIndex !== rowIndex) return data;
+        checkTransaction: (rowId: number, value: boolean) => {
+          const datasets = get().transactionDatasets.map((dataset) => {
+            if (dataset.id !== rowId) return dataset;
 
-                if (columnName === "transactionType") {
-                  const transactionType = get().transactionTypes?.find(
-                    (transactionType) => transactionType.id.toString() === value.toString(),
-                  );
-                  const categories = get().categories.filter((category) => category.type_id === transactionType?.id);
+            return { ...dataset, checked: value };
+          });
 
-                  return { ...data, transactionType, category: undefined, categories };
-                } else if (columnName === "category") {
-                  const category = get().categories.find((category) => category.id.toString() === value.toString());
-
-                  return { ...data, category };
-                } else if (columnName === "currency") {
-                  const currency = get().currencies.find((currency) => currency.id.toString() === value.toString());
-
-                  return { ...data, currency };
-                }
-
-                return { ...data, [columnName]: value };
-              }),
-            }),
-            false,
-            "changeTransaction",
-          );
+          set({ transactionDatasets: datasets }, false, "checkTransaction");
         },
-        upsertTransaction: async (rowIndex: number) => {
+        changeTransaction: (rowId: number, columnName: string, value: number | string) => {
+          const currencies = useTransactionOptionStore.getState().currencies;
+          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+          const categories = useTransactionOptionStore.getState().categories;
+
+          const datasets = get().transactionDatasets.map((dataset) => {
+            if (dataset.id !== rowId) return dataset;
+
+            if (columnName === "transactionType") {
+              const transactionType = transactionTypes?.find((type) => type.id.toString() === value.toString());
+              const filteredCategories = categories.filter((category) => category.type_id === transactionType?.id);
+
+              return { ...dataset, transactionType, category: undefined, categories: filteredCategories };
+            } else if (columnName === "category") {
+              const category = categories.find((category) => category.id.toString() === value.toString());
+
+              return { ...dataset, category };
+            } else if (columnName === "currency") {
+              const currency = currencies.find((currency) => currency.id.toString() === value.toString());
+
+              return { ...dataset, currency };
+            }
+
+            return { ...dataset, [columnName]: value };
+          });
+
+          set({ transactionDatasets: datasets }, false, "changeTransaction");
+        },
+        upsertTransaction: async (rowId: number) => {
           try {
-            const transaction = get().transactionDatasets?.[rowIndex];
+            const transactionDatasets = get().transactionDatasets;
 
-            if (
-              !transaction ||
-              !transaction.date ||
-              !transaction.transactionType ||
-              !transaction.category ||
-              !transaction.currency
-            )
-              return;
+            const dataset = transactionDatasets.find((dataset) => dataset.id === rowId);
+
+            if (!dataset || !dataset.date || !dataset.transactionType || !dataset.category || !dataset.currency) return;
 
             const { data: newTransaction } = await supabase
               .from("transactions")
               .upsert({
-                id: transaction.status === "new" ? undefined : transaction.id,
-                date: transaction.date,
-                type_id: transaction.transactionType.id,
-                category_id: transaction.category.id,
-                currency_id: transaction.currency.id,
-                memo: transaction.memo,
-                amount: transaction.amount,
+                id: dataset.status === "new" ? undefined : dataset.id,
+                date: dataset.date,
+                type_id: dataset.transactionType.id,
+                category_id: dataset.category.id,
+                currency_id: dataset.currency.id,
+                memo: dataset.memo,
+                amount: dataset.amount,
               })
               .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)")
               .maybeSingle();
 
             if (!newTransaction) return;
 
-            set(
-              (prev) => ({
-                transactionDatasets: prev.transactionDatasets.map((data, index) => {
-                  if (rowIndex === index) {
-                    return {
-                      id: newTransaction.id,
-                      status: "done",
-                      checked: false,
-                      date: newTransaction.date,
-                      transactionType: newTransaction.transactionType,
-                      category: newTransaction.category,
-                      currency: newTransaction.currency,
-                      memo: newTransaction.memo,
-                      amount: newTransaction.amount,
-                    };
-                  }
+            const datasets = transactionDatasets.map((dataset) => {
+              if (dataset.id !== rowId) return dataset;
 
-                  return data;
-                }),
-              }),
-              false,
-              "upsertTransaction",
-            );
+              return {
+                id: newTransaction.id,
+                status: "done",
+                checked: false,
+                date: newTransaction.date,
+                transactionType: newTransaction.transactionType,
+                category: newTransaction.category,
+                currency: newTransaction.currency,
+                memo: newTransaction.memo,
+                amount: newTransaction.amount,
+              };
+            });
+
+            set({ transactionDatasets: datasets }, false, "upsertTransaction");
           } catch (error) {
             console.error(error);
           }
@@ -292,9 +258,6 @@ export const useTransactionStore = create<TransactionStore>()(
         name: "transaction-store",
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
-          currencies: state.currencies,
-          transactionTypes: state.transactionTypes,
-          categories: state.categories,
           transactionDatasets: state.transactionDatasets,
         }),
       },
