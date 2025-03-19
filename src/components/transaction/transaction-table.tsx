@@ -136,7 +136,7 @@ export const columns: ColumnDef<TransactionData>[] = [
     header: "Memo",
     size: 200,
     cell: ({ row, table }) => {
-      const memo = row.getValue<string | null>("memo");
+      const memo = row.getValue<Nullable<string>>("memo");
       const status = row.original.status;
 
       if (status === "new" || status === "edit") {
