@@ -4,7 +4,7 @@ import { GOAL_FILE_ROUTE } from "@/constants/route";
 
 const GoalPage = () => {
   return (
-    <div className="flex flex-col items-center justify-center gap-8 w-full h-full">
+    <div>
       <p>Goal Page</p>
     </div>
   );

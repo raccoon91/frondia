@@ -23,7 +23,9 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
 
         getCurrencies: async () => {
           try {
-            const { data } = await supabase.from("currencies").select("*");
+            const { data, error } = await supabase.from("currencies").select("*");
+
+            if (error) throw error;
 
             set({ currencies: data ?? [] }, false, "getCurrencies");
           } catch (error) {
@@ -32,7 +34,12 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
         },
         getTransactionTypes: async () => {
           try {
-            const { data } = await supabase.from("transaction_types").select("*");
+            const { data, error } = await supabase
+              .from("transaction_types")
+              .select("*")
+              .order("order", { ascending: true });
+
+            if (error) throw error;
 
             set({ transactionTypes: data ?? [] }, false, "getTransactionTypes");
           } catch (error) {
@@ -41,7 +48,9 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
         },
         getCategories: async () => {
           try {
-            const { data } = await supabase.from("categories").select("*");
+            const { data, error } = await supabase.from("categories").select("*").order("order", { ascending: true });
+
+            if (error) throw error;
 
             set({ categories: data ?? [] }, false, "getCategories");
           } catch (error) {

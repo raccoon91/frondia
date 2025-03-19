@@ -6,13 +6,14 @@ import { z } from "zod";
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { loginFormSchema } from "@/schema/auth.schema";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/lib/supabase/client";
+import { useAuthStore } from "@/stores/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -23,9 +24,9 @@ const LoginPage = () => {
   });
 
   const handleSubmitLogin = async (formdata: z.infer<typeof loginFormSchema>) => {
-    const { data } = await supabase.auth.signInWithPassword({ email: formdata.email, password: formdata.password });
+    const isSuccess = await login(formdata.email, formdata.password);
 
-    if (data.user) navigate({ to: ROUTE.HOME });
+    if (isSuccess) navigate({ to: ROUTE.HOME });
   };
 
   return (
