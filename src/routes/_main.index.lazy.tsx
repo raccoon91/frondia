@@ -3,7 +3,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 
 import { HOME_FILE_ROUTE } from "@/constants/route";
-import { generateDatabaseSeed } from "@/lib/supabase/seed";
+import { generateCurrency, generateTypeAndCategory } from "@/lib/supabase/seed";
 import { useHomeStore } from "@/stores/home.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +27,7 @@ const MainPage = () => {
           <CardTitle>Calendar</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Card Content</p>
+          <p>Calendar</p>
         </CardContent>
       </Card>
 
@@ -42,7 +42,7 @@ const MainPage = () => {
                 <p>{type.name}</p>
 
                 {Object.values(category).map(({ category, transaction }) => (
-                  <div key={category.id} className="flex justify-between">
+                  <div key={category.id} className="flex justify-between ml-4">
                     <p>{category.name}</p>
 
                     <div className="flex gap-2">
@@ -61,8 +61,13 @@ const MainPage = () => {
         <CardHeader>
           <CardTitle>Goals</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Button onClick={generateDatabaseSeed}>Generate Seed</Button>
+        <CardContent className="flex flex-col gap-4">
+          <Button size="sm" onClick={generateCurrency}>
+            Generate Currency
+          </Button>
+          <Button size="sm" onClick={generateTypeAndCategory}>
+            Generate Type and Category
+          </Button>
         </CardContent>
       </Card>
     </div>
