@@ -6,7 +6,7 @@ import { z } from "zod";
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { loginFormSchema } from "@/schema/auth.schema";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";

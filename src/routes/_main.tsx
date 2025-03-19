@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { MAIN_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { MainLayout } from "@/components/layouts/main-layout";
 
 export const Route = createFileRoute(MAIN_FILE_ROUTE)({
