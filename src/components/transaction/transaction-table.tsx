@@ -313,7 +313,7 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
 
   return (
     <div className="w-full h-full">
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-sm border">
         <Table>
           <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
