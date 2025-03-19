@@ -5,48 +5,48 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: hsl(206 0% 95%);
-  --foreground: hsl(206 0% 10%);
-  --card: hsl(206 0% 93%);
-  --card-foreground: hsl(206 0% 15%);
-  --popover: hsl(206 0% 95%);
-  --popover-foreground: hsl(206 95% 10%);
-  --primary: hsl(206 88% 58%);
+  --background: hsl(208 0% 95%);
+  --foreground: hsl(208 0% 10%);
+  --card: hsl(208 0% 94%);
+  --card-foreground: hsl(208 0% 15%);
+  --popover: hsl(208 0% 95%);
+  --popover-foreground: hsl(208 95% 10%);
+  --primary: hsl(208 88% 58%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(206 10% 90%);
+  --secondary: hsl(208 10% 90%);
   --secondary-foreground: hsl(0 0% 0%);
-  --muted: hsl(168 10% 93%);
-  --muted-foreground: hsl(206 0% 40%);
-  --accent: hsl(168 10% 90%);
-  --accent-foreground: hsl(206 0% 15%);
+  --muted: hsl(170 10% 94%);
+  --muted-foreground: hsl(208 0% 40%);
+  --accent: hsl(170 10% 90%);
+  --accent-foreground: hsl(208 0% 15%);
   --destructive: hsl(0 50% 50%);
-  --destructive-foreground: hsl(206 0% 93%);
-  --border: hsl(206 20% 82%);
-  --input: hsl(206 20% 50%);
-  --ring: hsl(206 88% 58%);
+  --destructive-foreground: hsl(208 0% 94%);
+  --border: hsl(208 20% 82%);
+  --input: hsl(208 20% 50%);
+  --ring: hsl(208 88% 58%);
   --radius: 0.5rem;
 }
 
 .dark {
-  --background: hsl(206 10% 10%);
-  --foreground: hsl(206 0% 93%);
-  --card: hsl(206 0% 10%);
-  --card-foreground: hsl(206 0% 93%);
-  --popover: hsl(206 10% 5%);
-  --popover-foreground: hsl(206 0% 93%);
-  --primary: hsl(206 88% 58%);
+  --background: hsl(208 10% 10%);
+  --foreground: hsl(208 0% 94%);
+  --card: hsl(208 0% 10%);
+  --card-foreground: hsl(208 0% 94%);
+  --popover: hsl(208 10% 5%);
+  --popover-foreground: hsl(208 0% 94%);
+  --primary: hsl(208 88% 58%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(206 10% 20%);
+  --secondary: hsl(208 10% 20%);
   --secondary-foreground: hsl(0 0% 100%);
-  --muted: hsl(168 10% 25%);
-  --muted-foreground: hsl(206 0% 65%);
-  --accent: hsl(168 10% 25%);
-  --accent-foreground: hsl(206 0% 93%);
+  --muted: hsl(170 10% 25%);
+  --muted-foreground: hsl(208 0% 65%);
+  --accent: hsl(170 10% 25%);
+  --accent-foreground: hsl(208 0% 94%);
   --destructive: hsl(0 50% 50%);
-  --destructive-foreground: hsl(206 0% 93%);
-  --border: hsl(206 20% 50%);
-  --input: hsl(206 20% 50%);
-  --ring: hsl(206 88% 58%);
+  --destructive-foreground: hsl(208 0% 94%);
+  --border: hsl(208 20% 50%);
+  --input: hsl(208 20% 50%);
+  --ring: hsl(208 88% 58%);
   --radius: 0.5rem;
 }
 
