@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-
-import { supabase } from "@/lib/supabase";
 import dayjs from "dayjs";
 
-interface TransactionState {
+import { supabase } from "@/lib/supabase";
+
+interface TransactionStore {
   currencies: Currency[];
   transactionTypes: TransactionType[];
   categories: Category[];
@@ -26,7 +26,7 @@ interface TransactionState {
   upsertTransaction: (rowIndex: number) => Promise<void>;
 }
 
-export const useTransactionStore = create<TransactionState>()(
+export const useTransactionStore = create<TransactionStore>()(
   devtools(
     persist(
       (set, get) => ({
