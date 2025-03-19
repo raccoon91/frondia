@@ -8,205 +8,236 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from "./routes/__root";
-import { Route as MainImport } from "./routes/_main";
-import { Route as AuthImport } from "./routes/_auth";
+import { Route as rootRoute } from './routes/__root'
+import { Route as MainImport } from './routes/_main'
+import { Route as AuthImport } from './routes/_auth'
 
 // Create Virtual Routes
 
-const MainIndexLazyImport = createFileRoute("/_main/")();
-const MainTransactionLazyImport = createFileRoute("/_main/transaction")();
-const MainReportLazyImport = createFileRoute("/_main/report")();
-const MainGoalLazyImport = createFileRoute("/_main/goal")();
-const AuthLoginLazyImport = createFileRoute("/_auth/login")();
+const MainIndexLazyImport = createFileRoute('/_main/')()
+const MainTransactionLazyImport = createFileRoute('/_main/transaction')()
+const MainSettingLazyImport = createFileRoute('/_main/setting')()
+const MainReportLazyImport = createFileRoute('/_main/report')()
+const MainGoalLazyImport = createFileRoute('/_main/goal')()
+const AuthLoginLazyImport = createFileRoute('/_auth/login')()
 
 // Create/Update Routes
 
 const MainRoute = MainImport.update({
-  id: "/_main",
+  id: '/_main',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const AuthRoute = AuthImport.update({
-  id: "/_auth",
+  id: '/_auth',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const MainIndexLazyRoute = MainIndexLazyImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => MainRoute,
-} as any).lazy(() => import("./routes/_main.index.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_main.index.lazy').then((d) => d.Route))
 
 const MainTransactionLazyRoute = MainTransactionLazyImport.update({
-  id: "/transaction",
-  path: "/transaction",
+  id: '/transaction',
+  path: '/transaction',
   getParentRoute: () => MainRoute,
-} as any).lazy(() => import("./routes/_main.transaction.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_main.transaction.lazy').then((d) => d.Route),
+)
+
+const MainSettingLazyRoute = MainSettingLazyImport.update({
+  id: '/setting',
+  path: '/setting',
+  getParentRoute: () => MainRoute,
+} as any).lazy(() => import('./routes/_main.setting.lazy').then((d) => d.Route))
 
 const MainReportLazyRoute = MainReportLazyImport.update({
-  id: "/report",
-  path: "/report",
+  id: '/report',
+  path: '/report',
   getParentRoute: () => MainRoute,
-} as any).lazy(() => import("./routes/_main.report.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_main.report.lazy').then((d) => d.Route))
 
 const MainGoalLazyRoute = MainGoalLazyImport.update({
-  id: "/goal",
-  path: "/goal",
+  id: '/goal',
+  path: '/goal',
   getParentRoute: () => MainRoute,
-} as any).lazy(() => import("./routes/_main.goal.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_main.goal.lazy').then((d) => d.Route))
 
 const AuthLoginLazyRoute = AuthLoginLazyImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => AuthRoute,
-} as any).lazy(() => import("./routes/_auth.login.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_auth.login.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/_auth": {
-      id: "/_auth";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof AuthImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/_main": {
-      id: "/_main";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof MainImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/_auth/login": {
-      id: "/_auth/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof AuthLoginLazyImport;
-      parentRoute: typeof AuthImport;
-    };
-    "/_main/goal": {
-      id: "/_main/goal";
-      path: "/goal";
-      fullPath: "/goal";
-      preLoaderRoute: typeof MainGoalLazyImport;
-      parentRoute: typeof MainImport;
-    };
-    "/_main/report": {
-      id: "/_main/report";
-      path: "/report";
-      fullPath: "/report";
-      preLoaderRoute: typeof MainReportLazyImport;
-      parentRoute: typeof MainImport;
-    };
-    "/_main/transaction": {
-      id: "/_main/transaction";
-      path: "/transaction";
-      fullPath: "/transaction";
-      preLoaderRoute: typeof MainTransactionLazyImport;
-      parentRoute: typeof MainImport;
-    };
-    "/_main/": {
-      id: "/_main/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof MainIndexLazyImport;
-      parentRoute: typeof MainImport;
-    };
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/_main': {
+      id: '/_main'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MainImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginLazyImport
+      parentRoute: typeof AuthImport
+    }
+    '/_main/goal': {
+      id: '/_main/goal'
+      path: '/goal'
+      fullPath: '/goal'
+      preLoaderRoute: typeof MainGoalLazyImport
+      parentRoute: typeof MainImport
+    }
+    '/_main/report': {
+      id: '/_main/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof MainReportLazyImport
+      parentRoute: typeof MainImport
+    }
+    '/_main/setting': {
+      id: '/_main/setting'
+      path: '/setting'
+      fullPath: '/setting'
+      preLoaderRoute: typeof MainSettingLazyImport
+      parentRoute: typeof MainImport
+    }
+    '/_main/transaction': {
+      id: '/_main/transaction'
+      path: '/transaction'
+      fullPath: '/transaction'
+      preLoaderRoute: typeof MainTransactionLazyImport
+      parentRoute: typeof MainImport
+    }
+    '/_main/': {
+      id: '/_main/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof MainIndexLazyImport
+      parentRoute: typeof MainImport
+    }
   }
 }
 
 // Create and export the route tree
 
 interface AuthRouteChildren {
-  AuthLoginLazyRoute: typeof AuthLoginLazyRoute;
+  AuthLoginLazyRoute: typeof AuthLoginLazyRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthLoginLazyRoute: AuthLoginLazyRoute,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainRouteChildren {
-  MainGoalLazyRoute: typeof MainGoalLazyRoute;
-  MainReportLazyRoute: typeof MainReportLazyRoute;
-  MainTransactionLazyRoute: typeof MainTransactionLazyRoute;
-  MainIndexLazyRoute: typeof MainIndexLazyRoute;
+  MainGoalLazyRoute: typeof MainGoalLazyRoute
+  MainReportLazyRoute: typeof MainReportLazyRoute
+  MainSettingLazyRoute: typeof MainSettingLazyRoute
+  MainTransactionLazyRoute: typeof MainTransactionLazyRoute
+  MainIndexLazyRoute: typeof MainIndexLazyRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainGoalLazyRoute: MainGoalLazyRoute,
   MainReportLazyRoute: MainReportLazyRoute,
+  MainSettingLazyRoute: MainSettingLazyRoute,
   MainTransactionLazyRoute: MainTransactionLazyRoute,
   MainIndexLazyRoute: MainIndexLazyRoute,
-};
+}
 
-const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren);
+const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 
 export interface FileRoutesByFullPath {
-  "": typeof MainRouteWithChildren;
-  "/login": typeof AuthLoginLazyRoute;
-  "/goal": typeof MainGoalLazyRoute;
-  "/report": typeof MainReportLazyRoute;
-  "/transaction": typeof MainTransactionLazyRoute;
-  "/": typeof MainIndexLazyRoute;
+  '': typeof MainRouteWithChildren
+  '/login': typeof AuthLoginLazyRoute
+  '/goal': typeof MainGoalLazyRoute
+  '/report': typeof MainReportLazyRoute
+  '/setting': typeof MainSettingLazyRoute
+  '/transaction': typeof MainTransactionLazyRoute
+  '/': typeof MainIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
-  "": typeof AuthRouteWithChildren;
-  "/login": typeof AuthLoginLazyRoute;
-  "/goal": typeof MainGoalLazyRoute;
-  "/report": typeof MainReportLazyRoute;
-  "/transaction": typeof MainTransactionLazyRoute;
-  "/": typeof MainIndexLazyRoute;
+  '': typeof AuthRouteWithChildren
+  '/login': typeof AuthLoginLazyRoute
+  '/goal': typeof MainGoalLazyRoute
+  '/report': typeof MainReportLazyRoute
+  '/setting': typeof MainSettingLazyRoute
+  '/transaction': typeof MainTransactionLazyRoute
+  '/': typeof MainIndexLazyRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  "/_auth": typeof AuthRouteWithChildren;
-  "/_main": typeof MainRouteWithChildren;
-  "/_auth/login": typeof AuthLoginLazyRoute;
-  "/_main/goal": typeof MainGoalLazyRoute;
-  "/_main/report": typeof MainReportLazyRoute;
-  "/_main/transaction": typeof MainTransactionLazyRoute;
-  "/_main/": typeof MainIndexLazyRoute;
+  __root__: typeof rootRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/_main': typeof MainRouteWithChildren
+  '/_auth/login': typeof AuthLoginLazyRoute
+  '/_main/goal': typeof MainGoalLazyRoute
+  '/_main/report': typeof MainReportLazyRoute
+  '/_main/setting': typeof MainSettingLazyRoute
+  '/_main/transaction': typeof MainTransactionLazyRoute
+  '/_main/': typeof MainIndexLazyRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "" | "/login" | "/goal" | "/report" | "/transaction" | "/";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "" | "/login" | "/goal" | "/report" | "/transaction" | "/";
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | ''
+    | '/login'
+    | '/goal'
+    | '/report'
+    | '/setting'
+    | '/transaction'
+    | '/'
+  fileRoutesByTo: FileRoutesByTo
+  to: '' | '/login' | '/goal' | '/report' | '/setting' | '/transaction' | '/'
   id:
-    | "__root__"
-    | "/_auth"
-    | "/_main"
-    | "/_auth/login"
-    | "/_main/goal"
-    | "/_main/report"
-    | "/_main/transaction"
-    | "/_main/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/_auth'
+    | '/_main'
+    | '/_auth/login'
+    | '/_main/goal'
+    | '/_main/report'
+    | '/_main/setting'
+    | '/_main/transaction'
+    | '/_main/'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren;
-  MainRoute: typeof MainRouteWithChildren;
+  AuthRoute: typeof AuthRouteWithChildren
+  MainRoute: typeof MainRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   MainRoute: MainRouteWithChildren,
-};
+}
 
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -229,6 +260,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "children": [
         "/_main/goal",
         "/_main/report",
+        "/_main/setting",
         "/_main/transaction",
         "/_main/"
       ]
@@ -243,6 +275,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/_main/report": {
       "filePath": "_main.report.lazy.tsx",
+      "parent": "/_main"
+    },
+    "/_main/setting": {
+      "filePath": "_main.setting.lazy.tsx",
       "parent": "/_main"
     },
     "/_main/transaction": {
