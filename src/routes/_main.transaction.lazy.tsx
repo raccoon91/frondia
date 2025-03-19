@@ -50,7 +50,7 @@ const TransactionPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 max-w-5xl mx-auto">
+    <div className="flex flex-col gap-4 mx-auto">
       <div className="flex justify-end gap-2">
         <Button size="sm" variant="outline" onClick={addTransaction}>
           Add
