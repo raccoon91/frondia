@@ -7,7 +7,9 @@ export const MainLayout = () => {
     <div className="overflow-hidden grid grid-cols-[48px_1fr] w-screen h-[100dvh]">
       <Sidebar />
 
-      <Outlet />
+      <div className="container mx-auto pt-32">
+        <Outlet />
+      </div>
     </div>
   );
 };

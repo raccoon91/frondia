@@ -11,6 +11,7 @@ interface TransactionType {
   user_id: string;
   name: string;
   created_at: string;
+  order: Nullable<number>;
 }
 
 interface Category {
@@ -19,6 +20,7 @@ interface Category {
   type_id: number;
   name: string;
   created_at: string;
+  order: Nullable<number>;
 }
 
 interface Transaction {
@@ -28,8 +30,8 @@ interface Transaction {
   type_id: number;
   category_id: number;
   amount: number;
-  date: string | null;
-  memo: string | null;
+  date: Nullable<string>;
+  memo: Nullable<string>;
   created_at: string;
   updated_at: string;
 
@@ -42,11 +44,11 @@ interface TransactionData {
   id: number;
   status: string;
   checked: boolean;
-  date: string | null;
+  date: Nullable<string>;
   transactionType?: TransactionType;
   category?: Category;
   currency?: Currency;
-  memo: string | null;
+  memo: Nullable<string>;
   amount: number;
 
   transactionTypes?: TransactionType[];
