@@ -98,7 +98,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="h-8 p-2 leading-4">{transactionType?.name}</p>;
+      return <p className="h-8 p-2 leading-4 truncate">{transactionType?.name}</p>;
     },
   },
   {
@@ -108,6 +108,7 @@ export const columns: ColumnDef<TransactionData>[] = [
     maxSize: 160,
     cell: ({ row, table }) => {
       const id = row.original.id;
+      const transactionType = row.original.transactionType;
       const categories = row.original.categories;
       const category = row.original.category;
       const status = row.original.status;
@@ -118,7 +119,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select defaultValue={`${category?.id}`} onValueChange={handleChange}>
+          <Select disabled={!transactionType} defaultValue={`${category?.id}`} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -134,7 +135,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         );
       }
 
-      return <p className="h-8 p-2 leading-4">{category?.name}</p>;
+      return <p className="h-8 p-2 leading-4 truncate">{category?.name}</p>;
     },
   },
   {
@@ -341,7 +342,15 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.original.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="p-1">
+                    <TableCell
+                      key={cell.id}
+                      className="p-1"
+                      style={{
+                        width: cell.column.columnDef.size,
+                        minWidth: cell.column.columnDef.minSize,
+                        maxWidth: cell.column.columnDef.maxSize,
+                      }}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}

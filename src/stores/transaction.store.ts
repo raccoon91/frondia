@@ -116,9 +116,10 @@ export const useTransactionStore = create<TransactionStore>()(
           const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
           const categories = useTransactionOptionStore.getState().categories;
 
+          const transactionDatasets = get().transactionDatasets;
           const editableTransaction = get().editableTransaction;
 
-          const datasets = get().transactionDatasets.map((dataset) => {
+          const datasets = transactionDatasets.map((dataset) => {
             if (dataset.id !== rowId) return dataset;
 
             editableTransaction[dataset.id] = dataset;
@@ -144,32 +145,44 @@ export const useTransactionStore = create<TransactionStore>()(
           set({ transactionDatasets: datasets, editableTransaction }, false, "editTransaction");
         },
         cancelEditTransaction: (rowId: number) => {
-          const editableTransaction = get().editableTransaction;
+          const transactionDatasets = get().transactionDatasets;
 
-          const originDataset = editableTransaction[rowId];
+          const targetDataset = transactionDatasets.find((dataset) => dataset.id === rowId);
 
-          if (!originDataset) return;
+          if (!targetDataset) return;
 
-          const datasets = get().transactionDatasets.map((dataset) => {
-            if (dataset.id !== rowId) return dataset;
+          if (targetDataset.status === "new") {
+            const filtered = transactionDatasets.filter((dataset) => dataset.id !== rowId);
 
-            delete editableTransaction[rowId];
+            set({ transactionDatasets: filtered }, false, "cancelEditTransaction");
+          } else {
+            const editableTransaction = get().editableTransaction;
 
-            return {
-              id: originDataset.id,
-              status: "done",
-              checked: originDataset.checked,
-              date: originDataset.date,
-              amount: originDataset.amount,
-              memo: originDataset.memo,
+            const originDataset = editableTransaction[rowId];
 
-              currency: originDataset.currency,
-              transactionType: originDataset.transactionType,
-              category: originDataset.category,
-            };
-          });
+            if (!originDataset) return;
 
-          set({ transactionDatasets: datasets, editableTransaction }, false, "cancelEditTransaction");
+            const datasets = transactionDatasets.map((dataset) => {
+              if (dataset.id !== rowId) return dataset;
+
+              delete editableTransaction[rowId];
+
+              return {
+                id: originDataset.id,
+                status: "done",
+                checked: originDataset.checked,
+                date: originDataset.date,
+                amount: originDataset.amount,
+                memo: originDataset.memo,
+
+                currency: originDataset.currency,
+                transactionType: originDataset.transactionType,
+                category: originDataset.category,
+              };
+            });
+
+            set({ transactionDatasets: datasets, editableTransaction }, false, "cancelEditTransaction");
+          }
         },
         checkTransaction: (rowId: number, value: boolean) => {
           const datasets = get().transactionDatasets.map((dataset) => {
