@@ -21,7 +21,7 @@ const MainPage = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-[1fr_2fr_1fr] items-start gap-6">
+    <div className="grid grid-cols-[1fr_2fr_1fr] items-start gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Calendar</CardTitle>

@@ -54,7 +54,7 @@ const SettingPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
