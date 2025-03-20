@@ -70,11 +70,11 @@ const SettingPage = () => {
             <CardTitle>Profile</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
-            <div className="flex">
+            <div className="flex text-sm">
               <p className="w-[100px]">Email</p>
               <p>{user?.email ?? "-"}</p>
             </div>
-            <div className="flex">
+            <div className="flex text-sm">
               <p className="w-[100px]">Register</p>
               <p>{user?.created_at ? dayjs(user.created_at).format("YYYY-MM-DD HH:mm") : null}</p>
             </div>
@@ -96,7 +96,7 @@ const SettingPage = () => {
           <CardContent className="flex flex-col gap-4">
             {typesAndCategories.map((type) => (
               <div key={type.id} className="flex flex-col gap-2">
-                <p>{type.name}</p>
+                <p className="text-sm font-bold">{type.name}</p>
 
                 {type.categories.length ? (
                   <div className="flex flex-wrap gap-2">
@@ -119,8 +119,8 @@ const SettingPage = () => {
           <CardContent className="flex flex-col gap-2">
             {currencies.map((currency) => (
               <div key={currency.id} className="flex justify-between">
-                <p>{`${currency.name} (${currency.symbol})`}</p>
-                <p>{currency.code}</p>
+                <p className="text-sm">{`${currency.name} (${currency.symbol})`}</p>
+                <p className="text-sm">{currency.code}</p>
               </div>
             ))}
           </CardContent>
