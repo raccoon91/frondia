@@ -39,7 +39,7 @@ export const useHomeStore = create<HomeStore>()(
             const statistics: Statistics = {};
 
             types?.forEach((type) => {
-              statistics[type.id] = { type, category: {} };
+              statistics[type.id] = { type, totalAmount: 0, totalCount: 0, category: {} };
             });
 
             categories?.forEach((category) => {
@@ -64,6 +64,9 @@ export const useHomeStore = create<HomeStore>()(
               const categoryId = transaction.category_id;
 
               if (!statistics?.[typeId]?.category?.[categoryId]?.transaction) return;
+
+              statistics[typeId].totalAmount += transaction.amount;
+              statistics[typeId].totalCount += 1;
 
               statistics[typeId].category[categoryId].transaction.amount += transaction.amount;
               statistics[typeId].category[categoryId].transaction.count += 1;

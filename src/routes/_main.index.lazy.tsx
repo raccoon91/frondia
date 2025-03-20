@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 
@@ -8,6 +8,7 @@ import { useHomeStore } from "@/stores/home.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
+import { Progress } from "@/components/ui/progress";
 
 const MainPage = () => {
   const { statistics, getStatistics } = useHomeStore(
@@ -28,24 +29,49 @@ const MainPage = () => {
           <CardTitle>Statistics</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-2">
-            {Object.values(statistics).map(({ type, category }) => (
-              <div key={type.id}>
-                <p>{type.name}</p>
+          <table className="-mt-4">
+            <tbody>
+              {Object.values(statistics)
+                .filter(({ totalCount }) => totalCount)
+                .map(({ type, totalAmount, category }) => (
+                  <Fragment key={type.id}>
+                    <tr>
+                      <td className="text-left pt-4">
+                        <p className="text-sm font-bold">{type.name}</p>
+                      </td>
+                      <td className="text-right pt-4">
+                        <p className="text-sm font-bold">{`Total : ${totalAmount.toLocaleString("en-US")}`}</p>
+                      </td>
+                      <td className="pt-4">
+                        <p className="text-sm font-bold text-right pl-4">count</p>
+                      </td>
+                    </tr>
 
-                {Object.values(category).map(({ category, transaction }) => (
-                  <div key={category.id} className="flex justify-between ml-4">
-                    <p>{category.name}</p>
+                    {Object.values(category)
+                      .filter(({ transaction }) => transaction.count)
+                      .map(({ category, transaction }) => (
+                        <tr key={category.id}>
+                          <td className="w-[1%] whitespace-nowrap pt-1">
+                            <p className="text-sm pl-6 pr-4">{category.name}</p>
+                          </td>
 
-                    <div className="flex gap-2">
-                      <p>{transaction.amount}</p>
-                      <p>{transaction.count}</p>
-                    </div>
-                  </div>
+                          <td className="relative pt-1">
+                            <Progress value={(transaction.amount / totalAmount) * 100} />
+
+                            <div className="absolute top-1 right-0">
+                              <p className="text-sm">{transaction.amount.toLocaleString("en-US")}</p>
+                            </div>
+                          </td>
+
+                          <td className="w-[1%] whitespace-nowrap pt-1">
+                            <p className="text-sm text-right pl-4">{transaction.count.toLocaleString("en-US")}</p>
+                          </td>
+                        </tr>
+                      ))}
+                  </Fragment>
                 ))}
-              </div>
-            ))}
-          </div>
+            </tbody>
+          </table>
         </CardContent>
       </Card>
 

@@ -1,6 +1,8 @@
-type StatisticsTransaction = {
-  amount: number;
-  count: number;
+type StatisticsType = {
+  type: TransactionType;
+  totalAmount: number;
+  totalCount: number;
+  category: Record<number, StatisticsCategory>;
 };
 
 type StatisticsCategory = {
@@ -8,9 +10,9 @@ type StatisticsCategory = {
   transaction: StatisticsTransaction;
 };
 
-type StatisticsType = {
-  type: TransactionType;
-  category: Record<number, StatisticsCategory>;
+type StatisticsTransaction = {
+  amount: number;
+  count: number;
 };
 
 type Statistics = Record<number, StatisticsType>;
