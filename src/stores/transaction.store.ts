@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { TRANSACTION_STATUS } from "@/constants/status";
 import { supabase } from "@/lib/supabase/client";
 import { useTransactionOptionStore } from "./transaction-option.store";
+import { useLocalStore } from "./local.store";
 
 interface TransactionStore {
   transactionDatasets: TransactionData[];
@@ -64,9 +65,9 @@ export const useTransactionStore = create<TransactionStore>()(
                 memo: transaction.memo,
                 amount: transaction.amount,
 
-                currency: transaction.currency,
                 transactionType: transaction.transactionType,
                 category: transaction.category,
+                currency: transaction.currency,
               })) ?? [];
 
             set({ transactionDatasets: datasets }, false, "getTransactions");
@@ -78,7 +79,14 @@ export const useTransactionStore = create<TransactionStore>()(
         addTransaction: () => {
           const currencies = useTransactionOptionStore.getState().currencies;
           const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
-          const categories = useTransactionOptionStore.getState().categories;
+          let categories = useTransactionOptionStore.getState().categories;
+
+          const localTransactionType = useLocalStore.getState().localTransactionType;
+          const localCurrency = useLocalStore.getState().localCurrency;
+
+          if (localTransactionType) {
+            categories = categories.filter((category) => category.type_id === localTransactionType.id);
+          }
 
           const datasets = [
             {
@@ -89,13 +97,13 @@ export const useTransactionStore = create<TransactionStore>()(
               amount: 0,
               memo: null,
 
-              currency: undefined,
-              transactionType: undefined,
+              transactionType: localTransactionType,
               category: undefined,
+              currency: localCurrency,
 
-              currencies,
               transactionTypes,
               categories,
+              currencies,
             },
             ...(get().transactionDatasets ?? []),
           ];
@@ -152,13 +160,13 @@ export const useTransactionStore = create<TransactionStore>()(
               amount: dataset.amount,
               memo: dataset.memo,
 
-              currency: dataset.currency,
               transactionType: dataset.transactionType,
               category: dataset.category,
+              currency: dataset.currency,
 
-              currencies,
               transactionTypes,
               categories,
+              currencies,
             };
           });
 
@@ -195,9 +203,9 @@ export const useTransactionStore = create<TransactionStore>()(
                 amount: originDataset.amount,
                 memo: originDataset.memo,
 
-                currency: originDataset.currency,
                 transactionType: originDataset.transactionType,
                 category: originDataset.category,
+                currency: originDataset.currency,
               };
             });
 
@@ -265,6 +273,11 @@ export const useTransactionStore = create<TransactionStore>()(
 
             if (!newTransaction) return;
 
+            useLocalStore.getState().setLocalStore({
+              localTransactionType: newTransaction.transactionType,
+              localCurrency: newTransaction.currency,
+            });
+
             const datasets = transactionDatasets.map((dataset) => {
               if (dataset.id !== rowId) return dataset;
 
@@ -273,11 +286,12 @@ export const useTransactionStore = create<TransactionStore>()(
                 status: TRANSACTION_STATUS.DONE,
                 checked: false,
                 date: dayjs(newTransaction.date).format("YYYY-MM-DD HH:mm"),
+                memo: newTransaction.memo,
+                amount: newTransaction.amount,
+
                 transactionType: newTransaction.transactionType,
                 category: newTransaction.category,
                 currency: newTransaction.currency,
-                memo: newTransaction.memo,
-                amount: newTransaction.amount,
               };
             });
 

@@ -219,7 +219,7 @@ export const columns: ColumnDef<TransactionData>[] = [
           <input
             type="number"
             className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
-            defaultValue={amount}
+            defaultValue={amount || ""}
             onChange={handleChange}
           />
         );
@@ -227,7 +227,7 @@ export const columns: ColumnDef<TransactionData>[] = [
 
       if (!currency) return <p className="h-8 p-2 leading-4">{amount}</p>;
 
-      return <p className="h-8 p-2 leading-4">{`${amount} ${currency?.symbol}`}</p>;
+      return <p className="h-8 p-2 leading-4">{`${amount.toLocaleString("en-US")} ${currency?.symbol}`}</p>;
     },
   },
   {

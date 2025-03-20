@@ -20,11 +20,12 @@ interface TransactionData {
   status: string;
   checked: boolean;
   date: Nullable<string>;
-  transactionType?: TransactionType;
-  category?: Category;
-  currency?: Currency;
   memo: Nullable<string>;
   amount: number;
+
+  transactionType?: Nullable<TransactionType>;
+  category?: Category;
+  currency?: Nullable<Currency>;
 
   transactionTypes?: TransactionType[];
   categories?: Category[];
