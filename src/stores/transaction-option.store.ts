@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
+import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
 
 interface TransactionOptionStore {
@@ -81,7 +82,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
         },
       }),
       {
-        name: "transaction-option-store",
+        name: STORE_NAME.TRANSACTION_OPTION,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
           currencies: state.currencies,

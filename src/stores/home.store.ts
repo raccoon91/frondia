@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
+import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
 
 interface HomeStore {
@@ -75,7 +76,7 @@ export const useHomeStore = create<HomeStore>()(
         },
       }),
       {
-        name: "home-store",
+        name: STORE_NAME.HOME,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
           statistics: state.statistics,

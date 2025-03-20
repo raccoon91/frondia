@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+import { STORE_NAME } from "@/constants/store";
+
 interface LocalStore {
   localTransactionType: Nullable<TransactionType>;
   localCurrency: Nullable<Currency>;
@@ -29,7 +31,7 @@ export const useLocalStore = create<LocalStore>()(
         },
       }),
       {
-        name: "local-store",
+        name: STORE_NAME.LOCAL,
         partialize: (state) => ({
           localTransactionType: state.localTransactionType,
           localCurrency: state.localCurrency,

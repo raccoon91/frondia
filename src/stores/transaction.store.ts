@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
+import { STORE_NAME } from "@/constants/store";
 import { TRANSACTION_STATUS } from "@/constants/status";
 import { supabase } from "@/lib/supabase/client";
 import { useTransactionOptionStore } from "./transaction-option.store";
@@ -302,7 +303,7 @@ export const useTransactionStore = create<TransactionStore>()(
         },
       }),
       {
-        name: "transaction-store",
+        name: STORE_NAME.TRANSACTION,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
           transactionDatasets: state.transactionDatasets,
