@@ -87,7 +87,7 @@ export const columns: ColumnDef<TransactionData>[] = [
               <SelectValue placeholder="Transaction Type" />
             </SelectTrigger>
 
-            <SelectContent>
+            <SelectContent className="max-h-[240px]">
               {transactionTypes?.map((transactionType) => (
                 <SelectItem key={transactionType.id} value={`${transactionType.id}`}>
                   {transactionType.name}
@@ -124,7 +124,7 @@ export const columns: ColumnDef<TransactionData>[] = [
               <SelectValue placeholder="Category" />
             </SelectTrigger>
 
-            <SelectContent>
+            <SelectContent className="max-h-[240px]">
               {categories?.map((category) => (
                 <SelectItem key={category.id} value={`${category.id}`}>
                   {category.name}
@@ -185,7 +185,7 @@ export const columns: ColumnDef<TransactionData>[] = [
               <SelectValue placeholder="Currency" />
             </SelectTrigger>
 
-            <SelectContent>
+            <SelectContent className="max-h-[240px]">
               {currencies?.map((currency) => (
                 <SelectItem key={currency.id} value={`${currency.id}`}>
                   {currency.code}
