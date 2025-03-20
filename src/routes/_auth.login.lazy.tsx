@@ -31,6 +31,10 @@ const LoginPage = () => {
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="relative hidden lg:flex lg:items-center lg:justify-center bg-muted ">
+        <img src="/images/snowball.png" alt="snowball image" className="max-w-2xs opacity-50" />
+      </div>
+
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
@@ -77,18 +81,13 @@ const LoginPage = () => {
                 </div>
 
                 <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <a href="#" className="underline underline-offset-4">
-                    Sign up
-                  </a>
+                  Don&apos;t have an account? <p className="inline-block underline underline-offset-4">Sign up</p>
                 </div>
               </form>
             </Form>
           </div>
         </div>
       </div>
-
-      <div className="relative hidden bg-muted lg:block"></div>
     </div>
   );
 };
