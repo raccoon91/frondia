@@ -64,7 +64,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
           const datasets = [
             {
-              id: dayjs().unix(),
+              id: dayjs().valueOf(),
               status: "new",
               checked: false,
               date: dayjs().format("YYYY-MM-DD HH:mm"),
