@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
 
 const SettingPage = () => {
   const navigate = useNavigate();
@@ -54,55 +55,61 @@ const SettingPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Button variant="outline" onClick={handleLogout}>
-            <p className="font-bold">Logout</p>
-            <LogOut size={20} />
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Transaction Types And Categories</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          {typesAndCategories.map((type) => (
-            <div key={type.id}>
-              <p>{type.name}</p>
-
-              {type.categories.length ? (
-                <div className="flex flex-wrap gap-2">
-                  {type.categories.map((category) => (
-                    <div key={category.id} className="ml-4">
-                      <p>{category.name}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={handleLogout}>
+                <p className="font-bold">Logout</p>
+                <LogOut size={20} />
+              </Button>
             </div>
-          ))}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Currencies</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          {currencies.map((currency) => (
-            <div key={currency.id} className="flex justify-between">
-              <p>{`${currency.name} (${currency.symbol})`}</p>
-              <p>{currency.code}</p>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-2 gap-4 items-start">
+        <Card>
+          <CardHeader>
+            <CardTitle>Transaction Types And Categories</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {typesAndCategories.map((type) => (
+              <div key={type.id} className="flex flex-col gap-2">
+                <p>{type.name}</p>
+
+                {type.categories.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {type.categories.map((category) => (
+                      <Badge key={category.id} variant="secondary">
+                        {category.name}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Currencies</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            {currencies.map((currency) => (
+              <div key={currency.id} className="flex justify-between">
+                <p>{`${currency.name} (${currency.symbol})`}</p>
+                <p>{currency.code}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
