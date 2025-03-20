@@ -5,6 +5,7 @@ import { Edit, Save, X } from "lucide-react";
 import { TRANSACTION_STATUS } from "@/constants/status";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -42,25 +43,19 @@ export const columns: ColumnDef<TransactionData>[] = [
   {
     accessorKey: "date",
     header: "Date",
-    minSize: 160,
-    maxSize: 160,
+    minSize: 180,
+    maxSize: 180,
     cell: ({ row, table }) => {
       const id = row.original.id;
       const date = row.original.date ?? "";
       const status = row.original.status;
 
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(id, "date", e.target.value);
-        };
+      const handleChange = (date: Nullable<string>) => {
+        table.options.meta?.changeInput(id, "date", date ?? "");
+      };
 
-        return (
-          <input
-            className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
-            defaultValue={date}
-            onChange={handleChange}
-          />
-        );
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
+        return <DateTimePicker defaultValue={date} onValueChange={handleChange} />;
       }
 
       return <p className="h-8 p-2 leading-4">{date}</p>;
@@ -77,15 +72,15 @@ export const columns: ColumnDef<TransactionData>[] = [
       const transactionType = row.original.transactionType;
       const status = row.original.status;
 
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        const handleChange = (value: string) => {
-          table.options.meta?.changeInput(id, "transactionType", value);
-        };
+      const handleChange = (value: string) => {
+        table.options.meta?.changeInput(id, "transactionType", value);
+      };
 
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         return (
           <Select defaultValue={transactionType ? `${transactionType?.id}` : undefined} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-              <SelectValue placeholder="Transaction Type" />
+              <SelectValue placeholder="Type" />
             </SelectTrigger>
 
             <SelectContent className="max-h-[240px]">
@@ -114,11 +109,11 @@ export const columns: ColumnDef<TransactionData>[] = [
       const category = row.original.category;
       const status = row.original.status;
 
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        const handleChange = (value: string) => {
-          table.options.meta?.changeInput(id, "category", value);
-        };
+      const handleChange = (value: string) => {
+        table.options.meta?.changeInput(id, "category", value);
+      };
 
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         return (
           <Select
             disabled={!transactionType}
@@ -151,11 +146,11 @@ export const columns: ColumnDef<TransactionData>[] = [
       const memo = row.original.memo;
       const status = row.original.status;
 
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(id, "memo", e.target.value);
-        };
+      const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        table.options.meta?.changeInput(id, "memo", e.target.value);
+      };
 
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         return (
           <input
             className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
@@ -179,11 +174,11 @@ export const columns: ColumnDef<TransactionData>[] = [
       const currency = row.original.currency;
       const status = row.original.status;
 
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        const handleChange = (value: string) => {
-          table.options.meta?.changeInput(id, "currency", value);
-        };
+      const handleChange = (value: string) => {
+        table.options.meta?.changeInput(id, "currency", value);
+      };
 
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         return (
           <Select defaultValue={currency ? `${currency?.id}` : undefined} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
@@ -215,11 +210,11 @@ export const columns: ColumnDef<TransactionData>[] = [
       const currency = row.original.currency;
       const status = row.original.status;
 
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-          table.options.meta?.changeInput(id, "amount", e.target.value);
-        };
+      const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        table.options.meta?.changeInput(id, "amount", e.target.value);
+      };
 
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         return (
           <input
             type="number"

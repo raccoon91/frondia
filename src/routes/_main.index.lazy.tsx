@@ -7,6 +7,7 @@ import { generateCurrency, generateTypeAndCategory } from "@/lib/supabase/seed";
 import { useHomeStore } from "@/stores/home.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
 
 const MainPage = () => {
   const { statistics, getStatistics } = useHomeStore(
@@ -21,16 +22,7 @@ const MainPage = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-[1fr_2fr_1fr] items-start gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Calendar</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Calendar</p>
-        </CardContent>
-      </Card>
-
+    <div className="grid grid-cols-[1fr_272px] items-start gap-8">
       <Card>
         <CardHeader>
           <CardTitle>Statistics</CardTitle>
@@ -57,19 +49,30 @@ const MainPage = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Goals</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Button size="sm" onClick={generateCurrency}>
-            Generate Currency
-          </Button>
-          <Button size="sm" onClick={generateTypeAndCategory}>
-            Generate Type and Category
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Calendar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Calendar components={{ Caption: () => null }} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Goals</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <Button size="sm" variant="outline" onClick={generateCurrency}>
+              Generate Currency
+            </Button>
+            <Button size="sm" variant="outline" onClick={generateTypeAndCategory}>
+              Generate Type and Category
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

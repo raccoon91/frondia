@@ -272,7 +272,7 @@ export const useTransactionStore = create<TransactionStore>()(
                 id: newTransaction.id,
                 status: TRANSACTION_STATUS.DONE,
                 checked: false,
-                date: newTransaction.date,
+                date: dayjs(newTransaction.date).format("YYYY-MM-DD HH:mm"),
                 transactionType: newTransaction.transactionType,
                 category: newTransaction.category,
                 currency: newTransaction.currency,
