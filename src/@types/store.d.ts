@@ -14,3 +14,19 @@ type StatisticsType = {
 };
 
 type Statistics = Record<number, StatisticsType>;
+
+interface TransactionData {
+  id: number;
+  status: string;
+  checked: boolean;
+  date: Nullable<string>;
+  transactionType?: TransactionType;
+  category?: Category;
+  currency?: Currency;
+  memo: Nullable<string>;
+  amount: number;
+
+  transactionTypes?: TransactionType[];
+  categories?: Category[];
+  currencies?: Currency[];
+}

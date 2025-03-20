@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
+import { TRANSACTION_STATUS } from "@/constants/status";
 import { supabase } from "@/lib/supabase/client";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
@@ -57,7 +58,7 @@ export const useTransactionStore = create<TransactionStore>()(
             const datasets =
               data?.map((transaction) => ({
                 id: transaction.id,
-                status: "done",
+                status: TRANSACTION_STATUS.DONE,
                 checked: false,
                 date: transaction.date ? dayjs(transaction.date).format("YYYY-MM-DD HH:mm") : "",
                 memo: transaction.memo,
@@ -82,7 +83,7 @@ export const useTransactionStore = create<TransactionStore>()(
           const datasets = [
             {
               id: dayjs().valueOf(),
-              status: "new",
+              status: TRANSACTION_STATUS.NEW,
               checked: false,
               date: dayjs().format("YYYY-MM-DD HH:mm"),
               amount: 0,
@@ -107,7 +108,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
             const { filtered, deleteIds } = datasets.reduce<{ filtered: TransactionData[]; deleteIds: number[] }>(
               (acc, cur) => {
-                if (cur.status === "new" && cur.checked) return acc;
+                if (cur.status === TRANSACTION_STATUS.NEW && cur.checked) return acc;
 
                 if (cur.checked) {
                   acc.deleteIds.push(cur.id);
@@ -145,7 +146,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
             return {
               id: dataset.id,
-              status: "edit",
+              status: TRANSACTION_STATUS.EDIT,
               checked: dataset.checked,
               date: dataset.date,
               amount: dataset.amount,
@@ -170,7 +171,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
           if (!targetDataset) return;
 
-          if (targetDataset.status === "new") {
+          if (targetDataset.status === TRANSACTION_STATUS.NEW) {
             const filtered = transactionDatasets.filter((dataset) => dataset.id !== rowId);
 
             set({ transactionDatasets: filtered }, false, "cancelEditTransaction");
@@ -188,7 +189,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
               return {
                 id: originDataset.id,
-                status: "done",
+                status: TRANSACTION_STATUS.DONE,
                 checked: originDataset.checked,
                 date: originDataset.date,
                 amount: originDataset.amount,
@@ -251,7 +252,7 @@ export const useTransactionStore = create<TransactionStore>()(
             const { data: newTransaction } = await supabase
               .from("transactions")
               .upsert({
-                id: dataset.status === "new" ? undefined : dataset.id,
+                id: dataset.status === TRANSACTION_STATUS.NEW ? undefined : dataset.id,
                 date: dataset.date,
                 type_id: dataset.transactionType.id,
                 category_id: dataset.category.id,
@@ -269,7 +270,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
               return {
                 id: newTransaction.id,
-                status: "done",
+                status: TRANSACTION_STATUS.DONE,
                 checked: false,
                 date: newTransaction.date,
                 transactionType: newTransaction.transactionType,

@@ -2,6 +2,7 @@ import { ChangeEvent, FC } from "react";
 import { ColumnDef, flexRender, getCoreRowModel, RowData, useReactTable } from "@tanstack/react-table";
 import { Edit, Save, X } from "lucide-react";
 
+import { TRANSACTION_STATUS } from "@/constants/status";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -48,7 +49,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const date = row.original.date ?? "";
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
           table.options.meta?.changeInput(id, "date", e.target.value);
         };
@@ -76,7 +77,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const transactionType = row.original.transactionType;
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         const handleChange = (value: string) => {
           table.options.meta?.changeInput(id, "transactionType", value);
         };
@@ -113,7 +114,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const category = row.original.category;
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         const handleChange = (value: string) => {
           table.options.meta?.changeInput(id, "category", value);
         };
@@ -150,7 +151,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const memo = row.original.memo;
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
           table.options.meta?.changeInput(id, "memo", e.target.value);
         };
@@ -178,7 +179,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const currency = row.original.currency;
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         const handleChange = (value: string) => {
           table.options.meta?.changeInput(id, "currency", value);
         };
@@ -214,7 +215,7 @@ export const columns: ColumnDef<TransactionData>[] = [
       const currency = row.original.currency;
       const status = row.original.status;
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
           table.options.meta?.changeInput(id, "amount", e.target.value);
         };
@@ -254,7 +255,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         table.options.meta?.clickSave(id);
       };
 
-      if (status === "new" || status === "edit") {
+      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
         return (
           <div className="flex justify-end gap-1">
             <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickSave}>
