@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-import { supabase } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 
+import { supabase } from "@/lib/supabase/client";
+
 interface AuthStore {
-  user: User | null;
+  user: Nullable<User>;
 
   getUser: () => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
