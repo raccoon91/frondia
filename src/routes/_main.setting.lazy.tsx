@@ -9,10 +9,17 @@ import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
+import dayjs from "dayjs";
 
 const SettingPage = () => {
   const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.logout);
+  const { user, getUser, logout } = useAuthStore(
+    useShallow((state) => ({
+      user: state.user,
+      getUser: state.getUser,
+      logout: state.logout,
+    })),
+  );
   const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
     useTransactionOptionStore(
       useShallow((state) => ({
@@ -43,6 +50,7 @@ const SettingPage = () => {
   }, [transactionTypes, categories]);
 
   useEffect(() => {
+    getUser();
     getCurrencies();
     getTransactionTypes();
     getCategories();
@@ -61,9 +69,17 @@ const SettingPage = () => {
           <CardHeader>
             <CardTitle>Profile</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-2">
+            <div className="flex">
+              <p className="w-[100px]">Email</p>
+              <p>{user?.email ?? "-"}</p>
+            </div>
+            <div className="flex">
+              <p className="w-[100px]">Register</p>
+              <p>{user?.created_at ? dayjs(user.created_at).format("YYYY-MM-DD HH:mm") : null}</p>
+            </div>
             <div className="flex justify-end">
-              <Button variant="outline" onClick={handleLogout}>
+              <Button size="sm" variant="outline" onClick={handleLogout}>
                 <p className="font-bold">Logout</p>
                 <LogOut size={20} />
               </Button>
