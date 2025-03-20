@@ -30,10 +30,27 @@ export const useTransactionStore = create<TransactionStore>()(
 
         getTransactions: async () => {
           try {
-            const { data, error } = await supabase
+            const selectedTransactionTypeId = useTransactionOptionStore.getState().selectedTransactionTypeId;
+            const selectedCategoryId = useTransactionOptionStore.getState().selectedCategoryId;
+            const selectedCurrencyId = useTransactionOptionStore.getState().selectedCurrencyId;
+
+            let builder = supabase
               .from("transactions")
-              .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)")
-              .order("date", { ascending: false });
+              .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)");
+
+            if (selectedTransactionTypeId) {
+              builder = builder.eq("type_id", Number(selectedTransactionTypeId));
+            }
+
+            if (selectedCategoryId) {
+              builder = builder.eq("category_id", Number(selectedCategoryId));
+            }
+
+            if (selectedCurrencyId) {
+              builder = builder.eq("currency_id", Number(selectedCurrencyId));
+            }
+
+            const { data, error } = await builder.order("date", { ascending: false });
 
             if (error) throw error;
 

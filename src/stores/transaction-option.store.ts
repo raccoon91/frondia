@@ -4,9 +4,17 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { supabase } from "@/lib/supabase/client";
 
 interface TransactionOptionStore {
+  selectedCurrencyId: string;
+  selectedTransactionTypeId: string;
+  selectedCategoryId: string;
+
   currencies: Currency[];
   transactionTypes: TransactionType[];
   categories: Category[];
+
+  changeCurrency: (currencyId: string) => void;
+  changeTransactionType: (transactionTypeId: string) => void;
+  changeCategory: (categoryId: string) => void;
 
   getCurrencies: () => Promise<void>;
   getTransactionTypes: () => Promise<void>;
@@ -17,9 +25,23 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
   devtools(
     persist(
       (set) => ({
+        selectedCurrencyId: "",
+        selectedTransactionTypeId: "",
+        selectedCategoryId: "",
+
         currencies: [],
         transactionTypes: [],
         categories: [],
+
+        changeCurrency: (currencyId: string) => {
+          set({ selectedCurrencyId: currencyId });
+        },
+        changeTransactionType: (transactionTypeId: string) => {
+          set({ selectedTransactionTypeId: transactionTypeId });
+        },
+        changeCategory: (categoryId: string) => {
+          set({ selectedCategoryId: categoryId });
+        },
 
         getCurrencies: async () => {
           try {

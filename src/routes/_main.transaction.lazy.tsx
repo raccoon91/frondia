@@ -1,44 +1,63 @@
-import { useCallback, useEffect } from "react";
+import { MouseEvent, useCallback, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 
 import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { useTransactionStore } from "@/stores/transaction.store";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { TransactionTable } from "@/components/transaction/transaction-table";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const TransactionPage = () => {
-  const { getCurrencies, getTransactionTypes, getCategories } = useTransactionOptionStore(
+  const {
+    selectedTransactionTypeId,
+    selectedCategoryId,
+    selectedCurrencyId,
+    changeTransactionType,
+    changeCategory,
+    changeCurrency,
+  } = useTransactionOptionStore(
     useShallow((state) => ({
-      getCurrencies: state.getCurrencies,
-      getTransactionTypes: state.getTransactionTypes,
-      getCategories: state.getCategories,
+      selectedTransactionTypeId: state.selectedTransactionTypeId,
+      selectedCategoryId: state.selectedCategoryId,
+      selectedCurrencyId: state.selectedCurrencyId,
+      changeTransactionType: state.changeTransactionType,
+      changeCategory: state.changeCategory,
+      changeCurrency: state.changeCurrency,
     })),
   );
-  const {
-    transactionDatasets,
-    getTransactions,
-    addTransaction,
-    deleteTransaction,
-    editTransaction,
-    cancelEditTransaction,
-    checkTransaction,
-    changeTransaction,
-    upsertTransaction,
-  } = useTransactionStore(
+  const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
+    useTransactionOptionStore(
+      useShallow((state) => ({
+        currencies: state.currencies,
+        transactionTypes: state.transactionTypes,
+        categories: state.categories,
+        getCurrencies: state.getCurrencies,
+        getTransactionTypes: state.getTransactionTypes,
+        getCategories: state.getCategories,
+      })),
+    );
+  const { transactionDatasets, getTransactions, addTransaction, deleteTransaction } = useTransactionStore(
     useShallow((state) => ({
       transactionDatasets: state.transactionDatasets,
       getTransactions: state.getTransactions,
       addTransaction: state.addTransaction,
       deleteTransaction: state.deleteTransaction,
-      editTransaction: state.editTransaction,
-      cancelEditTransaction: state.cancelEditTransaction,
-      checkTransaction: state.checkTransaction,
-      changeTransaction: state.changeTransaction,
-      upsertTransaction: state.upsertTransaction,
     })),
   );
+  const { editTransaction, cancelEditTransaction, checkTransaction, changeTransaction, upsertTransaction } =
+    useTransactionStore(
+      useShallow((state) => ({
+        editTransaction: state.editTransaction,
+        cancelEditTransaction: state.cancelEditTransaction,
+        checkTransaction: state.checkTransaction,
+        changeTransaction: state.changeTransaction,
+        upsertTransaction: state.upsertTransaction,
+      })),
+    );
 
   const getData = useCallback(async () => {
     await Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
@@ -49,16 +68,148 @@ const TransactionPage = () => {
     getData();
   }, []);
 
-  return (
-    <div className="flex flex-col gap-4 mx-auto">
-      <div className="flex justify-end gap-2">
-        <Button size="sm" variant="outline" onClick={addTransaction}>
-          Add
-        </Button>
+  const handleChangeTransactionType = (transactionTypeId: string) => {
+    changeTransactionType(transactionTypeId);
+  };
 
-        <Button size="sm" variant="outline" onClick={deleteTransaction}>
-          Delete
-        </Button>
+  const handleClearTransactionType = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
+    changeTransactionType("");
+  };
+
+  const handleChangeCategory = (cateogryId: string) => {
+    changeCategory(cateogryId);
+  };
+
+  const handleClearCategory = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
+    changeCategory("");
+  };
+
+  const handleChangeCurrency = (currencyId: string) => {
+    changeCurrency(currencyId);
+  };
+
+  const handleClearCurrency = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
+    changeCurrency("");
+  };
+
+  const handleReloadTransaction = () => {
+    getTransactions();
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between">
+        <div className="flex gap-2">
+          <div className="w-[160px]">
+            <Select value={selectedTransactionTypeId} onValueChange={handleChangeTransactionType}>
+              <div className="relative">
+                <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
+                  <SelectValue placeholder="Transaction Type" />
+                </SelectTrigger>
+
+                {selectedTransactionTypeId ? (
+                  <div
+                    className={cn(
+                      buttonVariants({ variant: "ghost" }),
+                      "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
+                    )}
+                    onClick={handleClearTransactionType}
+                  >
+                    <X />
+                  </div>
+                ) : null}
+              </div>
+
+              <SelectContent className="max-h-[240px]">
+                {transactionTypes?.map((type) => (
+                  <SelectItem key={type.id} value={`${type.id}`}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-[160px]">
+            <Select value={selectedCategoryId} onValueChange={handleChangeCategory}>
+              <div className="relative">
+                <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+
+                {selectedCategoryId ? (
+                  <div
+                    className={cn(
+                      buttonVariants({ variant: "ghost" }),
+                      "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
+                    )}
+                    onClick={handleClearCategory}
+                  >
+                    <X />
+                  </div>
+                ) : null}
+              </div>
+
+              <SelectContent className="max-h-[240px]">
+                {categories?.map((category) => (
+                  <SelectItem key={category.id} value={`${category.id}`}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-[120px]">
+            <Select value={selectedCurrencyId} onValueChange={handleChangeCurrency}>
+              <div className="relative">
+                <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+
+                {selectedCurrencyId ? (
+                  <div
+                    className={cn(
+                      buttonVariants({ variant: "ghost" }),
+                      "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
+                    )}
+                    onClick={handleClearCurrency}
+                  >
+                    <X />
+                  </div>
+                ) : null}
+              </div>
+
+              <SelectContent className="max-h-[240px]">
+                {currencies?.map((currency) => (
+                  <SelectItem key={currency.id} value={`${currency.id}`}>
+                    {currency.code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button size="sm" variant="outline" className="rounded-sm" onClick={handleReloadTransaction}>
+            <Search />
+          </Button>
+        </div>
+
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={addTransaction}>
+            Add
+          </Button>
+
+          <Button size="sm" variant="outline" onClick={deleteTransaction}>
+            Delete
+          </Button>
+        </div>
       </div>
 
       <TransactionTable

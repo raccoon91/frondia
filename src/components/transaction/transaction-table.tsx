@@ -82,7 +82,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select defaultValue={`${transactionType?.id}`} onValueChange={handleChange}>
+          <Select defaultValue={transactionType ? `${transactionType?.id}` : undefined} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Transaction Type" />
             </SelectTrigger>
@@ -119,7 +119,11 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select disabled={!transactionType} defaultValue={`${category?.id}`} onValueChange={handleChange}>
+          <Select
+            disabled={!transactionType}
+            defaultValue={category ? `${category?.id}` : undefined}
+            onValueChange={handleChange}
+          >
             <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -180,7 +184,7 @@ export const columns: ColumnDef<TransactionData>[] = [
         };
 
         return (
-          <Select defaultValue={`${currency?.id}`} onValueChange={handleChange}>
+          <Select defaultValue={currency ? `${currency?.id}` : undefined} onValueChange={handleChange}>
             <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
               <SelectValue placeholder="Currency" />
             </SelectTrigger>
