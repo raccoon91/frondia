@@ -112,131 +112,135 @@ const TransactionPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between">
-        <div className="flex gap-2">
-          <div className="w-[160px]">
-            <Select value={selectedTransactionTypeId} onValueChange={handleChangeTransactionType}>
-              <div className="relative">
-                <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-                  <SelectValue placeholder="Transaction Type" />
-                </SelectTrigger>
+    <div className="grid grid-rows-[60px_auto] gap-6">
+      <div className="flex items-center gap-6 px-6 border rounded-md bg-card text-card-foreground shadow-sm"></div>
 
-                {selectedTransactionTypeId ? (
-                  <div
-                    className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
-                    )}
-                    onClick={handleClearTransactionType}
-                  >
-                    <X />
-                  </div>
-                ) : null}
-              </div>
+      <div className="grid grid-rows-[32px_auto] gap-4">
+        <div className="flex justify-between">
+          <div className="flex gap-2">
+            <div className="w-[160px]">
+              <Select value={selectedTransactionTypeId} onValueChange={handleChangeTransactionType}>
+                <div className="relative">
+                  <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
+                    <SelectValue placeholder="Transaction Type" />
+                  </SelectTrigger>
 
-              <SelectContent className="max-h-[240px]">
-                {transactionTypes?.map((type) => (
-                  <SelectItem key={type.id} value={`${type.id}`}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  {selectedTransactionTypeId ? (
+                    <div
+                      className={cn(
+                        buttonVariants({ variant: "ghost" }),
+                        "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
+                      )}
+                      onClick={handleClearTransactionType}
+                    >
+                      <X />
+                    </div>
+                  ) : null}
+                </div>
+
+                <SelectContent className="max-h-[240px]">
+                  {transactionTypes?.map((type) => (
+                    <SelectItem key={type.id} value={`${type.id}`}>
+                      {type.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-[160px]">
+              <Select value={selectedCategoryId} onValueChange={handleChangeCategory}>
+                <div className="relative">
+                  <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+
+                  {selectedCategoryId ? (
+                    <div
+                      className={cn(
+                        buttonVariants({ variant: "ghost" }),
+                        "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
+                      )}
+                      onClick={handleClearCategory}
+                    >
+                      <X />
+                    </div>
+                  ) : null}
+                </div>
+
+                <SelectContent className="max-h-[240px]">
+                  {categories?.map((category) => (
+                    <SelectItem key={category.id} value={`${category.id}`}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-[120px]">
+              <Select value={selectedCurrencyId} onValueChange={handleChangeCurrency}>
+                <div className="relative">
+                  <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+
+                  {selectedCurrencyId ? (
+                    <div
+                      className={cn(
+                        buttonVariants({ variant: "ghost" }),
+                        "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
+                      )}
+                      onClick={handleClearCurrency}
+                    >
+                      <X />
+                    </div>
+                  ) : null}
+                </div>
+
+                <SelectContent className="max-h-[240px]">
+                  {currencies?.map((currency) => (
+                    <SelectItem key={currency.id} value={`${currency.id}`}>
+                      {currency.code}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button size="sm" variant="outline" className="rounded-sm" onClick={handleReloadTransaction}>
+              <Search />
+            </Button>
           </div>
 
-          <div className="w-[160px]">
-            <Select value={selectedCategoryId} onValueChange={handleChangeCategory}>
-              <div className="relative">
-                <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
+          <div className="flex gap-2">
+            <Button size="icon" variant="outline" className="w-8 h-8" onClick={addTransaction}>
+              <Coins />
+            </Button>
 
-                {selectedCategoryId ? (
-                  <div
-                    className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
-                    )}
-                    onClick={handleClearCategory}
-                  >
-                    <X />
-                  </div>
-                ) : null}
-              </div>
+            <Button size="icon" variant="outline" className="w-8 h-8" onClick={saveAllTransaction}>
+              <Save />
+            </Button>
 
-              <SelectContent className="max-h-[240px]">
-                {categories?.map((category) => (
-                  <SelectItem key={category.id} value={`${category.id}`}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Button size="icon" variant="outline" className="w-8 h-8" onClick={cancelAllTransaction}>
+              <CircleX />
+            </Button>
+
+            <Button size="icon" variant="outline" className="w-8 h-8" onClick={deleteTransaction}>
+              <Trash />
+            </Button>
           </div>
-
-          <div className="w-[120px]">
-            <Select value={selectedCurrencyId} onValueChange={handleChangeCurrency}>
-              <div className="relative">
-                <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-
-                {selectedCurrencyId ? (
-                  <div
-                    className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "absolute top-1/2 right-1 transform -translate-y-1/2 w-6 h-6 bg-background z-1",
-                    )}
-                    onClick={handleClearCurrency}
-                  >
-                    <X />
-                  </div>
-                ) : null}
-              </div>
-
-              <SelectContent className="max-h-[240px]">
-                {currencies?.map((currency) => (
-                  <SelectItem key={currency.id} value={`${currency.id}`}>
-                    {currency.code}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Button size="sm" variant="outline" className="rounded-sm" onClick={handleReloadTransaction}>
-            <Search />
-          </Button>
         </div>
 
-        <div className="flex gap-2">
-          <Button size="icon" variant="outline" className="w-8 h-8" onClick={addTransaction}>
-            <Coins />
-          </Button>
-
-          <Button size="icon" variant="outline" className="w-8 h-8" onClick={saveAllTransaction}>
-            <Save />
-          </Button>
-
-          <Button size="icon" variant="outline" className="w-8 h-8" onClick={cancelAllTransaction}>
-            <CircleX />
-          </Button>
-
-          <Button size="icon" variant="outline" className="w-8 h-8" onClick={deleteTransaction}>
-            <Trash />
-          </Button>
-        </div>
+        <TransactionTable
+          data={transactionDatasets}
+          onCheck={checkTransaction}
+          onChange={changeTransaction}
+          onEdit={editTransaction}
+          onCancel={cancelEditTransaction}
+          onSave={saveTransaction}
+        />
       </div>
-
-      <TransactionTable
-        data={transactionDatasets}
-        onCheck={checkTransaction}
-        onChange={changeTransaction}
-        onEdit={editTransaction}
-        onCancel={cancelEditTransaction}
-        onSave={saveTransaction}
-      />
     </div>
   );
 };

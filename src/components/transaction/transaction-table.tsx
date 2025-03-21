@@ -103,60 +103,58 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
   });
 
   return (
-    <div className="w-full h-full">
-      <div className="overflow-hidden rounded-sm border">
-        <Table>
-          <TableHeader className="bg-muted">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="font-bold px-3 h-10"
-                      style={{
-                        width: header.column.columnDef.size,
-                        minWidth: header.column.columnDef.minSize,
-                        maxWidth: header.column.columnDef.maxSize,
-                      }}
-                    >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
+    <div className="overflow-hidden rounded-md border shadow-sm">
+      <Table>
+        <TableHeader className="bg-card">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    className="font-bold px-3 h-10"
+                    style={{
+                      width: header.column.columnDef.size,
+                      minWidth: header.column.columnDef.minSize,
+                      maxWidth: header.column.columnDef.maxSize,
+                    }}
+                  >
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
 
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.original.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="p-1"
-                      style={{
-                        width: cell.column.columnDef.size,
-                        minWidth: cell.column.columnDef.minSize,
-                        maxWidth: cell.column.columnDef.maxSize,
-                      }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-32 text-center">
-                  No Transaction Data
-                </TableCell>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.original.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className="p-1"
+                    style={{
+                      width: cell.column.columnDef.size,
+                      minWidth: cell.column.columnDef.minSize,
+                      maxWidth: cell.column.columnDef.maxSize,
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-32 text-center">
+                No Transaction Data
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 };

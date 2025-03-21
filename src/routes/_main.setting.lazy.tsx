@@ -63,68 +63,74 @@ const SettingPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-[2fr_1fr] gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-2">
-            <div className="flex text-sm">
-              <p className="w-[100px]">Email</p>
-              <p>{user?.email ?? "-"}</p>
-            </div>
-            <div className="flex text-sm">
-              <p className="w-[100px]">Register</p>
-              <p>{user?.created_at ? dayjs(user.created_at).format("YYYY-MM-DD HH:mm") : null}</p>
-            </div>
-            <div className="flex justify-end">
-              <Button size="sm" variant="outline" onClick={handleLogout}>
-                <p className="font-bold">Logout</p>
-                <LogOut size={20} />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="grid grid-rows-[60px_auto] gap-6">
+      <div className="flex items-center gap-6 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
+        <p className="font-bold">Setting</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 items-start">
-        <Card>
-          <CardHeader>
-            <CardTitle>Transaction Types And Categories</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {typesAndCategories.map((type) => (
-              <div key={type.id} className="flex flex-col gap-2">
-                <p className="text-sm font-bold">{type.name}</p>
-
-                {type.categories.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {type.categories.map((category) => (
-                      <Badge key={category.id} variant="secondary">
-                        {category.name}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : null}
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-[2fr_1fr] gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <div className="flex text-sm">
+                <p className="w-[100px]">Email</p>
+                <p>{user?.email ?? "-"}</p>
               </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Currencies</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-2">
-            {currencies.map((currency) => (
-              <div key={currency.id} className="flex justify-between">
-                <p className="text-sm">{`${currency.name} (${currency.symbol})`}</p>
-                <p className="text-sm">{currency.code}</p>
+              <div className="flex text-sm">
+                <p className="w-[100px]">Register</p>
+                <p>{user?.created_at ? dayjs(user.created_at).format("YYYY-MM-DD HH:mm") : null}</p>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <div className="flex justify-end">
+                <Button size="sm" variant="outline" onClick={handleLogout}>
+                  <p className="font-bold">Logout</p>
+                  <LogOut size={20} />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6 items-start">
+          <Card>
+            <CardHeader>
+              <CardTitle>Transaction Types And Categories</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {typesAndCategories.map((type) => (
+                <div key={type.id} className="flex flex-col gap-2">
+                  <p className="text-sm font-bold">{type.name}</p>
+
+                  {type.categories.length ? (
+                    <div className="flex flex-wrap gap-2">
+                      {type.categories.map((category) => (
+                        <Badge key={category.id} variant="secondary">
+                          {category.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Currencies</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {currencies.map((currency) => (
+                <div key={currency.id} className="flex justify-between">
+                  <p className="text-sm">{`${currency.name} (${currency.symbol})`}</p>
+                  <p className="text-sm">{currency.code}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

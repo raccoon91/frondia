@@ -4,8 +4,12 @@ import { REPORT_FILE_ROUTE } from "@/constants/route";
 
 const ReportPage = () => {
   return (
-    <div>
-      <p>Report Page</p>
+    <div className="grid grid-rows-[60px_auto] gap-6">
+      <div className="flex items-center gap-6 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
+        <p className="font-bold">Report</p>
+      </div>
+
+      <div></div>
     </div>
   );
 };

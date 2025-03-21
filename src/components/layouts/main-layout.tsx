@@ -8,7 +8,7 @@ export const MainLayout = () => {
       <Sidebar />
 
       <div className="overflow-auto h-full">
-        <div className="container max-w-6xl mx-auto px-8 pt-32 pb-8">
+        <div className="container max-w-6xl mx-auto px-8 pt-20 pb-8">
           <Outlet />
         </div>
       </div>
