@@ -142,10 +142,10 @@ export const useHomeStore = create<HomeStore>()(
         },
 
         movePrevMonth: (date: string) => {
-          useLocalStore.getState().setDate(date);
+          useLocalStore.getState().setDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
         },
         moveNextMonth: (date: string) => {
-          useLocalStore.getState().setDate(date);
+          useLocalStore.getState().setDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
       }),
       {

@@ -35,12 +35,12 @@ const MainPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(dayjs(localDate).subtract(1, "month").format("YYYY-MM"));
+    movePrevMonth(localDate);
     getStatistics();
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(dayjs(localDate).add(1, "month").format("YYYY-MM"));
+    moveNextMonth(localDate);
     getStatistics();
   };
 
