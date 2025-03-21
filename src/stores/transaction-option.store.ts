@@ -35,13 +35,13 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
         categories: [],
 
         changeCurrency: (currencyId: string) => {
-          set({ selectedCurrencyId: currencyId });
+          set({ selectedCurrencyId: currencyId }, false, "changeCurrency");
         },
         changeTransactionType: (transactionTypeId: string) => {
-          set({ selectedTransactionTypeId: transactionTypeId });
+          set({ selectedTransactionTypeId: transactionTypeId }, false, "changeTransactionType");
         },
         changeCategory: (categoryId: string) => {
-          set({ selectedCategoryId: categoryId });
+          set({ selectedCategoryId: categoryId }, false, "changeCategory");
         },
 
         getCurrencies: async () => {

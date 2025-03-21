@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>()(
 
         if (!data?.user) return false;
 
-        set({ user: data.user });
+        set({ user: data.user }, false, "getUser");
 
         return true;
       } catch (error) {
@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthStore>()(
 
         if (!data?.user) return false;
 
-        set({ user: data.user });
+        set({ user: data.user }, false, "login");
 
         return true;
       } catch (error) {
@@ -52,7 +52,7 @@ export const useAuthStore = create<AuthStore>()(
 
         if (error) throw error;
 
-        set({ user: null });
+        set({ user: null }, false, "logout");
 
         return true;
       } catch (error) {
