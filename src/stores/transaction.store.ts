@@ -14,6 +14,9 @@ interface TransactionStore {
 
   getTransactions: () => Promise<void>;
 
+  movePrevMonth: (date: string) => void;
+  moveNextMonth: (date: string) => void;
+
   addTransaction: () => void;
   saveAllTransaction: () => Promise<void>;
   cancelAllTransaction: () => void;
@@ -35,9 +38,14 @@ export const useTransactionStore = create<TransactionStore>()(
 
         getTransactions: async () => {
           try {
+            const localDate = useLocalStore.getState().localDate;
+
             const selectedTransactionTypeId = useTransactionOptionStore.getState().selectedTransactionTypeId;
             const selectedCategoryId = useTransactionOptionStore.getState().selectedCategoryId;
             const selectedCurrencyId = useTransactionOptionStore.getState().selectedCurrencyId;
+
+            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
             let builder = supabase
               .from("transactions")
@@ -55,7 +63,10 @@ export const useTransactionStore = create<TransactionStore>()(
               builder = builder.eq("currency_id", Number(selectedCurrencyId));
             }
 
-            const { data, error } = await builder.order("date", { ascending: false });
+            const { data, error } = await builder
+              .gte("date", startOfMonth)
+              .lte("date", endOfMonth)
+              .order("date", { ascending: false });
 
             if (error) throw error;
 
@@ -77,6 +88,13 @@ export const useTransactionStore = create<TransactionStore>()(
           } catch (error) {
             console.error(error);
           }
+        },
+
+        movePrevMonth: (date: string) => {
+          useLocalStore.getState().setDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
+        },
+        moveNextMonth: (date: string) => {
+          useLocalStore.getState().setDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
 
         addTransaction: () => {

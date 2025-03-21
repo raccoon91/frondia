@@ -1,10 +1,11 @@
 import { MouseEvent, useCallback, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight, CircleX, Coins, Save, Search, Trash, X } from "lucide-react";
 import { useShallow } from "zustand/shallow";
-import { CircleX, Coins, Save, Search, Trash, X } from "lucide-react";
 
 import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
+import { useLocalStore } from "@/stores/local.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { TransactionTable } from "@/components/transaction/transaction-table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const TransactionPage = () => {
+  const localDate = useLocalStore((state) => state.localDate);
   const {
     selectedTransactionTypeId,
     selectedCategoryId,
@@ -43,6 +45,8 @@ const TransactionPage = () => {
   const {
     transactionDatasets,
     getTransactions,
+    movePrevMonth,
+    moveNextMonth,
     addTransaction,
     saveAllTransaction,
     cancelAllTransaction,
@@ -51,6 +55,8 @@ const TransactionPage = () => {
     useShallow((state) => ({
       transactionDatasets: state.transactionDatasets,
       getTransactions: state.getTransactions,
+      movePrevMonth: state.movePrevMonth,
+      moveNextMonth: state.moveNextMonth,
       addTransaction: state.addTransaction,
       saveAllTransaction: state.saveAllTransaction,
       cancelAllTransaction: state.cancelAllTransaction,
@@ -68,14 +74,24 @@ const TransactionPage = () => {
       })),
     );
 
-  const getData = useCallback(async () => {
+  const getTransactionData = useCallback(async () => {
     await Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
     await getTransactions();
   }, []);
 
   useEffect(() => {
-    getData();
+    getTransactionData();
   }, []);
+
+  const handleClickPrevMonth = () => {
+    movePrevMonth(localDate);
+    getTransactions();
+  };
+
+  const handleClickNextMonth = () => {
+    moveNextMonth(localDate);
+    getTransactions();
+  };
 
   const handleChangeTransactionType = (transactionTypeId: string) => {
     changeTransactionType(transactionTypeId);
@@ -113,7 +129,15 @@ const TransactionPage = () => {
 
   return (
     <div className="grid grid-rows-[60px_auto] gap-6">
-      <div className="flex items-center gap-6 px-6 border rounded-md bg-card text-card-foreground shadow-sm"></div>
+      <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
+        <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
+          <ChevronLeft />
+        </Button>
+        <p className="font-bold">{localDate}</p>
+        <Button variant="ghost" className="w-8 h-8" onClick={handleClickNextMonth}>
+          <ChevronRight />
+        </Button>
+      </div>
 
       <div className="grid grid-rows-[32px_auto] gap-4">
         <div className="flex justify-between">
