@@ -1,277 +1,68 @@
-import { ChangeEvent, FC } from "react";
-import { ColumnDef, flexRender, getCoreRowModel, RowData, useReactTable } from "@tanstack/react-table";
-import { Edit, Save, X } from "lucide-react";
+import { FC } from "react";
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 
-import { TRANSACTION_STATUS } from "@/constants/status";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-declare module "@tanstack/react-table" {
-  interface TableMeta<TData extends RowData> {
-    check: (rowId: number, value: boolean) => void;
-    changeInput: (rowId: number, columnName: string, value: string | number) => void;
-    changeSelect: (rowId: number, columnName: string, value: string | number) => void;
-    clickEdit: (rowId: number) => void;
-    clickCancel: (rowId: number) => void;
-    clickSave: (rowId: number) => void;
-  }
-}
+import { TransactionActions } from "./transaction-actions";
+import { TransactionAmount } from "./transaction-amount";
+import { TransactionCategorySelect } from "./transaction-category-select";
+import { TransactionCheck } from "./transaction-check";
+import { TransactionCurrencySelect } from "./transaction-currency-select";
+import { TransactionDate } from "./transaction-date";
+import { TransactionMemo } from "./transaction-memo";
+import { TransactionTypeSelect } from "./transaction-type-select";
 
 export const columns: ColumnDef<TransactionData>[] = [
   {
     id: "check",
     minSize: 40,
     maxSize: 40,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const checked = row.original.checked ?? false;
-
-      const handleCheck = (checked: boolean) => {
-        table.options.meta?.check(id, checked);
-      };
-
-      return (
-        <div className="flex items-center justify-center">
-          <Checkbox checked={checked} onCheckedChange={handleCheck} />
-        </div>
-      );
-    },
+    cell: TransactionCheck,
   },
   {
     accessorKey: "date",
     header: "Date",
     minSize: 180,
     maxSize: 180,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const date = row.original.date ?? "";
-      const status = row.original.status;
-
-      const handleChange = (date: Nullable<string>) => {
-        table.options.meta?.changeInput(id, "date", date ?? "");
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return <DateTimePicker defaultValue={date} onValueChange={handleChange} />;
-      }
-
-      return <p className="h-8 p-2 leading-4">{date}</p>;
-    },
+    cell: TransactionDate,
   },
   {
     accessorKey: "transactionType",
     header: "Type",
     minSize: 140,
     maxSize: 140,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const transactionTypes = row.original.transactionTypes;
-      const transactionType = row.original.transactionType;
-      const status = row.original.status;
-
-      const handleChange = (value: string) => {
-        table.options.meta?.changeInput(id, "transactionType", value);
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return (
-          <Select defaultValue={transactionType ? `${transactionType?.id}` : undefined} onValueChange={handleChange}>
-            <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-
-            <SelectContent className="max-h-[240px]">
-              {transactionTypes?.map((transactionType) => (
-                <SelectItem key={transactionType.id} value={`${transactionType.id}`}>
-                  {transactionType.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
-      }
-
-      return <p className="h-8 p-2 leading-4 truncate">{transactionType?.name}</p>;
-    },
+    cell: TransactionTypeSelect,
   },
   {
     accessorKey: "category",
     header: "Category",
     minSize: 160,
     maxSize: 160,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const transactionType = row.original.transactionType;
-      const categories = row.original.categories;
-      const category = row.original.category;
-      const status = row.original.status;
-
-      const handleChange = (value: string) => {
-        table.options.meta?.changeInput(id, "category", value);
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return (
-          <Select
-            disabled={!transactionType}
-            defaultValue={category ? `${category?.id}` : undefined}
-            onValueChange={handleChange}
-          >
-            <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-
-            <SelectContent className="max-h-[240px]">
-              {categories?.map((category) => (
-                <SelectItem key={category.id} value={`${category.id}`}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
-      }
-
-      return <p className="h-8 p-2 leading-4 truncate">{category?.name}</p>;
-    },
+    cell: TransactionCategorySelect,
   },
   {
     accessorKey: "memo",
     header: "Memo",
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const memo = row.original.memo;
-      const status = row.original.status;
-
-      const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        table.options.meta?.changeInput(id, "memo", e.target.value);
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return (
-          <input
-            className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
-            defaultValue={memo ?? ""}
-            onChange={handleChange}
-          />
-        );
-      }
-
-      return <p className="h-8 p-2 leading-4">{memo}</p>;
-    },
+    cell: TransactionMemo,
   },
   {
     accessorKey: "currency",
     header: "Currency",
     minSize: 120,
     maxSize: 120,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const currencies = row.original.currencies;
-      const currency = row.original.currency;
-      const status = row.original.status;
-
-      const handleChange = (value: string) => {
-        table.options.meta?.changeInput(id, "currency", value);
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return (
-          <Select defaultValue={currency ? `${currency?.id}` : undefined} onValueChange={handleChange}>
-            <SelectTrigger size="sm" className="w-full p-2 border-input-foreground rounded-sm">
-              <SelectValue placeholder="Currency" />
-            </SelectTrigger>
-
-            <SelectContent className="max-h-[240px]">
-              {currencies?.map((currency) => (
-                <SelectItem key={currency.id} value={`${currency.id}`}>
-                  {currency.code}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        );
-      }
-
-      return <p className="h-8 p-2 leading-4">{currency?.code}</p>;
-    },
+    cell: TransactionCurrencySelect,
   },
   {
     accessorKey: "amount",
     header: "Amount",
     minSize: 160,
     maxSize: 160,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const amount = row.original.amount;
-      const currency = row.original.currency;
-      const status = row.original.status;
-
-      const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        table.options.meta?.changeInput(id, "amount", e.target.value);
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return (
-          <input
-            type="number"
-            className="w-full h-8 p-2 leading-4 border border-input-foreground rounded-sm outline-none"
-            defaultValue={amount || ""}
-            onChange={handleChange}
-          />
-        );
-      }
-
-      if (!currency) return <p className="h-8 p-2 leading-4">{amount}</p>;
-
-      return <p className="h-8 p-2 leading-4">{`${amount.toLocaleString("en-US")} ${currency?.symbol}`}</p>;
-    },
+    cell: TransactionAmount,
   },
   {
     id: "actions",
     minSize: 80,
     maxSize: 80,
-    cell: ({ row, table }) => {
-      const id = row.original.id;
-      const status = row.original.status;
-
-      const handleClickEdit = () => {
-        table.options.meta?.clickEdit(id);
-      };
-
-      const handleClickCancel = () => {
-        table.options.meta?.clickCancel(id);
-      };
-
-      const handleClickSave = () => {
-        table.options.meta?.clickSave(id);
-      };
-
-      if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-        return (
-          <div className="flex justify-end gap-1">
-            <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickSave}>
-              <Save />
-            </Button>
-
-            <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickCancel}>
-              <X />
-            </Button>
-          </div>
-        );
-      }
-
-      return (
-        <div className="flex justify-end">
-          <Button size="icon" variant="ghost" className="w-8 h-8" onClick={handleClickEdit}>
-            <Edit />
-          </Button>
-        </div>
-      );
-    },
+    cell: TransactionActions,
   },
 ];
 
