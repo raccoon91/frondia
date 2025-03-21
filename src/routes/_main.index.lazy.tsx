@@ -15,11 +15,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 const MainPage = () => {
-  const { localDate } = useLocalStore(
-    useShallow((state) => ({
-      localDate: state.localDate,
-    })),
-  );
+  const localDate = useLocalStore((state) => state.localDate);
   const { statistics, calendarStatisticsMap, getStatisticsOptions, getStatistics, movePrevMonth, moveNextMonth } =
     useHomeStore(
       useShallow((state) => ({
