@@ -35,12 +35,12 @@ const SettingPage = () => {
   const typesAndCategories = useMemo(() => {
     if (!transactionTypes.length || !categories.length) return [];
 
-    const categoryMapByTypeId = categories.reduce<Record<number, Category[]>>((acc, cur) => {
-      if (!acc[cur.type_id]) acc[cur.type_id] = [];
+    const categoryMapByTypeId = categories.reduce<Record<number, Category[]>>((categoryMap, category) => {
+      if (!categoryMap[category.type_id]) categoryMap[category.type_id] = [];
 
-      acc[cur.type_id].push(cur);
+      categoryMap[category.type_id].push(category);
 
-      return acc;
+      return categoryMap;
     }, {});
 
     return transactionTypes.map((type) => ({
