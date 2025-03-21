@@ -119,6 +119,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    ::-webkit-scrollbar {
+      @apply w-2 h-2;
+    }
+    ::-webkit-scrollbar-thumb {
+      @apply bg-primary/20 rounded-md;
+    }
+  }
   body {
     @apply bg-background text-foreground font-[Nanum];
   }
