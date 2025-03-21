@@ -15,13 +15,15 @@ interface TransactionStore {
   getTransactions: () => Promise<void>;
 
   addTransaction: () => void;
+  saveAllTransaction: () => Promise<void>;
+  cancelAllTransaction: () => void;
   deleteTransaction: () => Promise<void>;
 
   editTransaction: (rowId: number) => void;
   cancelEditTransaction: (rowId: number) => void;
   checkTransaction: (rowId: number, value: boolean) => void;
   changeTransaction: (rowId: number, columnName: string, value: number | string) => void;
-  upsertTransaction: (rowId: number) => Promise<void>;
+  saveTransaction: (rowId: number) => Promise<void>;
 }
 
 export const useTransactionStore = create<TransactionStore>()(
@@ -111,18 +113,108 @@ export const useTransactionStore = create<TransactionStore>()(
 
           set({ transactionDatasets: datasets }, false, "addTransaction");
         },
+        saveAllTransaction: async () => {
+          try {
+            const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
+
+            const { inserts, upserts } = transactionDatasets.reduce<{
+              inserts: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">[];
+              upserts: Omit<Transaction, "user_id" | "created_at" | "updated_at">[];
+            }>(
+              (acc, dataset) => {
+                if (!dataset.transactionType || !dataset.category || !dataset.currency) return acc;
+
+                if (dataset.status === TRANSACTION_STATUS.NEW) {
+                  acc.inserts.push({
+                    date: dataset.date,
+                    type_id: dataset.transactionType.id,
+                    category_id: dataset.category.id,
+                    currency_id: dataset.currency.id,
+                    memo: dataset.memo,
+                    amount: dataset.amount,
+                  });
+                } else if (dataset.status === TRANSACTION_STATUS.EDIT) {
+                  acc.upserts.push({
+                    id: dataset.id,
+                    date: dataset.date,
+                    type_id: dataset.transactionType.id,
+                    category_id: dataset.category.id,
+                    currency_id: dataset.currency.id,
+                    memo: dataset.memo,
+                    amount: dataset.amount,
+                  });
+
+                  delete editableTransaction[dataset.id];
+                }
+
+                return acc;
+              },
+              { inserts: [], upserts: [] },
+            );
+
+            const { error: insertError } = await supabase.from("transactions").insert(inserts);
+
+            const { error: upsertError } = await supabase.from("transactions").upsert(upserts);
+
+            if (insertError) throw insertError;
+
+            if (upsertError) throw upsertError;
+
+            set({ editableTransaction }, false, "saveAllTransaction");
+
+            get().getTransactions();
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        cancelAllTransaction: () => {
+          const transactionDatasets = get().transactionDatasets;
+          const editableTransaction = get().editableTransaction;
+
+          const datasets = transactionDatasets.reduce<TransactionData[]>((datasets, dataset) => {
+            if (dataset.status === TRANSACTION_STATUS.NEW) return datasets;
+
+            if (dataset.status === TRANSACTION_STATUS.EDIT) {
+              const originDataset = editableTransaction[dataset.id];
+
+              if (!originDataset) return datasets;
+
+              datasets.push({
+                id: originDataset.id,
+                status: TRANSACTION_STATUS.DONE,
+                checked: originDataset.checked,
+                date: originDataset.date,
+                amount: originDataset.amount,
+                memo: originDataset.memo,
+
+                transactionType: originDataset.transactionType,
+                category: originDataset.category,
+                currency: originDataset.currency,
+              });
+
+              delete editableTransaction[dataset.id];
+            } else {
+              datasets.push(dataset);
+            }
+
+            return datasets;
+          }, []);
+
+          set({ transactionDatasets: datasets, editableTransaction }, false, "cancelAllTransaction");
+        },
         deleteTransaction: async () => {
           try {
             const datasets = get().transactionDatasets;
 
             const { filtered, deleteIds } = datasets.reduce<{ filtered: TransactionData[]; deleteIds: number[] }>(
-              (acc, cur) => {
-                if (cur.status === TRANSACTION_STATUS.NEW && cur.checked) return acc;
+              (acc, dataset) => {
+                if (dataset.status === TRANSACTION_STATUS.NEW && dataset.checked) return acc;
 
-                if (cur.checked) {
-                  acc.deleteIds.push(cur.id);
+                if (dataset.checked) {
+                  acc.deleteIds.push(dataset.id);
                 } else {
-                  acc.filtered.push(cur);
+                  acc.filtered.push(dataset);
                 }
 
                 return acc;
@@ -184,7 +276,7 @@ export const useTransactionStore = create<TransactionStore>()(
             const filtered = transactionDatasets.filter((dataset) => dataset.id !== rowId);
 
             set({ transactionDatasets: filtered }, false, "cancelEditTransaction");
-          } else {
+          } else if (targetDataset.status === TRANSACTION_STATUS.EDIT) {
             const editableTransaction = get().editableTransaction;
 
             const originDataset = editableTransaction[rowId];
@@ -250,9 +342,10 @@ export const useTransactionStore = create<TransactionStore>()(
 
           set({ transactionDatasets: datasets }, false, "changeTransaction");
         },
-        upsertTransaction: async (rowId: number) => {
+        saveTransaction: async (rowId: number) => {
           try {
             const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
 
             const dataset = transactionDatasets.find((dataset) => dataset.id === rowId);
 
@@ -273,6 +366,8 @@ export const useTransactionStore = create<TransactionStore>()(
               .maybeSingle();
 
             if (!newTransaction) return;
+
+            delete editableTransaction[rowId];
 
             useLocalStore.getState().setLocalStore({
               localTransactionType: newTransaction.transactionType,
@@ -296,7 +391,7 @@ export const useTransactionStore = create<TransactionStore>()(
               };
             });
 
-            set({ transactionDatasets: datasets }, false, "upsertTransaction");
+            set({ transactionDatasets: datasets, editableTransaction }, false, "saveTransaction");
           } catch (error) {
             console.error(error);
           }

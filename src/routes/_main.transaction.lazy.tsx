@@ -1,7 +1,7 @@
 import { MouseEvent, useCallback, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
-import { Search, X } from "lucide-react";
+import { CircleX, Coins, Save, Search, Trash, X } from "lucide-react";
 
 import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
@@ -40,22 +40,31 @@ const TransactionPage = () => {
         getCategories: state.getCategories,
       })),
     );
-  const { transactionDatasets, getTransactions, addTransaction, deleteTransaction } = useTransactionStore(
+  const {
+    transactionDatasets,
+    getTransactions,
+    addTransaction,
+    saveAllTransaction,
+    cancelAllTransaction,
+    deleteTransaction,
+  } = useTransactionStore(
     useShallow((state) => ({
       transactionDatasets: state.transactionDatasets,
       getTransactions: state.getTransactions,
       addTransaction: state.addTransaction,
+      saveAllTransaction: state.saveAllTransaction,
+      cancelAllTransaction: state.cancelAllTransaction,
       deleteTransaction: state.deleteTransaction,
     })),
   );
-  const { editTransaction, cancelEditTransaction, checkTransaction, changeTransaction, upsertTransaction } =
+  const { editTransaction, cancelEditTransaction, checkTransaction, changeTransaction, saveTransaction } =
     useTransactionStore(
       useShallow((state) => ({
         editTransaction: state.editTransaction,
         cancelEditTransaction: state.cancelEditTransaction,
         checkTransaction: state.checkTransaction,
         changeTransaction: state.changeTransaction,
-        upsertTransaction: state.upsertTransaction,
+        saveTransaction: state.saveTransaction,
       })),
     );
 
@@ -202,12 +211,20 @@ const TransactionPage = () => {
         </div>
 
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={addTransaction}>
-            Add
+          <Button size="icon" variant="outline" className="w-8 h-8" onClick={addTransaction}>
+            <Coins />
           </Button>
 
-          <Button size="sm" variant="outline" onClick={deleteTransaction}>
-            Delete
+          <Button size="icon" variant="outline" className="w-8 h-8" onClick={saveAllTransaction}>
+            <Save />
+          </Button>
+
+          <Button size="icon" variant="outline" className="w-8 h-8" onClick={cancelAllTransaction}>
+            <CircleX />
+          </Button>
+
+          <Button size="icon" variant="outline" className="w-8 h-8" onClick={deleteTransaction}>
+            <Trash />
           </Button>
         </div>
       </div>
@@ -218,7 +235,7 @@ const TransactionPage = () => {
         onChange={changeTransaction}
         onEdit={editTransaction}
         onCancel={cancelEditTransaction}
-        onSave={upsertTransaction}
+        onSave={saveTransaction}
       />
     </div>
   );
