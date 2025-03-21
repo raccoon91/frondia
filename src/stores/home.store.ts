@@ -4,24 +4,35 @@ import dayjs from "dayjs";
 
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
+import { useLocalStore } from "./local.store";
+import { CALENDAR_TYPE_POSITION } from "@/constants/calendar";
 
 interface HomeStore {
-  statistics: Statistics;
+  types: TransactionType[];
+  categories: Category[];
 
+  statistics: Statistics;
+  calendarStatisticsMap: CalendarStatisticsMap;
+
+  getStatisticsOptions: () => Promise<void>;
   getStatistics: () => Promise<void>;
+
+  movePrevMonth: (date: string) => void;
+  moveNextMonth: (date: string) => void;
 }
 
 export const useHomeStore = create<HomeStore>()(
   devtools(
     persist(
-      (set) => ({
-        statistics: {},
+      (set, get) => ({
+        types: [],
+        categories: [],
 
-        getStatistics: async () => {
+        statistics: [],
+        calendarStatisticsMap: {},
+
+        getStatisticsOptions: async () => {
           try {
-            const startOfMonth = dayjs().startOf("month").format("YYYY-MM-DD HH:mm");
-            const endOfMonth = dayjs().endOf("month").format("YYYY-MM-DD HH:mm");
-
             const { data: types, error: typeErorr } = await supabase
               .from("transaction_types")
               .select("*")
@@ -36,16 +47,38 @@ export const useHomeStore = create<HomeStore>()(
 
             if (categoryError) throw categoryError;
 
-            const statistics: Statistics = {};
+            set({ types, categories }, false, "getStatisticsOptions");
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        getStatistics: async () => {
+          try {
+            const localDate = useLocalStore.getState().localDate;
+
+            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+
+            const types = get().types;
+            const categories = get().categories;
+
+            const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
+              typeMap[type.id] = type;
+
+              return typeMap;
+            }, {});
+
+            const statisticsMap: StatisticsMap = {};
+            const calendarStatisticsMap: CalendarStatisticsMap = {};
 
             types?.forEach((type) => {
-              statistics[type.id] = { type, totalAmount: 0, totalCount: 0, category: {} };
+              statisticsMap[type.id] = { type, totalAmount: 0, totalCount: 0, categoryMap: {} };
             });
 
             categories?.forEach((category) => {
-              if (!statistics?.[category.type_id]?.category) return;
+              if (!statisticsMap?.[category.type_id]?.categoryMap) return;
 
-              statistics[category.type_id].category[category.id] = {
+              statisticsMap[category.type_id].categoryMap![category.id] = {
                 category,
                 transaction: { amount: 0, count: 0 },
               };
@@ -63,26 +96,66 @@ export const useHomeStore = create<HomeStore>()(
               const typeId = transaction.type_id;
               const categoryId = transaction.category_id;
 
-              if (!statistics?.[typeId]?.category?.[categoryId]?.transaction) return;
+              if (!statisticsMap?.[typeId]?.categoryMap?.[categoryId]?.transaction) return;
 
-              statistics[typeId].totalAmount += transaction.amount;
-              statistics[typeId].totalCount += 1;
+              statisticsMap[typeId].totalAmount += transaction.amount;
+              statisticsMap[typeId].totalCount += 1;
 
-              statistics[typeId].category[categoryId].transaction.amount += transaction.amount;
-              statistics[typeId].category[categoryId].transaction.count += 1;
+              statisticsMap[typeId].categoryMap[categoryId].transaction.amount += transaction.amount;
+              statisticsMap[typeId].categoryMap[categoryId].transaction.count += 1;
+
+              const type = typeMap[typeId];
+              const date = dayjs(transaction.date).format("YYYY-MM-DD");
+
+              if (!type) return;
+
+              if (!calendarStatisticsMap?.[date]) calendarStatisticsMap[date] = {};
+              if (!calendarStatisticsMap?.[date]?.[type.id]) {
+                calendarStatisticsMap[date][type.id] = {
+                  type,
+                  position: CALENDAR_TYPE_POSITION[type.id],
+                  count: 0,
+                };
+              }
+
+              calendarStatisticsMap[date][type.id].count += 1;
             });
 
-            set({ statistics }, false, "getStatistics");
+            const statistics = Object.values(statisticsMap)
+              .filter((statistic) => statistic.totalCount)
+              .map(({ type, totalAmount, totalCount, categoryMap }) => ({
+                type,
+                totalAmount,
+                totalCount,
+                categories: Object.values(categoryMap ?? {})
+                  .filter(({ transaction }) => transaction.count)
+                  .map(({ category, transaction }) => ({
+                    category,
+                    transaction,
+                  })),
+              }));
+
+            set({ statistics, calendarStatisticsMap }, false, "getStatistics");
           } catch (error) {
             console.error(error);
           }
+        },
+
+        movePrevMonth: (date: string) => {
+          useLocalStore.getState().setDate(date);
+        },
+        moveNextMonth: (date: string) => {
+          useLocalStore.getState().setDate(date);
         },
       }),
       {
         name: STORE_NAME.HOME,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
+          types: state.types,
+          categories: state.categories,
           statistics: state.statistics,
+          calendarStatisticsMap: state.calendarStatisticsMap,
         }),
       },
     ),

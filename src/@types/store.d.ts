@@ -1,21 +1,37 @@
-type StatisticsType = {
+interface StatisticsTransaction {
+  amount: number;
+  count: number;
+}
+
+interface StatisticsCategory {
+  category: Category;
+  transaction: StatisticsTransaction;
+}
+
+interface StatisticsType {
   type: TransactionType;
   totalAmount: number;
   totalCount: number;
-  category: Record<number, StatisticsCategory>;
-};
+  categoryMap?: Record<number, StatisticsCategory>;
+  categories?: StatisticsCategory[];
+}
 
-type StatisticsCategory = {
-  category: Category;
-  transaction: StatisticsTransaction;
-};
+type StatisticsMap = Record<number, StatisticsType>;
 
-type StatisticsTransaction = {
-  amount: number;
-  count: number;
-};
+type Statistics = StatisticsType[];
 
-type Statistics = Record<number, StatisticsType>;
+interface CalendarTypePosition {
+  name: string;
+  color: string;
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+}
+
+type CalendarMap = Record<number, { type: TransactionType; position: CalendarTypePosition; count: number }>;
+
+type CalendarStatisticsMap = Record<string, CalendarMap>;
 
 interface TransactionData {
   id: number;

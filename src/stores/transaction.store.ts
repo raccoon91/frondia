@@ -369,7 +369,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
             delete editableTransaction[rowId];
 
-            useLocalStore.getState().setLocalStore({
+            useLocalStore.getState().setTransactionOption({
               localTransactionType: newTransaction.transactionType,
               localCurrency: newTransaction.currency,
             });
