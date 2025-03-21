@@ -64,7 +64,7 @@ const SettingPage = () => {
 
   return (
     <div className="grid grid-rows-[60px_auto] gap-6">
-      <div className="flex items-center gap-6 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
+      <div className="flex items-center px-6 border rounded-md bg-card text-card-foreground shadow-sm">
         <p className="font-bold">Setting</p>
       </div>
 
