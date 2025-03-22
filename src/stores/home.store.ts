@@ -3,19 +3,19 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
 import { STORE_NAME } from "@/constants/store";
+import { CALENDAR_TYPE_POSITION } from "@/constants/calendar";
+import { GOAL_STATUS } from "@/constants/goal";
 import { supabase } from "@/lib/supabase/client";
 import { useLocalStore } from "./local.store";
-import { CALENDAR_TYPE_POSITION } from "@/constants/calendar";
+import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface HomeStore {
-  types: TransactionType[];
-  categories: Category[];
-
   statistics: Statistics;
   calendarStatisticsMap: CalendarStatisticsMap;
+  goalsInProgress: Goal[];
 
-  getStatisticsOptions: () => Promise<void>;
   getStatistics: () => Promise<void>;
+  getGoalsInProgress: () => Promise<void>;
 
   movePrevMonth: (date: string) => void;
   moveNextMonth: (date: string) => void;
@@ -24,34 +24,11 @@ interface HomeStore {
 export const useHomeStore = create<HomeStore>()(
   devtools(
     persist(
-      (set, get) => ({
-        types: [],
-        categories: [],
-
+      (set) => ({
         statistics: [],
         calendarStatisticsMap: {},
+        goalsInProgress: [],
 
-        getStatisticsOptions: async () => {
-          try {
-            const { data: types, error: typeErorr } = await supabase
-              .from("transaction_types")
-              .select("*")
-              .order("order", { ascending: true });
-
-            if (typeErorr) throw typeErorr;
-
-            const { data: categories, error: categoryError } = await supabase
-              .from("categories")
-              .select("*")
-              .order("order", { ascending: true });
-
-            if (categoryError) throw categoryError;
-
-            set({ types, categories }, false, "getStatisticsOptions");
-          } catch (error) {
-            console.error(error);
-          }
-        },
         getStatistics: async () => {
           try {
             const localDate = useLocalStore.getState().localDate;
@@ -59,8 +36,8 @@ export const useHomeStore = create<HomeStore>()(
             const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
-            const types = get().types;
-            const categories = get().categories;
+            const types = useTransactionOptionStore.getState().transactionTypes;
+            const categories = useTransactionOptionStore.getState().categories;
 
             const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
               typeMap[type.id] = type;
@@ -140,6 +117,22 @@ export const useHomeStore = create<HomeStore>()(
             console.error(error);
           }
         },
+        getGoalsInProgress: async () => {
+          try {
+            const { data: goalsInProgress, error: goalErorr } = await supabase
+              .from("goals")
+              .select(
+                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
+              )
+              .eq("status", GOAL_STATUS.PROGRESS);
+
+            if (goalErorr) throw goalErorr;
+
+            set({ goalsInProgress }, false, "getGoalsInProgress");
+          } catch (error) {
+            console.error(error);
+          }
+        },
 
         movePrevMonth: (date: string) => {
           useLocalStore.getState().setDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
@@ -152,8 +145,6 @@ export const useHomeStore = create<HomeStore>()(
         name: STORE_NAME.HOME,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
-          types: state.types,
-          categories: state.categories,
           statistics: state.statistics,
           calendarStatisticsMap: state.calendarStatisticsMap,
         }),

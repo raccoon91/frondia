@@ -5,33 +5,49 @@ import { useShallow } from "zustand/shallow";
 import dayjs from "dayjs";
 
 import { HOME_FILE_ROUTE } from "@/constants/route";
-import { generateCurrency, generateTypeAndCategory } from "@/lib/supabase/seed";
+import { cn } from "@/lib/utils";
 import { useLocalStore } from "@/stores/local.store";
+import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useHomeStore } from "@/stores/home.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { GoalCard } from "@/components/goal/goal-card";
 
 const MainPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
-  const { statistics, calendarStatisticsMap, getStatisticsOptions, getStatistics, movePrevMonth, moveNextMonth } =
-    useHomeStore(
-      useShallow((state) => ({
-        statistics: state.statistics,
-        calendarStatisticsMap: state.calendarStatisticsMap,
-        getStatisticsOptions: state.getStatisticsOptions,
-        getStatistics: state.getStatistics,
-        movePrevMonth: state.movePrevMonth,
-        moveNextMonth: state.moveNextMonth,
-      })),
-    );
+  const { getTransactionTypes, getCategories } = useTransactionOptionStore(
+    useShallow((state) => ({
+      getTransactionTypes: state.getTransactionTypes,
+      getCategories: state.getCategories,
+    })),
+  );
+  const {
+    statistics,
+    calendarStatisticsMap,
+    goalsInProgress,
+    getStatistics,
+    getGoalsInProgress,
+    movePrevMonth,
+    moveNextMonth,
+  } = useHomeStore(
+    useShallow((state) => ({
+      statistics: state.statistics,
+      calendarStatisticsMap: state.calendarStatisticsMap,
+      goalsInProgress: state.goalsInProgress,
+      getStatistics: state.getStatistics,
+      getGoalsInProgress: state.getGoalsInProgress,
+      movePrevMonth: state.movePrevMonth,
+      moveNextMonth: state.moveNextMonth,
+    })),
+  );
 
   useEffect(() => {
-    getStatisticsOptions().then(() => {
+    Promise.all([getTransactionTypes(), getCategories()]).then(() => {
       getStatistics();
     });
+    getGoalsInProgress();
   }, []);
 
   const handleClickPrevMonth = () => {
@@ -154,12 +170,9 @@ const MainPage = () => {
               <CardTitle>Goals</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
-              <Button size="sm" variant="outline" onClick={generateCurrency}>
-                Generate Currency
-              </Button>
-              <Button size="sm" variant="outline" onClick={generateTypeAndCategory}>
-                Generate Type and Category
-              </Button>
+              {goalsInProgress.map((goal) => (
+                <GoalCard key={goal.id} goal={goal} />
+              ))}
             </CardContent>
           </Card>
         </div>

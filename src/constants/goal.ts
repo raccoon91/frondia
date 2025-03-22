@@ -11,3 +11,9 @@ export const GOAL_AMOUNT_RULES = [
   { value: ">", label: ">" },
   { value: ">=", label: ">=" },
 ];
+
+export const GOAL_STATUS = {
+  READY: "ready",
+  PROGRESS: "progress",
+  DONE: "done",
+};

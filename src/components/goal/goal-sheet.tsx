@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import dayjs, { ManipulateType } from "dayjs";
 
-import { GOAL_AMOUNT_RULES, GOAL_DATE_UNIT_OPTIONS } from "@/constants/goal";
+import { GOAL_AMOUNT_RULES, GOAL_DATE_UNIT_OPTIONS, GOAL_STATUS } from "@/constants/goal";
 import { goalFormSchema } from "@/schema/goal.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -244,7 +244,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
 
                             const ready = dayjs(value).isBefore(dayjs().format("YYYY-MM-DD"));
 
-                            form.setValue("status", ready ? "ready" : "progress");
+                            form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
 
                             field.onChange(value);
                           }}
@@ -333,7 +333,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
 
                             const ready = dayjs(value).isBefore(dayjs().format("YYYY-MM-DD"));
 
-                            form.setValue("status", ready ? "ready" : "progress");
+                            form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
 
                             field.onChange(value);
                           }}
