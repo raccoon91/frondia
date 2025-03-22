@@ -33,7 +33,7 @@ export const generateTypeAndCategory = async () => {
     for (const transactionSeed of DEFAULT_TRANSACTION_TYPES_AND_CATEGORIES) {
       const { data: transaction } = await supabase
         .from("transaction_types")
-        .insert({ user_id: user.id, name: transactionSeed.name })
+        .insert({ name: transactionSeed.name })
         .select("*")
         .maybeSingle();
 
@@ -42,7 +42,6 @@ export const generateTypeAndCategory = async () => {
       if (!transaction) continue;
 
       const categorySeeds = transactionSeed.categories.map((category) => ({
-        user_id: user.id,
         type_id: transaction.id,
         name: category.name,
       }));

@@ -39,3 +39,23 @@ interface Transaction {
   transactionType?: TransactionType;
   category?: Category;
 }
+
+interface Goal {
+  id: number;
+  user_id: string;
+  name: string;
+  type_id: number;
+  currency_id: number;
+  amount: number;
+  rule: string;
+  period: number;
+  start: string;
+  end: string;
+  status: string;
+  date_unit: string;
+  created_at: string;
+
+  currency?: Currency;
+  type?: TransactionType;
+  map?: { category: Category }[];
+}
