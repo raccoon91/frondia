@@ -1,7 +1,7 @@
 import { FC, memo } from "react";
 import { CellContext } from "@tanstack/react-table";
 
-import { TRANSACTION_STATUS } from "@/constants/status";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 
 export const TransactionDate: FC<CellContext<TransactionData, unknown>> = memo(

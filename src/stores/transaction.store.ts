@@ -3,7 +3,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
 import { STORE_NAME } from "@/constants/store";
-import { TRANSACTION_STATUS } from "@/constants/status";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { supabase } from "@/lib/supabase/client";
 import { useTransactionOptionStore } from "./transaction-option.store";
 import { useLocalStore } from "./local.store";

@@ -1,7 +1,7 @@
 import { FC, memo } from "react";
 import { CellContext } from "@tanstack/react-table";
 
-import { TRANSACTION_STATUS } from "@/constants/status";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const TransactionTypeSelect: FC<CellContext<TransactionData, unknown>> = memo(

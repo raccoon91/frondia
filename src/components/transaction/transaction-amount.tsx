@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, memo } from "react";
 import { CellContext } from "@tanstack/react-table";
 
-import { TRANSACTION_STATUS } from "@/constants/status";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 
 export const TransactionAmount: FC<CellContext<TransactionData, unknown>> = memo(
   ({ row, table }) => {

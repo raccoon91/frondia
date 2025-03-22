@@ -2,7 +2,7 @@ import { FC, memo } from "react";
 import { CellContext } from "@tanstack/react-table";
 import { Edit, Save, X } from "lucide-react";
 
-import { TRANSACTION_STATUS } from "@/constants/status";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { Button } from "@/components/ui/button";
 
 export const TransactionActions: FC<CellContext<TransactionData, unknown>> = memo(
