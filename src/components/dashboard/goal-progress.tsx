@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Progress } from "../ui/progress";
+import { Progress } from "@/components/ui/progress";
 
 interface GoalProgressProps {
   goal: GoalInProgress;

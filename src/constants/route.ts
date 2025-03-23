@@ -2,6 +2,10 @@ export const AUTH_FILE_ROUTE = "/_auth";
 
 export const LOGIN_FILE_ROUTE = "/_auth/login";
 
+export const MAIN_FILE_ROUTE = "/_main";
+
+export const HOME_FILE_ROUTE = "/_main/";
+
 export const PRIVATE_FILE_ROUTE = "/_private";
 
 export const DASHBOARD_FILE_ROUTE = "/_private/dashboard";
@@ -16,6 +20,8 @@ export const SETTING_FILE_ROUTE = "/_private/setting";
 
 export const ROUTE = {
   LOGIN: "/login",
+
+  HOME: "/",
 
   DASHBOARD: "/dashboard",
   TRANSACTION: "/transaction",
