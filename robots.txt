@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /login
+
+Disallow: /dashboard
+Disallow: /transaction
+Disallow: /goal
+Disallow: /report
+Disallow: /setting
+
+Sitemap: https://snowball-sigma.vercel.app/sitemap.xml
