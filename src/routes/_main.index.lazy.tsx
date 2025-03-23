@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
-import { GoalCard } from "@/components/goal/goal-card";
+import { GoalProgress } from "@/components/home/goal-progress";
 
 const MainPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
@@ -27,7 +27,9 @@ const MainPage = () => {
     statistics,
     calendarStatisticsMap,
     goalsInProgress,
+    getTransactions,
     getStatistics,
+    getCalendarStatistics,
     getGoalsInProgress,
     movePrevMonth,
     moveNextMonth,
@@ -36,7 +38,9 @@ const MainPage = () => {
       statistics: state.statistics,
       calendarStatisticsMap: state.calendarStatisticsMap,
       goalsInProgress: state.goalsInProgress,
+      getTransactions: state.getTransactions,
       getStatistics: state.getStatistics,
+      getCalendarStatistics: state.getCalendarStatistics,
       getGoalsInProgress: state.getGoalsInProgress,
       movePrevMonth: state.movePrevMonth,
       moveNextMonth: state.moveNextMonth,
@@ -44,20 +48,31 @@ const MainPage = () => {
   );
 
   useEffect(() => {
-    Promise.all([getTransactionTypes(), getCategories()]).then(() => {
+    Promise.all([getTransactionTypes(), getCategories(), getTransactions()]).then(() => {
       getStatistics();
+      getCalendarStatistics();
+      getGoalsInProgress();
     });
-    getGoalsInProgress();
   }, []);
 
   const handleClickPrevMonth = () => {
     movePrevMonth(localDate);
-    getStatistics();
+
+    getTransactions().then(() => {
+      getStatistics();
+      getCalendarStatistics();
+      getGoalsInProgress();
+    });
   };
 
   const handleClickNextMonth = () => {
     moveNextMonth(localDate);
-    getStatistics();
+
+    getTransactions().then(() => {
+      getStatistics();
+      getCalendarStatistics();
+      getGoalsInProgress();
+    });
   };
 
   return (
@@ -171,7 +186,7 @@ const MainPage = () => {
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
               {goalsInProgress.map((goal) => (
-                <GoalCard key={goal.id} goal={goal} />
+                <GoalProgress key={goal.id} goal={goal} />
               ))}
             </CardContent>
           </Card>

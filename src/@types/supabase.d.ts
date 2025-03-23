@@ -8,7 +8,6 @@ interface Currency {
 
 interface TransactionType {
   id: number;
-  user_id: string;
   name: string;
   created_at: string;
   order: Nullable<number>;

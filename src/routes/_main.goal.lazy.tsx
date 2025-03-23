@@ -1,17 +1,14 @@
 import { useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
-import dayjs from "dayjs";
 import { z } from "zod";
 
 import { GOAL_FILE_ROUTE } from "@/constants/route";
 import { goalFormSchema } from "@/schema/goal.schema";
 import { useGoalStore } from "@/stores/goal.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoalSheet } from "@/components/goal/goal-sheet";
-import { ScheduleSheet } from "@/components/goal/schedule-sheet";
 import { GoalCard } from "@/components/goal/goal-card";
 
 const GoalPage = () => {
@@ -63,7 +60,7 @@ const GoalPage = () => {
             onCreate={handleCreateGoal}
           />
 
-          <ScheduleSheet />
+          {/* <ScheduleSheet /> */}
         </div>
 
         <div className="grid grid-cols-3 gap-6">
@@ -77,7 +74,7 @@ const GoalPage = () => {
                 <GoalCard key={goal.id} goal={goal} />
               ))}
 
-              <div className="overflow-hidden relative flex flex-col gap-2 p-4 border rounded-md bg-background shadow-sm">
+              {/* <div className="overflow-hidden relative flex flex-col gap-2 p-4 border rounded-md bg-background shadow-sm">
                 <div className="absolute top-0 right-0 py-1 px-2 rounded-bl-sm bg-indigo-300">
                   <p className="text-sm">Schedule</p>
                 </div>
@@ -105,7 +102,7 @@ const GoalPage = () => {
                   <p>~</p>
                   <p>{dayjs().add(7, "day").format("YYYY-MM-DD")}</p>
                 </div>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
 

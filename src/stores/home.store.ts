@@ -10,11 +10,14 @@ import { useLocalStore } from "./local.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface HomeStore {
+  transactions: Transaction[];
   statistics: Statistics;
   calendarStatisticsMap: CalendarStatisticsMap;
-  goalsInProgress: Goal[];
+  goalsInProgress: GoalInProgress[];
 
+  getTransactions: () => Promise<void>;
   getStatistics: () => Promise<void>;
+  getCalendarStatistics: () => Promise<void>;
   getGoalsInProgress: () => Promise<void>;
 
   movePrevMonth: (date: string) => void;
@@ -24,29 +27,40 @@ interface HomeStore {
 export const useHomeStore = create<HomeStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
+        transactions: [],
         statistics: [],
         calendarStatisticsMap: {},
         goalsInProgress: [],
 
-        getStatistics: async () => {
+        getTransactions: async () => {
           try {
             const localDate = useLocalStore.getState().localDate;
 
             const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
+            const { data: transactions, error: transactionError } = await supabase
+              .from("transactions")
+              .select("*")
+              .gte("date", startOfMonth)
+              .lte("date", endOfMonth);
+
+            if (transactionError) throw transactionError;
+
+            set({ transactions }, false, "getTransactions");
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        getStatistics: async () => {
+          try {
             const types = useTransactionOptionStore.getState().transactionTypes;
             const categories = useTransactionOptionStore.getState().categories;
 
-            const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
-              typeMap[type.id] = type;
-
-              return typeMap;
-            }, {});
+            const transactions = get().transactions;
 
             const statisticsMap: StatisticsMap = {};
-            const calendarStatisticsMap: CalendarStatisticsMap = {};
 
             types?.forEach((type) => {
               statisticsMap[type.id] = { type, totalAmount: 0, totalCount: 0, categoryMap: {} };
@@ -61,14 +75,6 @@ export const useHomeStore = create<HomeStore>()(
               };
             });
 
-            const { data: transactions, error: transactionError } = await supabase
-              .from("transactions")
-              .select("*")
-              .gte("date", startOfMonth)
-              .lte("date", endOfMonth);
-
-            if (transactionError) throw transactionError;
-
             transactions?.forEach((transaction) => {
               const typeId = transaction.type_id;
               const categoryId = transaction.category_id;
@@ -80,22 +86,6 @@ export const useHomeStore = create<HomeStore>()(
 
               statisticsMap[typeId].categoryMap[categoryId].transaction.amount += transaction.amount;
               statisticsMap[typeId].categoryMap[categoryId].transaction.count += 1;
-
-              const type = typeMap[typeId];
-              const date = dayjs(transaction.date).format("YYYY-MM-DD");
-
-              if (!type) return;
-
-              if (!calendarStatisticsMap?.[date]) calendarStatisticsMap[date] = {};
-              if (!calendarStatisticsMap?.[date]?.[type.id]) {
-                calendarStatisticsMap[date][type.id] = {
-                  type,
-                  position: CALENDAR_TYPE_POSITION[type.id],
-                  count: 0,
-                };
-              }
-
-              calendarStatisticsMap[date][type.id].count += 1;
             });
 
             const statistics = Object.values(statisticsMap)
@@ -112,14 +102,63 @@ export const useHomeStore = create<HomeStore>()(
                   })),
               }));
 
-            set({ statistics, calendarStatisticsMap }, false, "getStatistics");
+            set({ statistics }, false, "getStatistics");
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        getCalendarStatistics: async () => {
+          try {
+            const types = useTransactionOptionStore.getState().transactionTypes;
+
+            const transactions = get().transactions;
+
+            const calendarStatisticsMap: CalendarStatisticsMap = {};
+            const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
+              typeMap[type.id] = type;
+
+              return typeMap;
+            }, {});
+
+            transactions?.forEach((transaction) => {
+              const type = typeMap[transaction.type_id];
+              const date = dayjs(transaction.date).format("YYYY-MM-DD");
+
+              if (!type) return;
+
+              if (!calendarStatisticsMap?.[date]) calendarStatisticsMap[date] = {};
+              if (!calendarStatisticsMap?.[date]?.[type.id]) {
+                calendarStatisticsMap[date][type.id] = {
+                  type,
+                  position: CALENDAR_TYPE_POSITION[type.id],
+                  count: 0,
+                };
+              }
+
+              calendarStatisticsMap[date][type.id].count += 1;
+            });
+
+            set({ calendarStatisticsMap }, false, "getCalendarStatistics");
           } catch (error) {
             console.error(error);
           }
         },
         getGoalsInProgress: async () => {
           try {
-            const { data: goalsInProgress, error: goalErorr } = await supabase
+            const transactions = get().transactions;
+
+            const transactionMapByCategoryId = transactions.reduce<Record<number, Transaction[]>>(
+              (map, transaction) => {
+                if (!map[transaction.category_id]) map[transaction.category_id] = [];
+
+                map[transaction.category_id].push(transaction);
+
+                return map;
+              },
+              {},
+            );
+
+            const { data: goals, error: goalErorr } = await supabase
               .from("goals")
               .select(
                 "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
@@ -127,6 +166,38 @@ export const useHomeStore = create<HomeStore>()(
               .eq("status", GOAL_STATUS.PROGRESS);
 
             if (goalErorr) throw goalErorr;
+
+            const goalsInProgress = goals.map((goal) => {
+              let totalAmount = 0;
+              let totalCount = 0;
+              let result: GoalInProgress["result"] = "success";
+
+              goal.map.forEach(({ category }) => {
+                const transactions = transactionMapByCategoryId?.[category.id] ?? [];
+
+                transactions.forEach((transaction) => {
+                  totalAmount += transaction.amount;
+                  totalCount += 1;
+                });
+              });
+
+              if (goal.rule === "fixed_amount") {
+                result = totalAmount >= goal.amount ? "success" : "failure";
+              } else if (goal.rule === "spending_limit") {
+                result = totalAmount <= goal.amount ? "success" : "failure";
+              } else if (goal.rule === "count_amount") {
+                result = totalCount >= goal.amount ? "success" : "failure";
+              } else if (goal.rule === "count_limit") {
+                result = totalCount < goal.amount ? "success" : "failure";
+              }
+
+              return {
+                ...goal,
+                totalAmount,
+                result,
+                remain: dayjs(goal.end).diff(dayjs(), "day"),
+              };
+            });
 
             set({ goalsInProgress }, false, "getGoalsInProgress");
           } catch (error) {
@@ -145,8 +216,10 @@ export const useHomeStore = create<HomeStore>()(
         name: STORE_NAME.HOME,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
+          transactions: state.transactions,
           statistics: state.statistics,
           calendarStatisticsMap: state.calendarStatisticsMap,
+          goalsInProgress: state.goalsInProgress,
         }),
       },
     ),

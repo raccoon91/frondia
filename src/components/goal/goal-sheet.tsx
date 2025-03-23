@@ -1,11 +1,11 @@
 import { ChangeEvent, FC, useMemo, useState } from "react";
 import { Goal } from "lucide-react";
 import { useForm } from "react-hook-form";
+import dayjs, { ManipulateType } from "dayjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import dayjs, { ManipulateType } from "dayjs";
 
-import { GOAL_AMOUNT_RULES, GOAL_DATE_UNIT_OPTIONS, GOAL_STATUS } from "@/constants/goal";
+import { GOAL_DATE_UNIT_OPTIONS, GOAL_RULES, GOAL_STATUS } from "@/constants/goal";
 import { goalFormSchema } from "@/schema/goal.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,12 +28,12 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
   const form = useForm<z.infer<typeof goalFormSchema>>({
     resolver: zodResolver(goalFormSchema),
     defaultValues: {
+      rule: "",
       name: "",
       type_id: "",
       categories: [],
       currency_id: "",
       amount: "",
-      rule: "",
       period: "",
       date_unit: "",
       start: "",
@@ -88,6 +88,31 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
             <div className="overflow-auto flex flex-col gap-4 flex-1 px-4">
               <FormField
                 control={form.control}
+                name="rule"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Rule</FormLabel>
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
+                          <SelectValue placeholder="Select Rule" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent className="max-h-[240px]">
+                        {GOAL_RULES?.map((rule) => (
+                          <SelectItem key={rule.value} value={rule.value}>
+                            {rule.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -108,7 +133,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
                     <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
-                          <SelectValue placeholder="Type" />
+                          <SelectValue placeholder="Select Type" />
                         </SelectTrigger>
                       </FormControl>
 
@@ -146,31 +171,6 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
               <div className="flex gap-2 w-full">
                 <FormField
                   control={form.control}
-                  name="rule"
-                  render={({ field }) => (
-                    <FormItem className="w-[80px]">
-                      <FormLabel>Rule</FormLabel>
-                      <Select defaultValue={field.value} onValueChange={field.onChange}>
-                        <FormControl>
-                          <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
-                            <SelectValue placeholder="Rule" />
-                          </SelectTrigger>
-                        </FormControl>
-
-                        <SelectContent className="max-h-[240px]">
-                          {GOAL_AMOUNT_RULES?.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name="amount"
                   render={({ field }) => (
                     <FormItem className="flex-2">
@@ -186,7 +186,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
                   control={form.control}
                   name="currency_id"
                   render={({ field }) => (
-                    <FormItem className="w-[110px]">
+                    <FormItem className="flex-1">
                       <FormLabel>Currency</FormLabel>
                       <Select defaultValue={field.value} onValueChange={field.onChange}>
                         <FormControl>
@@ -242,7 +242,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
                               form.setValue("end", end);
                             }
 
-                            const ready = dayjs(value).isBefore(dayjs().format("YYYY-MM-DD"));
+                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
 
                             form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
 
@@ -331,7 +331,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
                               form.setValue("end", end);
                             }
 
-                            const ready = dayjs(value).isBefore(dayjs().format("YYYY-MM-DD"));
+                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
 
                             form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
 

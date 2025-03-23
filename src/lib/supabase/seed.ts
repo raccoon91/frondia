@@ -1,14 +1,8 @@
-import { DEFAULT_CURRENCIES, DEFAULT_TRANSACTION_TYPES_AND_CATEGORIES } from "@/constants/seed";
+import { DEFAULT_CATEGORY_MAP, DEFAULT_CURRENCIES, DEFAULT_TRANSACTION_TYPES } from "@/constants/seed";
 import { supabase } from "./client";
 
 export const generateCurrency = async () => {
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) return;
-
     const { data: currencies, error: currencyError } = await supabase
       .from("currencies")
       .insert(DEFAULT_CURRENCIES)
@@ -22,6 +16,21 @@ export const generateCurrency = async () => {
   }
 };
 
+export const generateTypes = async () => {
+  try {
+    const { data: types, error: typeError } = await supabase
+      .from("transaction_types")
+      .insert(DEFAULT_TRANSACTION_TYPES)
+      .select("*");
+
+    if (typeError) throw typeError;
+
+    console.log("types", types);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const generateTypeAndCategory = async () => {
   try {
     const {
@@ -30,21 +39,19 @@ export const generateTypeAndCategory = async () => {
 
     if (!user) return;
 
-    for (const transactionSeed of DEFAULT_TRANSACTION_TYPES_AND_CATEGORIES) {
-      const { data: transaction } = await supabase
-        .from("transaction_types")
-        .insert({ name: transactionSeed.name })
-        .select("*")
-        .maybeSingle();
+    const { data: types, error: typeError } = await supabase.from("transaction_types").select("*");
 
-      console.log("transaction", transaction);
+    if (typeError) throw typeError;
 
-      if (!transaction) continue;
+    if (!types) return;
 
-      const categorySeeds = transactionSeed.categories.map((category) => ({
-        type_id: transaction.id,
-        name: category.name,
-      }));
+    for (const type of types) {
+      const categorySeeds =
+        DEFAULT_CATEGORY_MAP?.[type.name]?.map((category) => ({
+          user_id: user.id,
+          type_id: type.id,
+          ...category,
+        })) ?? [];
 
       const { data: categories } = await supabase.from("categories").insert(categorySeeds).select("*");
 

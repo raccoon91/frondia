@@ -33,6 +33,12 @@ type CalendarMap = Record<number, { type: TransactionType; position: CalendarTyp
 
 type CalendarStatisticsMap = Record<string, CalendarMap>;
 
+interface GoalInProgress extends Goal {
+  totalAmount: number;
+  result: "success" | "failure";
+  remain: number;
+}
+
 interface TransactionData {
   id: number;
   status: string;
