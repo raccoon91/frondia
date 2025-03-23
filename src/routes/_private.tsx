@@ -1,14 +1,14 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { MAIN_FILE_ROUTE, ROUTE } from "@/constants/route";
+import { PRIVATE_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { useAuthStore } from "@/stores/auth.store";
-import { MainLayout } from "@/components/layouts/main-layout";
+import { PrivateLayout } from "@/components/layouts/private-layout";
 
-export const Route = createFileRoute(MAIN_FILE_ROUTE)({
+export const Route = createFileRoute(PRIVATE_FILE_ROUTE)({
   beforeLoad: async () => {
     const isSuccess = await useAuthStore.getState().getUser();
 
     if (!isSuccess) throw redirect({ to: ROUTE.LOGIN });
   },
-  component: MainLayout,
+  component: PrivateLayout,
 });

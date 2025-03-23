@@ -4,18 +4,18 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useShallow } from "zustand/shallow";
 import dayjs from "dayjs";
 
-import { HOME_FILE_ROUTE } from "@/constants/route";
+import { DASHBOARD_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
 import { useLocalStore } from "@/stores/local.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { useHomeStore } from "@/stores/home.store";
+import { useDashboardStore } from "@/stores/dashboard.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
-import { GoalProgress } from "@/components/home/goal-progress";
+import { GoalProgress } from "@/components/dashboard/goal-progress";
 
-const MainPage = () => {
+const DashboardPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
   const { getTransactionTypes, getCategories } = useTransactionOptionStore(
     useShallow((state) => ({
@@ -33,7 +33,7 @@ const MainPage = () => {
     getGoalsInProgress,
     movePrevMonth,
     moveNextMonth,
-  } = useHomeStore(
+  } = useDashboardStore(
     useShallow((state) => ({
       statistics: state.statistics,
       calendarStatisticsMap: state.calendarStatisticsMap,
@@ -196,6 +196,6 @@ const MainPage = () => {
   );
 };
 
-export const Route = createLazyFileRoute(HOME_FILE_ROUTE)({
-  component: MainPage,
+export const Route = createLazyFileRoute(DASHBOARD_FILE_ROUTE)({
+  component: DashboardPage,
 });

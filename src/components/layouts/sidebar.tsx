@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChartPie, Coins, Flame, Home, Settings } from "lucide-react";
+import { ChartPie, Coins, Flame, PanelsRightBottom, Settings } from "lucide-react";
 
 import { ROUTE } from "@/constants/route";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -11,15 +11,15 @@ export const Sidebar = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
-              to={ROUTE.HOME}
+              to={ROUTE.DASHBOARD}
               className="text-muted-foreground transition-transform hover:scale-125"
               activeProps={{ className: "text-primary scale-125" }}
             >
-              <Home />
+              <PanelsRightBottom />
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right" sideOffset={12}>
-            <p className="font-bold">Home</p>
+            <p className="font-bold">Dashboard</p>
           </TooltipContent>
         </Tooltip>
 

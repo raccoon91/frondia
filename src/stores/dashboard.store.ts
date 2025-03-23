@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useLocalStore } from "./local.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
-interface HomeStore {
+interface DashboardStore {
   transactions: Transaction[];
   statistics: Statistics;
   calendarStatisticsMap: CalendarStatisticsMap;
@@ -24,7 +24,7 @@ interface HomeStore {
   moveNextMonth: (date: string) => void;
 }
 
-export const useHomeStore = create<HomeStore>()(
+export const useDashboardStore = create<DashboardStore>()(
   devtools(
     persist(
       (set, get) => ({
@@ -213,7 +213,7 @@ export const useHomeStore = create<HomeStore>()(
         },
       }),
       {
-        name: STORE_NAME.HOME,
+        name: STORE_NAME.DASHBOARD,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
           transactions: state.transactions,

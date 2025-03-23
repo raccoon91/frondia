@@ -26,7 +26,7 @@ const LoginPage = () => {
   const handleSubmitLogin = async (formdata: z.infer<typeof loginFormSchema>) => {
     const isSuccess = await login(formdata.email, formdata.password);
 
-    if (isSuccess) navigate({ to: ROUTE.HOME });
+    if (isSuccess) navigate({ to: ROUTE.DASHBOARD });
   };
 
   return (

@@ -8,7 +8,7 @@ export const Route = createFileRoute(AUTH_FILE_ROUTE)({
   beforeLoad: async () => {
     const isSuccess = await useAuthStore.getState().getUser();
 
-    if (isSuccess) throw redirect({ to: ROUTE.HOME });
+    if (isSuccess) throw redirect({ to: ROUTE.DASHBOARD });
   },
   component: AuthLayout,
 });

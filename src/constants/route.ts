@@ -1,25 +1,25 @@
-export const MAIN_FILE_ROUTE = "/_main";
-
-export const HOME_FILE_ROUTE = "/_main/";
-
-export const TRANSACTION_FILE_ROUTE = "/_main/transaction";
-
-export const GOAL_FILE_ROUTE = "/_main/goal";
-
-export const REPORT_FILE_ROUTE = "/_main/report";
-
-export const SETTING_FILE_ROUTE = "/_main/setting";
-
 export const AUTH_FILE_ROUTE = "/_auth";
 
 export const LOGIN_FILE_ROUTE = "/_auth/login";
 
+export const PRIVATE_FILE_ROUTE = "/_private";
+
+export const DASHBOARD_FILE_ROUTE = "/_private/dashboard";
+
+export const TRANSACTION_FILE_ROUTE = "/_private/transaction";
+
+export const GOAL_FILE_ROUTE = "/_private/goal";
+
+export const REPORT_FILE_ROUTE = "/_private/report";
+
+export const SETTING_FILE_ROUTE = "/_private/setting";
+
 export const ROUTE = {
-  HOME: "/",
+  LOGIN: "/login",
+
+  DASHBOARD: "/dashboard",
   TRANSACTION: "/transaction",
   GOAL: "/goal",
   REPORT: "/report",
   SETTING: "/setting",
-
-  LOGIN: "/login",
 };
