@@ -145,6 +145,11 @@ export const useDashboardStore = create<DashboardStore>()(
         },
         getGoalsInProgress: async () => {
           try {
+            const localDate = useLocalStore.getState().localDate;
+
+            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+
             const transactions = get().transactions;
 
             const transactionMapByCategoryId = transactions.reduce<Record<number, Transaction[]>>(
@@ -163,7 +168,9 @@ export const useDashboardStore = create<DashboardStore>()(
               .select(
                 "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
               )
-              .eq("status", GOAL_STATUS.PROGRESS);
+              .eq("status", GOAL_STATUS.PROGRESS)
+              .lte("start", endOfMonth)
+              .gte("end", startOfMonth);
 
             if (goalErorr) throw goalErorr;
 

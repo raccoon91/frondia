@@ -234,17 +234,23 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
                             const unit = form.getValues("date_unit");
                             const start = form.getValues("start");
 
+                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
+
                             if (unit && start) {
                               const end = dayjs(start)
                                 .add(Number(value), unit as ManipulateType)
+                                .subtract(1, "day")
                                 .toString();
+                              const done = dayjs(end).isBefore(dayjs().format("YYYY-MM-DD"));
 
                               form.setValue("end", end);
+                              form.setValue(
+                                "status",
+                                done ? GOAL_STATUS.DONE : ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS,
+                              );
+                            } else {
+                              form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
                             }
-
-                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
-
-                            form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
 
                             field.onChange(value);
                           }}
@@ -323,17 +329,23 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
                             const period = form.getValues("period");
                             const unit = form.getValues("date_unit");
 
+                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
+
                             if (period && unit) {
                               const end = dayjs(value)
                                 .add(Number(period), unit as ManipulateType)
+                                .subtract(1, "day")
                                 .toString();
+                              const done = dayjs(end).isBefore(dayjs().format("YYYY-MM-DD"));
 
                               form.setValue("end", end);
+                              form.setValue(
+                                "status",
+                                done ? GOAL_STATUS.DONE : ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS,
+                              );
+                            } else {
+                              form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
                             }
-
-                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
-
-                            form.setValue("status", ready ? GOAL_STATUS.READY : GOAL_STATUS.PROGRESS);
 
                             field.onChange(value);
                           }}

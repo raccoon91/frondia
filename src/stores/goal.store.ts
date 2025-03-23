@@ -3,33 +3,99 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { z } from "zod";
 
 import { STORE_NAME } from "@/constants/store";
+import { GOAL_STATUS } from "@/constants/goal";
 import { goalFormSchema } from "@/schema/goal.schema";
 import { supabase } from "@/lib/supabase/client";
+import { useLocalStore } from "./local.store";
+import dayjs from "dayjs";
 
 interface GoalStore {
-  goals: Goal[];
+  goalsInReady: Goal[];
+  goalsInProgress: Goal[];
+  goalsInDone: Goal[];
 
-  getGoals: () => Promise<void>;
+  getGoalsInReady: () => Promise<void>;
+  getGoalsInProgress: () => Promise<void>;
+  getGoalsInDone: () => Promise<void>;
   createGoal: (formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
+
+  movePrevMonth: (date: string) => void;
+  moveNextMonth: (date: string) => void;
 }
 
 export const useGoalStore = create<GoalStore>()(
   devtools(
     persist(
       (set) => ({
-        goals: [],
+        goalsInReady: [],
+        goalsInProgress: [],
+        goalsInDone: [],
 
-        getGoals: async () => {
+        getGoalsInReady: async () => {
           try {
+            const localDate = useLocalStore.getState().localDate;
+
+            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+
             const { data: goals, error: goalErorr } = await supabase
               .from("goals")
               .select(
                 "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
-              );
+              )
+              .eq("status", GOAL_STATUS.READY)
+              .lte("start", endOfMonth)
+              .gte("end", startOfMonth);
 
             if (goalErorr) throw goalErorr;
 
-            set({ goals }, false, "getGoals");
+            set({ goalsInReady: goals }, false, "getGoalsInReady");
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        getGoalsInProgress: async () => {
+          try {
+            const localDate = useLocalStore.getState().localDate;
+
+            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+
+            const { data: goals, error: goalErorr } = await supabase
+              .from("goals")
+              .select(
+                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
+              )
+              .eq("status", GOAL_STATUS.PROGRESS)
+              .lte("start", endOfMonth)
+              .gte("end", startOfMonth);
+
+            if (goalErorr) throw goalErorr;
+
+            set({ goalsInProgress: goals }, false, "getGoalsInProgress");
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        getGoalsInDone: async () => {
+          try {
+            const localDate = useLocalStore.getState().localDate;
+
+            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+
+            const { data: goals, error: goalErorr } = await supabase
+              .from("goals")
+              .select(
+                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
+              )
+              .eq("status", GOAL_STATUS.DONE)
+              .lte("start", endOfMonth)
+              .gte("end", startOfMonth);
+
+            if (goalErorr) throw goalErorr;
+
+            set({ goalsInDone: goals }, false, "getGoalsInDone");
           } catch (error) {
             console.error(error);
           }
@@ -69,12 +135,21 @@ export const useGoalStore = create<GoalStore>()(
             console.error(error);
           }
         },
+
+        movePrevMonth: (date: string) => {
+          useLocalStore.getState().setDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
+        },
+        moveNextMonth: (date: string) => {
+          useLocalStore.getState().setDate(dayjs(date).add(1, "month").format("YYYY-MM"));
+        },
       }),
       {
         name: STORE_NAME.GOAL,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
-          goals: state.goals,
+          goalsInReady: state.goalsInReady,
+          goalsInProgress: state.goalsInProgress,
+          goalsInDone: state.goalsInDone,
         }),
       },
     ),

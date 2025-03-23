@@ -1,17 +1,21 @@
 import { useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useShallow } from "zustand/shallow";
 import { z } from "zod";
 
 import { GOAL_FILE_ROUTE } from "@/constants/route";
 import { goalFormSchema } from "@/schema/goal.schema";
+import { useLocalStore } from "@/stores/local.store";
 import { useGoalStore } from "@/stores/goal.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoalSheet } from "@/components/goal/goal-sheet";
 import { GoalCard } from "@/components/goal/goal-card";
 
 const GoalPage = () => {
+  const localDate = useLocalStore((state) => state.localDate);
   const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
     useTransactionOptionStore(
       useShallow((state) => ({
@@ -24,31 +28,63 @@ const GoalPage = () => {
       })),
     );
 
-  const { goals, getGoals, createGoal } = useGoalStore(
+  const {
+    goalsInReady,
+    goalsInProgress,
+    goalsInDone,
+    getGoalsInReady,
+    getGoalsInProgress,
+    getGoalsInDone,
+    createGoal,
+    movePrevMonth,
+    moveNextMonth,
+  } = useGoalStore(
     useShallow((state) => ({
-      goals: state.goals,
-      getGoals: state.getGoals,
+      goalsInReady: state.goalsInReady,
+      goalsInProgress: state.goalsInProgress,
+      goalsInDone: state.goalsInDone,
+      getGoalsInReady: state.getGoalsInReady,
+      getGoalsInProgress: state.getGoalsInProgress,
+      getGoalsInDone: state.getGoalsInDone,
       createGoal: state.createGoal,
+      movePrevMonth: state.movePrevMonth,
+      moveNextMonth: state.moveNextMonth,
     })),
   );
 
   useEffect(() => {
-    getCurrencies();
-    getTransactionTypes();
-    getCategories();
-    getGoals();
+    Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
+    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
   }, []);
 
   const handleCreateGoal = async (formdata: z.infer<typeof goalFormSchema>) => {
     await createGoal(formdata);
 
-    getGoals();
+    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
+  };
+
+  const handleClickPrevMonth = () => {
+    movePrevMonth(localDate);
+
+    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
+  };
+
+  const handleClickNextMonth = () => {
+    moveNextMonth(localDate);
+
+    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
   };
 
   return (
     <div className="grid grid-rows-[60px_auto] gap-6">
-      <div className="flex items-center px-6 border rounded-md bg-card text-card-foreground shadow-sm">
-        <p className="font-bold">Goal</p>
+      <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
+        <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
+          <ChevronLeft />
+        </Button>
+        <p className="font-bold">{localDate}</p>
+        <Button variant="ghost" className="w-8 h-8" onClick={handleClickNextMonth}>
+          <ChevronRight />
+        </Button>
       </div>
 
       <div className="grid grid-rows-[32px_auto] gap-4">
@@ -70,39 +106,9 @@ const GoalPage = () => {
             </CardHeader>
 
             <CardContent className="flex flex-col gap-2">
-              {goals.map((goal) => (
+              {goalsInReady.map((goal) => (
                 <GoalCard key={goal.id} goal={goal} />
               ))}
-
-              {/* <div className="overflow-hidden relative flex flex-col gap-2 p-4 border rounded-md bg-background shadow-sm">
-                <div className="absolute top-0 right-0 py-1 px-2 rounded-bl-sm bg-indigo-300">
-                  <p className="text-sm">Schedule</p>
-                </div>
-
-                <p className="font-bold">name</p>
-
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary">Investment</Badge>
-                  <Badge variant="outline">Stock</Badge>
-                  <Badge variant="outline">S&P500</Badge>
-                </div>
-
-                <div className="flex justify-between px-2">
-                  <div className="flex gap-2">
-                    <p className="text-sm">day</p>
-
-                    <p className="text-sm">15:00</p>
-                  </div>
-
-                  <p className="text-sm">10000</p>
-                </div>
-
-                <div className="flex items-center justify-end gap-1 px-2 text-xs text-muted-foreground italic">
-                  <p>{dayjs().format("YYYY-MM-DD")}</p>
-                  <p>~</p>
-                  <p>{dayjs().add(7, "day").format("YYYY-MM-DD")}</p>
-                </div>
-              </div> */}
             </CardContent>
           </Card>
 
@@ -110,12 +116,22 @@ const GoalPage = () => {
             <CardHeader>
               <CardTitle>Progress</CardTitle>
             </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {goalsInProgress.map((goal) => (
+                <GoalCard key={goal.id} goal={goal} />
+              ))}
+            </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle>Done</CardTitle>
             </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {goalsInDone.map((goal) => (
+                <GoalCard key={goal.id} goal={goal} />
+              ))}
+            </CardContent>
           </Card>
         </div>
       </div>
