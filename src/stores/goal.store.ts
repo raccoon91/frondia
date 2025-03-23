@@ -1,15 +1,17 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { z } from "zod";
+import dayjs from "dayjs";
 
 import { STORE_NAME } from "@/constants/store";
 import { GOAL_STATUS } from "@/constants/goal";
 import { goalFormSchema } from "@/schema/goal.schema";
 import { supabase } from "@/lib/supabase/client";
 import { useLocalStore } from "./local.store";
-import dayjs from "dayjs";
 
 interface GoalStore {
+  isLoading: boolean;
+
   goalsInReady: Goal[];
   goalsInProgress: Goal[];
   goalsInDone: Goal[];
@@ -27,6 +29,8 @@ export const useGoalStore = create<GoalStore>()(
   devtools(
     persist(
       (set) => ({
+        isLoading: false,
+
         goalsInReady: [],
         goalsInProgress: [],
         goalsInDone: [],
@@ -102,6 +106,8 @@ export const useGoalStore = create<GoalStore>()(
         },
         createGoal: async (formdata) => {
           try {
+            set({ isLoading: true }, false, "createGoal");
+
             const { data, error: goalErorr } = await supabase
               .from("goals")
               .insert({
@@ -119,7 +125,10 @@ export const useGoalStore = create<GoalStore>()(
               .select("*")
               .maybeSingle();
 
-            if (!data) return;
+            if (!data) {
+              set({ isLoading: false }, false, "createGoal");
+              return;
+            }
 
             if (goalErorr) throw goalErorr;
 
@@ -131,8 +140,12 @@ export const useGoalStore = create<GoalStore>()(
             const { error: mapErorr } = await supabase.from("goal_category_map").insert(categoryMap);
 
             if (mapErorr) throw mapErorr;
+
+            set({ isLoading: false }, false, "createGoal");
           } catch (error) {
             console.error(error);
+
+            set({ isLoading: false }, false, "createGoal");
           }
         },
 

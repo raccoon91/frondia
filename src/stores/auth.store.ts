@@ -5,6 +5,8 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 
 interface AuthStore {
+  isLoading: boolean;
+
   user: Nullable<User>;
 
   getUser: () => Promise<boolean>;
@@ -14,21 +16,27 @@ interface AuthStore {
 
 export const useAuthStore = create<AuthStore>()(
   devtools((set) => ({
+    isLoading: false,
+
     user: null,
 
     getUser: async () => {
       try {
+        set({ isLoading: true }, false, "getUser");
+
         const { data, error } = await supabase.auth.getUser();
 
         if (error) throw error;
 
         if (!data?.user) return false;
 
-        set({ user: data.user }, false, "getUser");
+        set({ user: data.user, isLoading: false }, false, "getUser");
 
         return true;
       } catch (error) {
         console.error(error);
+
+        set({ isLoading: false }, false, "getUser");
       }
     },
     login: async (email: string, password: string) => {

@@ -1,6 +1,7 @@
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useShallow } from "zustand/shallow";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
@@ -10,10 +11,16 @@ import { useAuthStore } from "@/stores/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
+import { LoadingDot } from "@/components/ui/loading-dot";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const { isLoading, login } = useAuthStore(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      login: state.login,
+    })),
+  );
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -47,37 +54,47 @@ const LoginPage = () => {
                   </p>
                 </div>
 
-                <div className="grid gap-6">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Input type="email" autoFocus {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="flex flex-col gap-8">
+                  <div className="flex flex-col gap-4">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input type="email" autoFocus {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                  <Button type="submit" className="w-full">
-                    Login
-                  </Button>
+                  <div className="relative">
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                      Login
+                    </Button>
+
+                    {isLoading ? (
+                      <div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center">
+                        <LoadingDot />
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
 
                 <div className="text-center text-sm">

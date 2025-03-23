@@ -14,15 +14,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { DatePicker } from "@/components/ui/date-picker";
+import { LoadingDot } from "@/components/ui/loading-dot";
 
 interface GoalSheetProps {
+  isLoading: boolean;
   currencies: Currency[];
   transactionTypes: TransactionType[];
   categories: Category[];
   onCreate: (formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
 }
 
-export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, categories, onCreate }) => {
+export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transactionTypes, categories, onCreate }) => {
   const [isOpenGoalSheet, setIsOpenGoalSheet] = useState(false);
 
   const form = useForm<z.infer<typeof goalFormSchema>>({
@@ -383,10 +385,16 @@ export const GoalSheet: FC<GoalSheetProps> = ({ currencies, transactionTypes, ca
               />
             </div>
 
-            <div className="mt-auto px-4">
-              <Button type="submit" className="w-full" disabled={!form.formState.isValid}>
+            <div className="relative mt-auto px-4">
+              <Button type="submit" className="w-full" disabled={isLoading || !form.formState.isValid}>
                 Create Goal
               </Button>
+
+              {isLoading ? (
+                <div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center z-1">
+                  <LoadingDot />
+                </div>
+              ) : null}
             </div>
           </form>
         </Form>

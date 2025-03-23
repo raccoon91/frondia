@@ -29,6 +29,7 @@ const GoalPage = () => {
     );
 
   const {
+    isLoading,
     goalsInReady,
     goalsInProgress,
     goalsInDone,
@@ -40,6 +41,7 @@ const GoalPage = () => {
     moveNextMonth,
   } = useGoalStore(
     useShallow((state) => ({
+      isLoading: state.isLoading,
       goalsInReady: state.goalsInReady,
       goalsInProgress: state.goalsInProgress,
       goalsInDone: state.goalsInDone,
@@ -90,6 +92,7 @@ const GoalPage = () => {
       <div className="grid grid-rows-[32px_auto] gap-4">
         <div className="flex justify-end gap-2">
           <GoalSheet
+            isLoading={isLoading}
             currencies={currencies}
             transactionTypes={transactionTypes}
             categories={categories}
