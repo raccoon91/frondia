@@ -7,6 +7,7 @@ export const FeatureSection = () => {
   const boxRef = useRef<HTMLDivElement>(null);
 
   const [focused, setFocused] = useState("monthly");
+  const [image, setImage] = useState("/images/feature_1.png");
   const [position, setPosition] = useState<Record<string, number> | null>(null);
 
   useLayoutEffect(() => {
@@ -35,10 +36,12 @@ export const FeatureSection = () => {
   const handleHoverFeature = (e: MouseEvent<HTMLDivElement>) => {
     const dataset = e.currentTarget.dataset;
     const focused = dataset.focused;
+    const image = dataset.image;
 
-    if (!focused) return;
+    if (!focused || !image) return;
 
     setFocused(focused);
+    setImage(`/images/${image}`);
   };
 
   return (
@@ -56,6 +59,7 @@ export const FeatureSection = () => {
         <div className="flex flex-col flex-3">
           <Card
             data-focused="monthly"
+            data-image="feature_1.png"
             className={cn(
               "py-3 px-4 bg-background border-background shadow-none",
               focused === "monthly" ? "bg-secondary border-secondary" : "",
@@ -70,6 +74,7 @@ export const FeatureSection = () => {
 
           <Card
             data-focused="daily"
+            data-image="feature_2.png"
             className={cn(
               "py-3 px-4 bg-background border-background shadow-none",
               focused === "daily" ? "bg-secondary border-secondary" : "",
@@ -83,7 +88,23 @@ export const FeatureSection = () => {
           </Card>
 
           <Card
+            data-focused="tracking"
+            data-image="feature_3.png"
+            className={cn(
+              "py-3 px-4 bg-background border-background shadow-none",
+              focused === "tracking" ? "bg-secondary border-secondary" : "",
+            )}
+            onMouseEnter={handleHoverFeature}
+          >
+            <CardContent className="flex flex-col gap-1 p-0">
+              <p className="text-lg font-semibold">목표 설정</p>
+              <p>목표를 얼마나 달성했는지 실시간으로 확인하고, 소비 습관을 바꿔보세요.</p>
+            </CardContent>
+          </Card>
+
+          <Card
             data-focused="goal"
+            data-image="feature_4.png"
             className={cn(
               "py-3 px-4 bg-background border-background shadow-none",
               focused === "goal" ? "bg-secondary border-secondary" : "",
@@ -93,21 +114,6 @@ export const FeatureSection = () => {
             <CardContent className="flex flex-col gap-1 p-0">
               <p className="text-lg font-semibold">맞춤형</p>
               <p>소비 목표 설정 원하는 목표를 설정하고, 소비 습관을 개선하세요.</p>
-              <p>(예: "이번 달 식비 20% 줄이기")</p>
-            </CardContent>
-          </Card>
-
-          <Card
-            data-focused="tracking"
-            className={cn(
-              "py-3 px-4 bg-background border-background shadow-none",
-              focused === "tracking" ? "bg-secondary border-secondary" : "",
-            )}
-            onMouseEnter={handleHoverFeature}
-          >
-            <CardContent className="flex flex-col gap-1 p-0">
-              <p className="text-lg font-semibold">목표 달성 트래킹 설정한</p>
-              <p>목표를 얼마나 달성했는지 실시간으로 확인하고, 소비 습관을 바꿔보세요.</p>
             </CardContent>
           </Card>
         </div>
@@ -115,12 +121,14 @@ export const FeatureSection = () => {
         <div ref={boxRef} className="relative flex-2">
           {position ? (
             <div
-              className="absolute top-0 left-0 right-0 bg-secondary rounded-tl-md"
+              className="overflow-hidden absolute top-0 left-0 right-0 rounded-tl-md"
               style={{
                 width: position.width,
                 height: position.height + 80,
+                backgroundImage: `url(${image})`,
+                backgroundSize: "auto 100%",
               }}
-            ></div>
+            />
           ) : null}
         </div>
       </div>
