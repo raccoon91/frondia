@@ -22,13 +22,13 @@ export const BottomSection = () => {
   return (
     <section className="flex flex-col items-center mx-auto pt-30 pb-60">
       <h2 className="text-4xl">
-        오늘부터 <span className="text-primary font-semibold">Snowball</span>과 함께
+        Start Today with <span className="text-primary font-semibold">Snowball</span>
       </h2>
-      <h2 className="mt-2 text-4xl">더 나은 소비 습관을 만들어 보세요!</h2>
+      <h2 className="mt-2 text-4xl">and Build Better Spending Habits!</h2>
 
       <div className="mt-12">
         <Button variant="outline" onClick={handleClickStart}>
-          지금 시작하기 <ArrowRight />
+          Get Started <ArrowRight />
         </Button>
       </div>
     </section>
