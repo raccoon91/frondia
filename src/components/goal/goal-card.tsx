@@ -21,7 +21,7 @@ export const GoalCard: FC<GoalCardProps> = ({ goal }) => {
 
   return (
     <div className="overflow-hidden relative p-4 border rounded-md bg-background shadow-sm">
-      <div className={cn("absolute top-0 right-0 py-1 px-2 rounded-bl-sm", rule?.color ?? "bg-background")}>
+      <div className={cn("absolute top-0 right-0 py-1 px-2 rounded-bl-sm", rule?.bg ?? "bg-background")}>
         <p className="text-xs">{rule?.label ?? ""}</p>
       </div>
 

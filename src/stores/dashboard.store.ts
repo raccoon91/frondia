@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 
 import { STORE_NAME } from "@/constants/store";
 import { CALENDAR_TYPE_POSITION } from "@/constants/calendar";
-import { GOAL_STATUS } from "@/constants/goal";
+import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
 import { supabase } from "@/lib/supabase/client";
 import { useLocalStore } from "./local.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
@@ -178,6 +178,7 @@ export const useDashboardStore = create<DashboardStore>()(
               let totalAmount = 0;
               let totalCount = 0;
               let result: GoalInProgress["result"] = "success";
+              let value = 0;
 
               goal.map.forEach(({ category }) => {
                 const transactions = transactionMapByCategoryId?.[category.id] ?? [];
@@ -188,20 +189,26 @@ export const useDashboardStore = create<DashboardStore>()(
                 });
               });
 
-              if (goal.rule === "fixed_amount") {
+              if (goal.rule === GOAL_RULE.FIXED_AMOUNT) {
                 result = totalAmount >= goal.amount ? "success" : "failure";
-              } else if (goal.rule === "spending_limit") {
+                value = (totalAmount / goal.amount) * 100;
+              } else if (goal.rule === GOAL_RULE.SPENDING_LIMIT) {
                 result = totalAmount <= goal.amount ? "success" : "failure";
-              } else if (goal.rule === "count_amount") {
+                value = (totalAmount / goal.amount) * 100;
+              } else if (goal.rule === GOAL_RULE.COUNT_AMOUNT) {
                 result = totalCount >= goal.amount ? "success" : "failure";
-              } else if (goal.rule === "count_limit") {
+                value = (totalCount / goal.amount) * 100;
+              } else if (goal.rule === GOAL_RULE.COUNT_LIMIT) {
                 result = totalCount < goal.amount ? "success" : "failure";
+                value = (totalCount / goal.amount) * 100;
               }
 
               return {
-                ...goal,
-                totalAmount,
+                id: goal.id,
+                rule: goal.rule,
                 result,
+                name: goal.name,
+                value,
                 remain: dayjs(goal.end).diff(dayjs(), "day"),
               };
             });

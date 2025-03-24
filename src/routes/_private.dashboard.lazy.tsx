@@ -160,16 +160,16 @@ const DashboardPage = () => {
                         {Object.values(calendarMap ?? {}).map(({ type, position }) => (
                           <div
                             key={type.id}
+                            className={cn(
+                              "absolute flex items-center justify-center min-w-1.5 min-h-1.5 rounded-sm z-1",
+                              position.color,
+                            )}
                             style={{
                               top: position?.top,
                               right: position?.right,
                               bottom: position?.bottom,
                               left: position?.left,
                             }}
-                            className={cn(
-                              "absolute flex items-center justify-center min-w-1.5 min-h-1.5 rounded-sm z-1",
-                              position.color,
-                            )}
                           ></div>
                         ))}
                       </div>

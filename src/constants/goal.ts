@@ -5,11 +5,18 @@ export const GOAL_DATE_UNIT_OPTIONS = [
   { value: "year", label: "Year" },
 ];
 
+export const GOAL_RULE = {
+  FIXED_AMOUNT: "fixed_amount",
+  SPENDING_LIMIT: "spending_limit",
+  COUNT_AMOUNT: "count_amount",
+  COUNT_LIMIT: "count_limit",
+};
+
 export const GOAL_RULES = [
-  { value: "fixed_amount", label: "Fixed Amount", color: "bg-emerald-300" },
-  { value: "spending_limit", label: "Spending Limit", color: "bg-rose-300" },
-  { value: "count_amount", label: "Count Above", color: "bg-indigo-300" },
-  { value: "count_limit", label: "Count Limit", color: "bg-amber-300" },
+  { value: GOAL_RULE.FIXED_AMOUNT, label: "Fixed Amount", bg: "bg-emerald-300" },
+  { value: GOAL_RULE.SPENDING_LIMIT, label: "Spending Limit", bg: "bg-rose-300" },
+  { value: GOAL_RULE.COUNT_AMOUNT, label: "Count Above", bg: "bg-indigo-300" },
+  { value: GOAL_RULE.COUNT_LIMIT, label: "Count Limit", bg: "bg-amber-300" },
 ];
 
 export const GOAL_STATUS = {
