@@ -1,0 +1,10 @@
+@URL = {{$dotenv VITE_SUPABASE_URL}}
+@ANON_KEY = {{$dotenv VITE_SUPABASE_ANON_KEY}}
+
+###
+# @name postGoals
+POST {{URL}}/functions/v1/goals
+Authorization: Bearer {{ANON_KEY}}
+Content-Type: application/json
+
+{ "name": "goals" }
