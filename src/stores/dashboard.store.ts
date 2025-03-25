@@ -149,6 +149,7 @@ export const useDashboardStore = create<DashboardStore>()(
 
             const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            const today = dayjs().format("YYYY-MM-DD 00:00");
 
             const transactions = get().transactions;
 
@@ -168,50 +169,94 @@ export const useDashboardStore = create<DashboardStore>()(
               .select(
                 "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
               )
-              .eq("status", GOAL_STATUS.PROGRESS)
               .lte("start", endOfMonth)
               .gte("end", startOfMonth);
 
             if (goalErorr) throw goalErorr;
 
-            const goalsInProgress = goals.map((goal) => {
-              let totalAmount = 0;
-              let totalCount = 0;
-              let result: GoalInProgress["result"] = "success";
-              let value = 0;
+            const { goalsInProgress, updated } = goals.reduce<{
+              goalsInProgress: GoalInProgress[];
+              updated: Goal[];
+            }>(
+              (acc, goal) => {
+                if (
+                  goal.status === GOAL_STATUS.READY &&
+                  (dayjs(goal.start).isSame(today) || dayjs(goal.start).isBefore(today))
+                ) {
+                  // change goal status to progress
+                  goal.status = GOAL_STATUS.PROGRESS;
 
-              goal.map.forEach(({ category }) => {
-                const transactions = transactionMapByCategoryId?.[category.id] ?? [];
+                  acc.updated.push(goal);
+                } else if (goal.status === GOAL_STATUS.PROGRESS && dayjs(goal.end).isBefore(today)) {
+                  // change goal status to done
+                  goal.status = GOAL_STATUS.DONE;
 
-                transactions.forEach((transaction) => {
-                  totalAmount += transaction.amount;
-                  totalCount += 1;
-                });
-              });
+                  acc.updated.push(goal);
+                }
 
-              if (goal.rule === GOAL_RULE.FIXED_AMOUNT) {
-                result = totalAmount >= goal.amount ? "success" : "failure";
-                value = (totalAmount / goal.amount) * 100;
-              } else if (goal.rule === GOAL_RULE.SPENDING_LIMIT) {
-                result = totalAmount <= goal.amount ? "success" : "failure";
-                value = (totalAmount / goal.amount) * 100;
-              } else if (goal.rule === GOAL_RULE.COUNT_AMOUNT) {
-                result = totalCount >= goal.amount ? "success" : "failure";
-                value = (totalCount / goal.amount) * 100;
-              } else if (goal.rule === GOAL_RULE.COUNT_LIMIT) {
-                result = totalCount < goal.amount ? "success" : "failure";
-                value = (totalCount / goal.amount) * 100;
-              }
+                if (goal.status === GOAL_STATUS.PROGRESS) {
+                  let totalAmount = 0;
+                  let totalCount = 0;
+                  let result: GoalInProgress["result"] = "success";
+                  let value = 0;
 
-              return {
-                id: goal.id,
-                rule: goal.rule,
-                result,
-                name: goal.name,
-                value,
-                remain: dayjs(goal.end).diff(dayjs(), "day"),
-              };
-            });
+                  goal.map.forEach(({ category }) => {
+                    const transactions = transactionMapByCategoryId?.[category.id] ?? [];
+
+                    transactions.forEach((transaction) => {
+                      totalAmount += transaction.amount;
+                      totalCount += 1;
+                    });
+                  });
+
+                  if (goal.rule === GOAL_RULE.FIXED_AMOUNT) {
+                    result = totalAmount >= goal.amount ? "success" : "failure";
+                    value = (totalAmount / goal.amount) * 100;
+                  } else if (goal.rule === GOAL_RULE.SPENDING_LIMIT) {
+                    result = totalAmount <= goal.amount ? "success" : "failure";
+                    value = (totalAmount / goal.amount) * 100;
+                  } else if (goal.rule === GOAL_RULE.COUNT_AMOUNT) {
+                    result = totalCount >= goal.amount ? "success" : "failure";
+                    value = (totalCount / goal.amount) * 100;
+                  } else if (goal.rule === GOAL_RULE.COUNT_LIMIT) {
+                    result = totalCount < goal.amount ? "success" : "failure";
+                    value = (totalCount / goal.amount) * 100;
+                  }
+
+                  acc.goalsInProgress.push({
+                    id: goal.id,
+                    rule: goal.rule,
+                    result,
+                    name: goal.name,
+                    value,
+                    remain: dayjs(goal.end).diff(dayjs(), "day"),
+                  });
+                }
+
+                return acc;
+              },
+              { goalsInProgress: [], updated: [] },
+            );
+
+            if (updated.length) {
+              await supabase.from("goals").upsert(
+                updated.map((goal) => ({
+                  id: goal.id,
+                  user_id: goal.user_id,
+                  name: goal.name,
+                  type_id: goal.type_id,
+                  currency_id: goal.currency_id,
+                  amount: goal.amount,
+                  period: goal.period,
+                  start: goal.start,
+                  end: goal.end,
+                  status: goal.status,
+                  created_at: goal.created_at,
+                  rule: goal.rule,
+                  date_unit: goal.date_unit,
+                })),
+              );
+            }
 
             set({ goalsInProgress }, false, "getGoalsInProgress");
           } catch (error) {

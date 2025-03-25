@@ -16,9 +16,7 @@ interface GoalStore {
   goalsInProgress: Goal[];
   goalsInDone: Goal[];
 
-  getGoalsInReady: () => Promise<void>;
-  getGoalsInProgress: () => Promise<void>;
-  getGoalsInDone: () => Promise<void>;
+  getGoals: () => Promise<void>;
   createGoal: (formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
 
   movePrevMonth: (date: string) => void;
@@ -35,71 +33,81 @@ export const useGoalStore = create<GoalStore>()(
         goalsInProgress: [],
         goalsInDone: [],
 
-        getGoalsInReady: async () => {
+        getGoals: async () => {
           try {
             const localDate = useLocalStore.getState().localDate;
 
             const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            const today = dayjs().format("YYYY-MM-DD 00:00");
 
             const { data: goals, error: goalErorr } = await supabase
               .from("goals")
               .select(
                 "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
               )
-              .eq("status", GOAL_STATUS.READY)
               .lte("start", endOfMonth)
               .gte("end", startOfMonth);
 
             if (goalErorr) throw goalErorr;
 
-            set({ goalsInReady: goals }, false, "getGoalsInReady");
-          } catch (error) {
-            console.error(error);
-          }
-        },
-        getGoalsInProgress: async () => {
-          try {
-            const localDate = useLocalStore.getState().localDate;
+            const { goalsInReady, goalsInProgress, goalsInDone, updated } = goals.reduce<{
+              goalsInReady: Goal[];
+              goalsInProgress: Goal[];
+              goalsInDone: Goal[];
+              updated: Goal[];
+            }>(
+              (acc, goal) => {
+                if (
+                  goal.status === GOAL_STATUS.READY &&
+                  (dayjs(goal.start).isSame(today) || dayjs(goal.start).isBefore(today))
+                ) {
+                  // change goal status to progress
+                  goal.status = GOAL_STATUS.PROGRESS;
 
-            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
-            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+                  acc.updated.push(goal);
+                } else if (goal.status === GOAL_STATUS.PROGRESS && dayjs(goal.end).isBefore(today)) {
+                  // change goal status to done
+                  goal.status = GOAL_STATUS.DONE;
 
-            const { data: goals, error: goalErorr } = await supabase
-              .from("goals")
-              .select(
-                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
-              )
-              .eq("status", GOAL_STATUS.PROGRESS)
-              .lte("start", endOfMonth)
-              .gte("end", startOfMonth);
+                  acc.updated.push(goal);
+                }
 
-            if (goalErorr) throw goalErorr;
+                if (goal.status === GOAL_STATUS.READY) acc.goalsInReady.push(goal);
+                if (goal.status === GOAL_STATUS.PROGRESS) acc.goalsInProgress.push(goal);
+                if (goal.status === GOAL_STATUS.DONE) acc.goalsInDone.push(goal);
 
-            set({ goalsInProgress: goals }, false, "getGoalsInProgress");
-          } catch (error) {
-            console.error(error);
-          }
-        },
-        getGoalsInDone: async () => {
-          try {
-            const localDate = useLocalStore.getState().localDate;
+                return acc;
+              },
+              {
+                goalsInReady: [],
+                goalsInProgress: [],
+                goalsInDone: [],
+                updated: [],
+              },
+            );
 
-            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
-            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            if (updated.length) {
+              await supabase.from("goals").upsert(
+                updated.map((goal) => ({
+                  id: goal.id,
+                  user_id: goal.user_id,
+                  name: goal.name,
+                  type_id: goal.type_id,
+                  currency_id: goal.currency_id,
+                  amount: goal.amount,
+                  period: goal.period,
+                  start: goal.start,
+                  end: goal.end,
+                  status: goal.status,
+                  created_at: goal.created_at,
+                  rule: goal.rule,
+                  date_unit: goal.date_unit,
+                })),
+              );
+            }
 
-            const { data: goals, error: goalErorr } = await supabase
-              .from("goals")
-              .select(
-                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
-              )
-              .eq("status", GOAL_STATUS.DONE)
-              .lte("start", endOfMonth)
-              .gte("end", startOfMonth);
-
-            if (goalErorr) throw goalErorr;
-
-            set({ goalsInDone: goals }, false, "getGoalsInDone");
+            set({ goalsInReady, goalsInProgress, goalsInDone }, false, "getGoals");
           } catch (error) {
             console.error(error);
           }

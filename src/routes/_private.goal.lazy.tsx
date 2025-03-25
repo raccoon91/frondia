@@ -28,53 +28,41 @@ const GoalPage = () => {
       })),
     );
 
-  const {
-    isLoading,
-    goalsInReady,
-    goalsInProgress,
-    goalsInDone,
-    getGoalsInReady,
-    getGoalsInProgress,
-    getGoalsInDone,
-    createGoal,
-    movePrevMonth,
-    moveNextMonth,
-  } = useGoalStore(
-    useShallow((state) => ({
-      isLoading: state.isLoading,
-      goalsInReady: state.goalsInReady,
-      goalsInProgress: state.goalsInProgress,
-      goalsInDone: state.goalsInDone,
-      getGoalsInReady: state.getGoalsInReady,
-      getGoalsInProgress: state.getGoalsInProgress,
-      getGoalsInDone: state.getGoalsInDone,
-      createGoal: state.createGoal,
-      movePrevMonth: state.movePrevMonth,
-      moveNextMonth: state.moveNextMonth,
-    })),
-  );
+  const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, createGoal, movePrevMonth, moveNextMonth } =
+    useGoalStore(
+      useShallow((state) => ({
+        isLoading: state.isLoading,
+        goalsInReady: state.goalsInReady,
+        goalsInProgress: state.goalsInProgress,
+        goalsInDone: state.goalsInDone,
+        getGoals: state.getGoals,
+        createGoal: state.createGoal,
+        movePrevMonth: state.movePrevMonth,
+        moveNextMonth: state.moveNextMonth,
+      })),
+    );
 
   useEffect(() => {
     Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
-    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
+    getGoals();
   }, []);
 
   const handleCreateGoal = async (formdata: z.infer<typeof goalFormSchema>) => {
     await createGoal(formdata);
 
-    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
+    getGoals();
   };
 
   const handleClickPrevMonth = () => {
     movePrevMonth(localDate);
 
-    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
+    getGoals();
   };
 
   const handleClickNextMonth = () => {
     moveNextMonth(localDate);
 
-    Promise.all([getGoalsInReady(), getGoalsInProgress(), getGoalsInDone()]);
+    getGoals();
   };
 
   return (

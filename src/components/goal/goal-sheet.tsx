@@ -236,14 +236,14 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                             const unit = form.getValues("date_unit");
                             const start = form.getValues("start");
 
-                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
+                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD 00:00"));
 
                             if (unit && start) {
                               const end = dayjs(start)
                                 .add(Number(value), unit as ManipulateType)
                                 .subtract(1, "day")
-                                .toString();
-                              const done = dayjs(end).isBefore(dayjs().format("YYYY-MM-DD"));
+                                .format("YYYY-MM-DD 00:00");
+                              const done = dayjs(end).isBefore(dayjs().format("YYYY-MM-DD 00:00"));
 
                               form.setValue("end", end);
                               form.setValue(
@@ -277,7 +277,7 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                           if (period && start) {
                             const end = dayjs(start)
                               .add(Number(period), value as ManipulateType)
-                              .toString();
+                              .format("YYYY-MM-DD 00:00");
 
                             form.setValue("end", end);
                           }
@@ -331,14 +331,14 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                             const period = form.getValues("period");
                             const unit = form.getValues("date_unit");
 
-                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD"));
+                            const ready = dayjs(value).isAfter(dayjs().format("YYYY-MM-DD 00:00"));
 
                             if (period && unit) {
                               const end = dayjs(value)
                                 .add(Number(period), unit as ManipulateType)
                                 .subtract(1, "day")
-                                .toString();
-                              const done = dayjs(end).isBefore(dayjs().format("YYYY-MM-DD"));
+                                .format("YYYY-MM-DD 00:00");
+                              const done = dayjs(end).isBefore(dayjs().format("YYYY-MM-DD 00:00"));
 
                               form.setValue("end", end);
                               form.setValue(
