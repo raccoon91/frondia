@@ -15,7 +15,7 @@ export const TransactionDate: FC<CellContext<TransactionData, unknown>> = memo(
     };
 
     if (status === TRANSACTION_STATUS.NEW || status === TRANSACTION_STATUS.EDIT) {
-      return <DateTimePicker defaultValue={date} onValueChange={handleChange} />;
+      return <DateTimePicker hideIcon defaultValue={date} onValueChange={handleChange} />;
     }
 
     return <p className="h-8 p-2 leading-4">{date}</p>;

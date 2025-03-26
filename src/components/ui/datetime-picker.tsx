@@ -10,11 +10,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface DateTimePickerProps {
+  hideIcon?: boolean;
   defaultValue?: string;
   onValueChange?: (date: Nullable<string>) => void;
 }
 
-export function DateTimePicker({ defaultValue, onValueChange }: DateTimePickerProps) {
+export function DateTimePicker({ hideIcon, defaultValue, onValueChange }: DateTimePickerProps) {
   const [date, setDate] = React.useState<Date | undefined>(defaultValue ? dayjs(defaultValue).toDate() : undefined);
 
   const handleChangeDate = (value?: Date) => {
@@ -69,7 +70,7 @@ export function DateTimePicker({ defaultValue, onValueChange }: DateTimePickerPr
           variant="outline"
           className={cn("w-full justify-start text-left font-normal px-2", !date && "text-muted-foreground")}
         >
-          <CalendarIcon />
+          {!hideIcon ? <CalendarIcon /> : null}
           {date ? dayjs(date).format("YYYY-MM-DD HH:mm") : <span>Date</span>}
         </Button>
       </PopoverTrigger>

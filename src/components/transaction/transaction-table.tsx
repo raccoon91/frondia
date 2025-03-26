@@ -14,22 +14,22 @@ import { TransactionTypeSelect } from "./transaction-type-select";
 export const columns: ColumnDef<TransactionData>[] = [
   {
     id: "check",
-    minSize: 40,
-    maxSize: 40,
+    minSize: 30,
+    maxSize: 30,
     cell: TransactionCheck,
   },
   {
     accessorKey: "date",
     header: "Date",
-    minSize: 180,
-    maxSize: 180,
+    minSize: 160,
+    maxSize: 160,
     cell: TransactionDate,
   },
   {
     accessorKey: "transactionType",
     header: "Type",
-    minSize: 140,
-    maxSize: 140,
+    minSize: 120,
+    maxSize: 120,
     cell: TransactionTypeSelect,
   },
   {
@@ -42,20 +42,21 @@ export const columns: ColumnDef<TransactionData>[] = [
   {
     accessorKey: "memo",
     header: "Memo",
+    minSize: 120,
     cell: TransactionMemo,
   },
   {
     accessorKey: "currency",
     header: "Currency",
-    minSize: 120,
-    maxSize: 120,
+    minSize: 100,
+    maxSize: 100,
     cell: TransactionCurrencySelect,
   },
   {
     accessorKey: "amount",
     header: "Amount",
-    minSize: 160,
-    maxSize: 160,
+    minSize: 140,
+    maxSize: 140,
     cell: TransactionAmount,
   },
   {
