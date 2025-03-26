@@ -21,6 +21,7 @@ interface TransactionStore {
   saveAllTransaction: () => Promise<void>;
   cancelAllTransaction: () => void;
   deleteTransaction: () => Promise<void>;
+  macroTransaction: (macro: Macro) => void;
 
   editTransaction: (rowId: number) => void;
   cancelEditTransaction: (rowId: number) => void;
@@ -248,6 +249,41 @@ export const useTransactionStore = create<TransactionStore>()(
           } catch (error) {
             console.error(error);
           }
+        },
+        macroTransaction: (macro: Macro) => {
+          const currencies = useTransactionOptionStore.getState().currencies;
+          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+          let categories = useTransactionOptionStore.getState().categories;
+
+          const transactionType = transactionTypes.find((type) => type.id === macro.type_id);
+          const category = categories.find((category) => category.id === macro.category_id);
+          const currency = currencies.find((currency) => currency.id === macro.currency_id);
+
+          if (transactionType) {
+            categories = categories.filter((category) => category.type_id === transactionType.id);
+          }
+
+          const datasets = [
+            {
+              id: dayjs().valueOf(),
+              status: TRANSACTION_STATUS.NEW,
+              checked: false,
+              date: dayjs().format("YYYY-MM-DD HH:mm"),
+              amount: macro.amount ?? 0,
+              memo: macro.memo,
+
+              transactionType,
+              category,
+              currency,
+
+              transactionTypes,
+              categories,
+              currencies,
+            },
+            ...(get().transactionDatasets ?? []),
+          ];
+
+          set({ transactionDatasets: datasets }, false, "macroTransaction");
         },
 
         editTransaction: (rowId: number) => {

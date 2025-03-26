@@ -170,6 +170,42 @@ export type Database = {
           },
         ]
       }
+      macros: {
+        Row: {
+          amount: number | null
+          category_id: number | null
+          created_at: string
+          currency_id: number | null
+          id: number
+          memo: string | null
+          name: string
+          type_id: number | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          category_id?: number | null
+          created_at?: string
+          currency_id?: number | null
+          id?: number
+          memo?: string | null
+          name: string
+          type_id?: number | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          category_id?: number | null
+          created_at?: string
+          currency_id?: number | null
+          id?: number
+          memo?: string | null
+          name?: string
+          type_id?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

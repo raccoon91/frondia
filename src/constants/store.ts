@@ -3,5 +3,6 @@ export const STORE_NAME = {
   DASHBOARD: "dashboard-store",
   TRANSACTION_OPTION: "transaction-option-store",
   TRANSACTION: "transaction-store",
+  MACRO: "macro-store",
   GOAL: "goal-store",
 };

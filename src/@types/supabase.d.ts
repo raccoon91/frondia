@@ -46,6 +46,18 @@ interface Transaction {
   category?: Category;
 }
 
+interface Macro {
+  id: number;
+  user_id: string;
+  name: string;
+  type_id: Nullable<number>;
+  category_id: Nullable<number>;
+  amount: Nullable<number>;
+  currency_id: Nullable<number>;
+  memo: Nullable<string>;
+  created_at: string;
+}
+
 interface Goal {
   id: number;
   user_id: string;
