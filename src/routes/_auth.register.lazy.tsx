@@ -5,40 +5,41 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { loginFormSchema } from "@/schema/auth.schema";
+import { registerFormSchema } from "@/schema/auth.schema";
 import { useAuthStore } from "@/stores/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
 import { LoadingDot } from "@/components/ui/loading-dot";
-import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
-  const { isLoading, login, loginWithGoogle } = useAuthStore(
+  const { isLoading, register } = useAuthStore(
     useShallow((state) => ({
       isLoading: state.isLoading,
-      login: state.login,
-      loginWithGoogle: state.loginWithGoogle,
+      register: state.register,
     })),
   );
 
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<z.infer<typeof registerFormSchema>>({
+    resolver: zodResolver(registerFormSchema),
     defaultValues: {
       email: "",
+      name: "",
       password: "",
+      passwordConfirm: "",
     },
   });
 
-  const handleSubmitLogin = async (formdata: z.infer<typeof loginFormSchema>) => {
-    const isSuccess = await login(formdata);
+  const handleSubmitRegister = async (formdata: z.infer<typeof registerFormSchema>) => {
+    const isSuccess = await register(formdata);
 
-    if (isSuccess) navigate({ to: ROUTE.DASHBOARD });
-  };
+    if (isSuccess) {
+      toast.success("Email sent successfully! Please check your inbox");
 
-  const handleSubmitLoginWithGoogle = async () => {
-    await loginWithGoogle();
+      navigate({ to: ROUTE.HOME });
+    }
   };
 
   return (
@@ -51,12 +52,12 @@ const LoginPage = () => {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <Form {...form}>
-              <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(handleSubmitLogin)}>
+              <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(handleSubmitRegister)}>
                 <div className="flex flex-col items-center gap-1 text-center">
-                  <h1 className="text-2xl font-bold">Login to your account</h1>
-                  <p className="text-balance text-sm text-muted-foreground">
-                    Enter your email below to login to your account
-                  </p>
+                  <h1 className="text-2xl font-bold">
+                    Start <span className="text-primary font-bold">Snowball</span>
+                  </h1>
+                  <p className="text-sm">And save your money</p>
                 </div>
 
                 <div className="flex flex-col gap-6">
@@ -66,9 +67,25 @@ const LoginPage = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel className="gap-1">
+                            <p>Email</p>
+                            <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input type="email" autoFocus {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="gap-1">User Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -79,7 +96,26 @@ const LoginPage = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel className="gap-1">
+                            <p>Password</p>
+                            <span className="text-destructive">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="passwordConfirm"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="gap-1">
+                            <p>Password Confirm</p>
+                            <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input type="password" {...field} />
                           </FormControl>
@@ -91,7 +127,7 @@ const LoginPage = () => {
 
                   <div className="relative">
                     <Button type="submit" className="w-full" disabled={isLoading}>
-                      Login
+                      Register
                     </Button>
 
                     {isLoading ? (
@@ -102,31 +138,10 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <Separator className="flex-1" />
-                    <p className="text-sm text-muted-foreground">or continue with</p>
-                    <Separator className="flex-1" />
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={isLoading}
-                    className="relative justify-start p-1"
-                    onClick={handleSubmitLoginWithGoogle}
-                  >
-                    <img src="/images/google_logo.svg" alt="google logo" className="w-auto h-full" />
-                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 font-bold">
-                      Google
-                    </p>
-                  </Button>
-                </div>
-
                 <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <Link to={ROUTE.REGISTER} className="underline">
-                    Sign up
+                  Already have an account?{" "}
+                  <Link to={ROUTE.LOGIN} className="underline">
+                    Log in
                   </Link>
                 </div>
               </form>
@@ -139,5 +154,5 @@ const LoginPage = () => {
 };
 
 export const Route = createLazyFileRoute(LOGIN_FILE_ROUTE)({
-  component: LoginPage,
+  component: RegisterPage,
 });

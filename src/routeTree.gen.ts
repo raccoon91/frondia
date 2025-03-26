@@ -25,6 +25,7 @@ const PrivateSettingLazyImport = createFileRoute("/_private/setting")();
 const PrivateReportLazyImport = createFileRoute("/_private/report")();
 const PrivateGoalLazyImport = createFileRoute("/_private/goal")();
 const PrivateDashboardLazyImport = createFileRoute("/_private/dashboard")();
+const AuthRegisterLazyImport = createFileRoute("/_auth/register")();
 const AuthLoginLazyImport = createFileRoute("/_auth/login")();
 
 // Create/Update Routes
@@ -80,6 +81,12 @@ const PrivateDashboardLazyRoute = PrivateDashboardLazyImport.update({
   getParentRoute: () => PrivateRoute,
 } as any).lazy(() => import("./routes/_private.dashboard.lazy").then((d) => d.Route));
 
+const AuthRegisterLazyRoute = AuthRegisterLazyImport.update({
+  id: "/register",
+  path: "/register",
+  getParentRoute: () => AuthRoute,
+} as any).lazy(() => import("./routes/_auth.register.lazy").then((d) => d.Route));
+
 const AuthLoginLazyRoute = AuthLoginLazyImport.update({
   id: "/login",
   path: "/login",
@@ -116,6 +123,13 @@ declare module "@tanstack/react-router" {
       path: "/login";
       fullPath: "/login";
       preLoaderRoute: typeof AuthLoginLazyImport;
+      parentRoute: typeof AuthImport;
+    };
+    "/_auth/register": {
+      id: "/_auth/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof AuthRegisterLazyImport;
       parentRoute: typeof AuthImport;
     };
     "/_private/dashboard": {
@@ -167,10 +181,12 @@ declare module "@tanstack/react-router" {
 
 interface AuthRouteChildren {
   AuthLoginLazyRoute: typeof AuthLoginLazyRoute;
+  AuthRegisterLazyRoute: typeof AuthRegisterLazyRoute;
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthLoginLazyRoute: AuthLoginLazyRoute,
+  AuthRegisterLazyRoute: AuthRegisterLazyRoute,
 };
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
@@ -206,6 +222,7 @@ const PrivateRouteWithChildren = PrivateRoute._addFileChildren(PrivateRouteChild
 export interface FileRoutesByFullPath {
   "": typeof PrivateRouteWithChildren;
   "/login": typeof AuthLoginLazyRoute;
+  "/register": typeof AuthRegisterLazyRoute;
   "/dashboard": typeof PrivateDashboardLazyRoute;
   "/goal": typeof PrivateGoalLazyRoute;
   "/report": typeof PrivateReportLazyRoute;
@@ -217,6 +234,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   "": typeof PrivateRouteWithChildren;
   "/login": typeof AuthLoginLazyRoute;
+  "/register": typeof AuthRegisterLazyRoute;
   "/dashboard": typeof PrivateDashboardLazyRoute;
   "/goal": typeof PrivateGoalLazyRoute;
   "/report": typeof PrivateReportLazyRoute;
@@ -231,6 +249,7 @@ export interface FileRoutesById {
   "/_main": typeof MainRouteWithChildren;
   "/_private": typeof PrivateRouteWithChildren;
   "/_auth/login": typeof AuthLoginLazyRoute;
+  "/_auth/register": typeof AuthRegisterLazyRoute;
   "/_private/dashboard": typeof PrivateDashboardLazyRoute;
   "/_private/goal": typeof PrivateGoalLazyRoute;
   "/_private/report": typeof PrivateReportLazyRoute;
@@ -241,15 +260,16 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "" | "/login" | "/dashboard" | "/goal" | "/report" | "/setting" | "/transaction" | "/";
+  fullPaths: "" | "/login" | "/register" | "/dashboard" | "/goal" | "/report" | "/setting" | "/transaction" | "/";
   fileRoutesByTo: FileRoutesByTo;
-  to: "" | "/login" | "/dashboard" | "/goal" | "/report" | "/setting" | "/transaction" | "/";
+  to: "" | "/login" | "/register" | "/dashboard" | "/goal" | "/report" | "/setting" | "/transaction" | "/";
   id:
     | "__root__"
     | "/_auth"
     | "/_main"
     | "/_private"
     | "/_auth/login"
+    | "/_auth/register"
     | "/_private/dashboard"
     | "/_private/goal"
     | "/_private/report"
@@ -287,7 +307,8 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
-        "/_auth/login"
+        "/_auth/login",
+        "/_auth/register"
       ]
     },
     "/_main": {
@@ -308,6 +329,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/_auth/login": {
       "filePath": "_auth.login.lazy.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/register": {
+      "filePath": "_auth.register.lazy.tsx",
       "parent": "/_auth"
     },
     "/_private/dashboard": {

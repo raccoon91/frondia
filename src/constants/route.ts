@@ -2,6 +2,8 @@ export const AUTH_FILE_ROUTE = "/_auth";
 
 export const LOGIN_FILE_ROUTE = "/_auth/login";
 
+export const REGISTER_FILE_ROUTE = "/_auth/register";
+
 export const MAIN_FILE_ROUTE = "/_main";
 
 export const HOME_FILE_ROUTE = "/_main/";
@@ -20,6 +22,7 @@ export const SETTING_FILE_ROUTE = "/_private/setting";
 
 export const ROUTE = {
   LOGIN: "/login",
+  REGISTER: "/register",
 
   HOME: "/",
 

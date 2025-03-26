@@ -13,10 +13,9 @@ import dayjs from "dayjs";
 
 const SettingPage = () => {
   const navigate = useNavigate();
-  const { user, getUser, logout } = useAuthStore(
+  const { user, logout } = useAuthStore(
     useShallow((state) => ({
       user: state.user,
-      getUser: state.getUser,
       logout: state.logout,
     })),
   );
@@ -33,24 +32,24 @@ const SettingPage = () => {
     );
 
   const typesAndCategories = useMemo(() => {
-    if (!transactionTypes.length || !categories.length) return [];
+    if (!transactionTypes.length) return [];
 
-    const categoryMapByTypeId = categories.reduce<Record<number, Category[]>>((categoryMap, category) => {
-      if (!categoryMap[category.type_id]) categoryMap[category.type_id] = [];
+    const categoryMapByTypeId =
+      categories?.reduce<Record<number, Category[]>>((categoryMap, category) => {
+        if (!categoryMap[category.type_id]) categoryMap[category.type_id] = [];
 
-      categoryMap[category.type_id].push(category);
+        categoryMap[category.type_id].push(category);
 
-      return categoryMap;
-    }, {});
+        return categoryMap;
+      }, {}) ?? {};
 
     return transactionTypes.map((type) => ({
       ...type,
-      categories: categoryMapByTypeId[type.id],
+      categories: categoryMapByTypeId?.[type.id] ?? [],
     }));
   }, [transactionTypes, categories]);
 
   useEffect(() => {
-    getUser();
     getCurrencies();
     getTransactionTypes();
     getCategories();
@@ -69,7 +68,7 @@ const SettingPage = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        <div className="grid grid-cols-[2fr_1fr] gap-6">
+        <div className="grid grid-cols-2 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Profile</CardTitle>
@@ -93,7 +92,7 @@ const SettingPage = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-[1fr_272px] gap-6 items-start">
           <Card>
             <CardHeader>
               <CardTitle>Transaction Types And Categories</CardTitle>

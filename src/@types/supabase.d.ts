@@ -1,3 +1,10 @@
+interface Profile {
+  id: number;
+  name: string | null;
+  user_id: string;
+  created_at: string;
+}
+
 interface Currency {
   id: number;
   code: string;
