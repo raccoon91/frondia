@@ -1,4 +1,4 @@
-import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
 import { LoadingDot } from "@/components/ui/loading-dot";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { isLoading, login, loginWithGoogle } = useAuthStore(
+  const { isLoading, login } = useAuthStore(
     useShallow((state) => ({
       isLoading: state.isLoading,
       login: state.login,
@@ -37,9 +37,9 @@ const LoginPage = () => {
     if (isSuccess) navigate({ to: ROUTE.DASHBOARD });
   };
 
-  const handleSubmitLoginWithGoogle = async () => {
-    await loginWithGoogle();
-  };
+  // const handleSubmitLoginWithGoogle = async () => {
+  //   await loginWithGoogle();
+  // };
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -102,7 +102,7 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                {/* <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <Separator className="flex-1" />
                     <p className="text-sm text-muted-foreground">or continue with</p>
@@ -121,14 +121,14 @@ const LoginPage = () => {
                       Google
                     </p>
                   </Button>
-                </div>
+                </div> */}
 
-                <div className="text-center text-sm">
+                {/* <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
                   <Link to={ROUTE.REGISTER} className="underline">
                     Sign up
                   </Link>
-                </div>
+                </div> */}
               </form>
             </Form>
           </div>
