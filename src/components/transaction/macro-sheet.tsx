@@ -25,14 +25,6 @@ export const MacroSheet: FC<MacroSheetProps> = ({ isLoading, currencies, transac
 
   const form = useForm<z.infer<typeof macroFormSchema>>({
     resolver: zodResolver(macroFormSchema),
-    defaultValues: {
-      name: "",
-      type_id: "",
-      category_id: "",
-      currency_id: "",
-      amount: "",
-      memo: "",
-    },
   });
 
   const filteredCategories = useMemo(
@@ -77,13 +69,57 @@ export const MacroSheet: FC<MacroSheetProps> = ({ isLoading, currencies, transac
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Name</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input autoFocus {...field} />
                     </FormControl>
                   </FormItem>
                 )}
               />
+
+              <div className="flex gap-2">
+                <FormField
+                  control={form.control}
+                  name="day"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Day</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={0} max={31} {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="hour"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Hour</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={0} max={23} {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="minute"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Minute</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={0} max={59} {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -178,7 +214,10 @@ export const MacroSheet: FC<MacroSheetProps> = ({ isLoading, currencies, transac
                 name="memo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Memo</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Memo</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

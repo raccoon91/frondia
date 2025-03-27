@@ -263,12 +263,18 @@ export const useTransactionStore = create<TransactionStore>()(
             categories = categories.filter((category) => category.type_id === transactionType.id);
           }
 
+          let date = dayjs();
+
+          if (macro.day !== null) date = date.set("date", macro.day);
+          if (macro.hour !== null) date = date.set("hour", macro.hour);
+          if (macro.minute !== null) date = date.set("minute", macro.minute);
+
           const datasets = [
             {
               id: dayjs().valueOf(),
               status: TRANSACTION_STATUS.NEW,
               checked: false,
-              date: dayjs().format("YYYY-MM-DD HH:mm"),
+              date: date.format("YYYY-MM-DD HH:mm:00"),
               amount: macro.amount ?? 0,
               memo: macro.memo,
 

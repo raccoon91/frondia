@@ -2,10 +2,13 @@ import { MouseEvent, useCallback, useEffect } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, CircleX, Coins, Save, Search, Trash, X } from "lucide-react";
 import { useShallow } from "zustand/shallow";
+import { z } from "zod";
 
 import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
+import { macroFormSchema } from "@/schema/macro.schema";
 import { cn } from "@/lib/utils";
 import { useLocalStore } from "@/stores/local.store";
+import { useMacroStore } from "@/stores/macro.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -13,9 +16,6 @@ import { TransactionTable } from "@/components/transaction/transaction-table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { MacroSheet } from "@/components/transaction/macro-sheet";
-import { useMacroStore } from "@/stores/macro.store";
-import { z } from "zod";
-import { macroFormSchema } from "@/schema/macro.schema";
 
 const TransactionPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
@@ -301,7 +301,8 @@ const TransactionPage = () => {
           />
         </div>
 
-        <div className="sticky top-[20px] grid grid-rows-[32px_auto] gap-4">
+        {/* <div className="sticky top-[20px] grid grid-rows-[32px_auto] gap-4"> */}
+        <div className="grid grid-rows-[32px_auto] gap-4">
           <div className="flex justify-end">
             <MacroSheet
               isLoading={isLoading}

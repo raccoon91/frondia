@@ -56,6 +56,9 @@ interface Macro {
   currency_id: Nullable<number>;
   memo: Nullable<string>;
   created_at: string;
+  day: Nullable<number>;
+  hour: Nullable<number>;
+  minute: Nullable<number>;
 }
 
 interface Goal {

@@ -176,8 +176,11 @@ export type Database = {
           category_id: number | null
           created_at: string
           currency_id: number | null
+          day: number | null
+          hour: number | null
           id: number
           memo: string | null
+          minute: number | null
           name: string
           type_id: number | null
           user_id: string
@@ -187,8 +190,11 @@ export type Database = {
           category_id?: number | null
           created_at?: string
           currency_id?: number | null
+          day?: number | null
+          hour?: number | null
           id?: number
           memo?: string | null
+          minute?: number | null
           name: string
           type_id?: number | null
           user_id: string
@@ -198,8 +204,11 @@ export type Database = {
           category_id?: number | null
           created_at?: string
           currency_id?: number | null
+          day?: number | null
+          hour?: number | null
           id?: number
           memo?: string | null
+          minute?: number | null
           name?: string
           type_id?: number | null
           user_id?: string
