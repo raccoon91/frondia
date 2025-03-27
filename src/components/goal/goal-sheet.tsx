@@ -29,19 +29,6 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
 
   const form = useForm<z.infer<typeof goalFormSchema>>({
     resolver: zodResolver(goalFormSchema),
-    defaultValues: {
-      rule: "",
-      name: "",
-      type_id: "",
-      categories: [],
-      currency_id: "",
-      amount: "",
-      period: "",
-      date_unit: "",
-      start: "",
-      end: "",
-      status: "",
-    },
   });
 
   const categoryOptions = useMemo(
@@ -93,7 +80,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                 name="rule"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Rule</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Rule</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
@@ -118,7 +108,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Name</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input autoFocus {...field} />
                     </FormControl>
@@ -131,7 +124,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                 name="type_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Transaction Type</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Transaction Type</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
@@ -156,7 +152,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                 name="categories"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Category</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <MultiSelect
                         placeholder="Select Category"
@@ -176,7 +175,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                   name="amount"
                   render={({ field }) => (
                     <FormItem className="flex-2">
-                      <FormLabel>Amount</FormLabel>
+                      <FormLabel className="gap-1">
+                        <p>Amount</p>
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -189,7 +191,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                   name="currency_id"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>Currency</FormLabel>
+                      <FormLabel className="gap-1">
+                        <p>Currency</p>
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <Select defaultValue={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
@@ -216,7 +221,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                   name="period"
                   render={({ field }) => (
                     <FormItem className="flex-2">
-                      <FormLabel>Period</FormLabel>
+                      <FormLabel className="gap-1">
+                        <p>Period</p>
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -267,7 +275,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                   name="date_unit"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>Date Unit</FormLabel>
+                      <FormLabel className="gap-1">
+                        <p>Date Unit</p>
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <Select
                         defaultValue={field.value}
                         onValueChange={(value: string) => {
@@ -310,7 +321,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                   name="start"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>Start</FormLabel>
+                      <FormLabel className="gap-1">
+                        <p>Start</p>
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
                         <DatePicker
                           size="default"
@@ -362,7 +376,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                   name="end"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>End</FormLabel>
+                      <FormLabel className="gap-1">
+                        <p>End</p>
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input disabled value={field.value ? dayjs(field.value).format("YYYY-MM-DD") : ""} />
                       </FormControl>
@@ -376,7 +393,10 @@ export const GoalSheet: FC<GoalSheetProps> = ({ isLoading, currencies, transacti
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel className="gap-1">
+                      <p>Status</p>
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input disabled {...field} />
                     </FormControl>
