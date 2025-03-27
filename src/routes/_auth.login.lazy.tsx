@@ -25,10 +25,6 @@ const LoginPage = () => {
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
   });
 
   const handleSubmitLogin = async (formdata: z.infer<typeof loginFormSchema>) => {

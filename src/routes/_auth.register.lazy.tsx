@@ -24,12 +24,6 @@ const RegisterPage = () => {
 
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
-    defaultValues: {
-      email: "",
-      name: "",
-      password: "",
-      passwordConfirm: "",
-    },
   });
 
   const handleSubmitRegister = async (formdata: z.infer<typeof registerFormSchema>) => {
