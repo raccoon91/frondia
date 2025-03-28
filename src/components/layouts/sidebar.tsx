@@ -1,87 +1,28 @@
 import { Link } from "@tanstack/react-router";
-import { ChartPie, Coins, Flame, PanelsRightBottom, Settings } from "lucide-react";
 
-import { ROUTE } from "@/constants/route";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { MENUS } from "@/constants/menu";
 
 export const Sidebar = () => {
   return (
     <TooltipProvider>
       <div className="flex flex-col items-center justify-center w-full gap-6">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to={ROUTE.DASHBOARD}
-              className="text-muted-foreground transition-transform hover:scale-125"
-              activeProps={{ className: "text-primary scale-125" }}
-            >
-              <PanelsRightBottom />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={12}>
-            <p className="font-bold">Dashboard</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to={ROUTE.TRANSACTION}
-              className="text-muted-foreground transition-transform hover:scale-125"
-              activeProps={{ className: "text-primary scale-125" }}
-            >
-              <Coins />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={12}>
-            <p className="font-bold">Transaction</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to={ROUTE.GOAL}
-              className="text-muted-foreground transition-transform hover:scale-125"
-              activeProps={{ className: "text-primary scale-125" }}
-            >
-              <Flame />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={12}>
-            <p className="font-bold">Goal</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to={ROUTE.REPORT}
-              className="text-muted-foreground transition-transform hover:scale-125"
-              activeProps={{ className: "text-primary scale-125" }}
-            >
-              <ChartPie />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={12}>
-            <p className="font-bold">Report</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to={ROUTE.SETTING}
-              className="text-muted-foreground transition-transform hover:scale-125"
-              activeProps={{ className: "text-primary scale-125" }}
-            >
-              <Settings />
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={12}>
-            <p className="font-bold">Setting</p>
-          </TooltipContent>
-        </Tooltip>
+        {MENUS.map((menu) => (
+          <Tooltip key={menu.name}>
+            <TooltipTrigger asChild>
+              <Link
+                to={menu.to}
+                className="text-muted-foreground transition-transform hover:scale-125"
+                activeProps={{ className: "text-primary scale-125" }}
+              >
+                <menu.icon />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={12}>
+              <p className="font-bold">{menu.name}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
       </div>
     </TooltipProvider>
   );

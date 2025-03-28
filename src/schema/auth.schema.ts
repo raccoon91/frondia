@@ -8,7 +8,7 @@ export const loginFormSchema = z.object({
 export const registerFormSchema = z
   .object({
     email: z.string().email().nonempty(),
-    name: z.string(),
+    name: z.string().default(""),
     password: z.string().min(6).max(20),
     passwordConfirm: z.string().min(6).max(20),
   })

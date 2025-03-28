@@ -1,21 +1,18 @@
 import { MouseEvent, useCallback, useEffect } from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, CircleX, Coins, Save, Search, Trash, X } from "lucide-react";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight, CircleX, Coins, Save, Search, Settings, Trash, X } from "lucide-react";
 import { useShallow } from "zustand/shallow";
-import { z } from "zod";
 
-import { TRANSACTION_FILE_ROUTE } from "@/constants/route";
-import { macroFormSchema } from "@/schema/macro.schema";
+import { ROUTE, TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
 import { useLocalStore } from "@/stores/local.store";
 import { useMacroStore } from "@/stores/macro.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { TransactionTable } from "@/components/transaction/transaction-table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { MacroSheet } from "@/components/transaction/macro-sheet";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TransactionTable } from "@/components/transaction/transaction-table";
 
 const TransactionPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
@@ -47,12 +44,10 @@ const TransactionPage = () => {
         getCategories: state.getCategories,
       })),
     );
-  const { isLoading, macros, getMacros, createMacro } = useMacroStore(
+  const { macros, getMacros } = useMacroStore(
     useShallow((state) => ({
-      isLoading: state.isLoading,
       macros: state.macros,
       getMacros: state.getMacros,
-      createMacro: state.createMacro,
     })),
   );
   const {
@@ -140,12 +135,6 @@ const TransactionPage = () => {
 
   const handleReloadTransaction = () => {
     getTransactions();
-  };
-
-  const handleCreateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
-    await createMacro(formdata);
-
-    getMacros();
   };
 
   const handleClickMacro = (e: MouseEvent<HTMLDivElement>) => {
@@ -301,33 +290,30 @@ const TransactionPage = () => {
           />
         </div>
 
-        {/* <div className="sticky top-[20px] grid grid-rows-[32px_auto] gap-4"> */}
-        <div className="grid grid-rows-[32px_auto] gap-4">
+        {/* <div className="sticky top-[20px] grid grid-rows-[32px_auto] gap-4"></div> */}
+
+        <Card className="pt-0 gap-4">
           <div className="flex justify-end">
-            <MacroSheet
-              isLoading={isLoading}
-              currencies={currencies}
-              transactionTypes={transactionTypes}
-              categories={categories}
-              onCreate={handleCreateMacro}
-            />
+            <Button asChild size="icon" variant="ghost" className="w-8 h-8">
+              <Link to={ROUTE.MACRO}>
+                <Settings />
+              </Link>
+            </Button>
           </div>
 
-          <Card>
-            <CardContent className="flex flex-col gap-2">
-              {macros.map((macro) => (
-                <div
-                  key={macro.id}
-                  data-macro-id={macro.id}
-                  className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
-                  onClick={handleClickMacro}
-                >
-                  <p className="text-sm">{macro.name}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+          <CardContent className="flex flex-col gap-2">
+            {macros.map((macro) => (
+              <div
+                key={macro.id}
+                data-macro-id={macro.id}
+                className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
+                onClick={handleClickMacro}
+              >
+                <p className="text-sm">{macro.name}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

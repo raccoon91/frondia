@@ -10,9 +10,12 @@ interface MacroStore {
   isLoading: boolean;
 
   macros: Macro[];
+  allMacros: Macro[];
 
   getMacros: () => Promise<void>;
+  getAllMacros: () => Promise<void>;
   createMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
+  toggleMacroActive: (macroId: number, active: boolean) => Promise<void>;
 }
 
 export const useMacroStore = create<MacroStore>()(
@@ -22,14 +25,26 @@ export const useMacroStore = create<MacroStore>()(
         isLoading: false,
 
         macros: [],
+        allMacros: [],
 
         getMacros: async () => {
           try {
-            const { data, error } = await supabase.from("macros").select("*");
+            const { data, error } = await supabase.from("macros").select("*").eq("active", true);
 
             if (error) throw error;
 
             set({ macros: data ?? [] }, false, "getMacros");
+          } catch (error) {
+            console.error(error);
+          }
+        },
+        getAllMacros: async () => {
+          try {
+            const { data, error } = await supabase.from("macros").select("*").order("created_at", { ascending: true });
+
+            if (error) throw error;
+
+            set({ allMacros: data ?? [] }, false, "getAllMacros");
           } catch (error) {
             console.error(error);
           }
@@ -52,15 +67,34 @@ export const useMacroStore = create<MacroStore>()(
               currency_id: formdata.currency_id ? Number(formdata.currency_id) : null,
               amount: formdata.amount ? Number(formdata.amount) : null,
               memo: formdata.memo,
+              day: formdata.day ? Number(formdata.day) : null,
+              hour: formdata.hour ? Number(formdata.hour) : null,
+              minute: formdata.minute ? Number(formdata.minute) : null,
+              active: true,
             });
 
             if (macroError) throw macroError;
 
-            set({ isLoading: false }, false, "getMacros");
+            set({ isLoading: false }, false, "createMacro");
           } catch (error) {
             console.error(error);
 
             set({ isLoading: false }, false, "createMacro");
+          }
+        },
+        toggleMacroActive: async (macroId: number, active: boolean) => {
+          try {
+            set({ isLoading: true }, false, "toggleMacroActive");
+
+            const { error } = await supabase.from("macros").update({ active }).eq("id", macroId);
+
+            if (error) throw error;
+
+            set({ isLoading: false }, false, "toggleMacroActive");
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "toggleMacroActive");
           }
         },
       }),
@@ -69,6 +103,7 @@ export const useMacroStore = create<MacroStore>()(
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
           macros: state.macros,
+          allMacros: state.allMacros,
         }),
       },
     ),

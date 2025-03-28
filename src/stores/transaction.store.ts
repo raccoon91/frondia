@@ -115,7 +115,7 @@ export const useTransactionStore = create<TransactionStore>()(
               id: dayjs().valueOf(),
               status: TRANSACTION_STATUS.NEW,
               checked: false,
-              date: dayjs().format("YYYY-MM-DD HH:mm"),
+              date: dayjs().format("YYYY-MM-DD HH:mm:00"),
               amount: 0,
               memo: null,
 

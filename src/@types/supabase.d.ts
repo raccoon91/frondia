@@ -59,6 +59,7 @@ interface Macro {
   day: Nullable<number>;
   hour: Nullable<number>;
   minute: Nullable<number>;
+  active: boolean;
 }
 
 interface Goal {

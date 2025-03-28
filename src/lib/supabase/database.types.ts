@@ -172,6 +172,7 @@ export type Database = {
       }
       macros: {
         Row: {
+          active: boolean
           amount: number | null
           category_id: number | null
           created_at: string
@@ -186,6 +187,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          active: boolean
           amount?: number | null
           category_id?: number | null
           created_at?: string
@@ -200,6 +202,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          active?: boolean
           amount?: number | null
           category_id?: number | null
           created_at?: string

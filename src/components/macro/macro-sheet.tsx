@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from "react";
+import { FC, PropsWithChildren, useMemo, useState } from "react";
 import { Wrench } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +20,14 @@ interface MacroSheetProps {
   onCreate: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
 }
 
-export const MacroSheet: FC<MacroSheetProps> = ({ isLoading, currencies, transactionTypes, categories, onCreate }) => {
+export const MacroSheet: FC<PropsWithChildren<MacroSheetProps>> = ({
+  isLoading,
+  currencies,
+  transactionTypes,
+  categories,
+  onCreate,
+  children,
+}) => {
   const [isOpenMacroSheet, setIsOpenMacroSheet] = useState(false);
 
   const form = useForm<z.infer<typeof macroFormSchema>>({
@@ -47,9 +54,13 @@ export const MacroSheet: FC<MacroSheetProps> = ({ isLoading, currencies, transac
   return (
     <Sheet open={isOpenMacroSheet} onOpenChange={handleToggleSheet}>
       <SheetTrigger asChild>
-        <Button size="icon" variant="outline" className="w-8 h-8">
-          <Wrench />
-        </Button>
+        {children ? (
+          children
+        ) : (
+          <Button size="icon" variant="outline" className="w-8 h-8">
+            <Wrench />
+          </Button>
+        )}
       </SheetTrigger>
 
       <SheetContent className="flex flex-col gap-2 w-[400px] sm:w-[540px]">

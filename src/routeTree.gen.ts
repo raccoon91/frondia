@@ -23,6 +23,7 @@ const MainIndexLazyImport = createFileRoute("/_main/")();
 const PrivateTransactionLazyImport = createFileRoute("/_private/transaction")();
 const PrivateSettingLazyImport = createFileRoute("/_private/setting")();
 const PrivateReportLazyImport = createFileRoute("/_private/report")();
+const PrivateMacroLazyImport = createFileRoute("/_private/macro")();
 const PrivateGoalLazyImport = createFileRoute("/_private/goal")();
 const PrivateDashboardLazyImport = createFileRoute("/_private/dashboard")();
 const AuthRegisterLazyImport = createFileRoute("/_auth/register")();
@@ -68,6 +69,12 @@ const PrivateReportLazyRoute = PrivateReportLazyImport.update({
   path: "/report",
   getParentRoute: () => PrivateRoute,
 } as any).lazy(() => import("./routes/_private.report.lazy").then((d) => d.Route));
+
+const PrivateMacroLazyRoute = PrivateMacroLazyImport.update({
+  id: "/macro",
+  path: "/macro",
+  getParentRoute: () => PrivateRoute,
+} as any).lazy(() => import("./routes/_private.macro.lazy").then((d) => d.Route));
 
 const PrivateGoalLazyRoute = PrivateGoalLazyImport.update({
   id: "/goal",
@@ -146,6 +153,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PrivateGoalLazyImport;
       parentRoute: typeof PrivateImport;
     };
+    "/_private/macro": {
+      id: "/_private/macro";
+      path: "/macro";
+      fullPath: "/macro";
+      preLoaderRoute: typeof PrivateMacroLazyImport;
+      parentRoute: typeof PrivateImport;
+    };
     "/_private/report": {
       id: "/_private/report";
       path: "/report";
@@ -204,6 +218,7 @@ const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren);
 interface PrivateRouteChildren {
   PrivateDashboardLazyRoute: typeof PrivateDashboardLazyRoute;
   PrivateGoalLazyRoute: typeof PrivateGoalLazyRoute;
+  PrivateMacroLazyRoute: typeof PrivateMacroLazyRoute;
   PrivateReportLazyRoute: typeof PrivateReportLazyRoute;
   PrivateSettingLazyRoute: typeof PrivateSettingLazyRoute;
   PrivateTransactionLazyRoute: typeof PrivateTransactionLazyRoute;
@@ -212,6 +227,7 @@ interface PrivateRouteChildren {
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateDashboardLazyRoute: PrivateDashboardLazyRoute,
   PrivateGoalLazyRoute: PrivateGoalLazyRoute,
+  PrivateMacroLazyRoute: PrivateMacroLazyRoute,
   PrivateReportLazyRoute: PrivateReportLazyRoute,
   PrivateSettingLazyRoute: PrivateSettingLazyRoute,
   PrivateTransactionLazyRoute: PrivateTransactionLazyRoute,
@@ -225,6 +241,7 @@ export interface FileRoutesByFullPath {
   "/register": typeof AuthRegisterLazyRoute;
   "/dashboard": typeof PrivateDashboardLazyRoute;
   "/goal": typeof PrivateGoalLazyRoute;
+  "/macro": typeof PrivateMacroLazyRoute;
   "/report": typeof PrivateReportLazyRoute;
   "/setting": typeof PrivateSettingLazyRoute;
   "/transaction": typeof PrivateTransactionLazyRoute;
@@ -237,6 +254,7 @@ export interface FileRoutesByTo {
   "/register": typeof AuthRegisterLazyRoute;
   "/dashboard": typeof PrivateDashboardLazyRoute;
   "/goal": typeof PrivateGoalLazyRoute;
+  "/macro": typeof PrivateMacroLazyRoute;
   "/report": typeof PrivateReportLazyRoute;
   "/setting": typeof PrivateSettingLazyRoute;
   "/transaction": typeof PrivateTransactionLazyRoute;
@@ -252,6 +270,7 @@ export interface FileRoutesById {
   "/_auth/register": typeof AuthRegisterLazyRoute;
   "/_private/dashboard": typeof PrivateDashboardLazyRoute;
   "/_private/goal": typeof PrivateGoalLazyRoute;
+  "/_private/macro": typeof PrivateMacroLazyRoute;
   "/_private/report": typeof PrivateReportLazyRoute;
   "/_private/setting": typeof PrivateSettingLazyRoute;
   "/_private/transaction": typeof PrivateTransactionLazyRoute;
@@ -260,9 +279,19 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "" | "/login" | "/register" | "/dashboard" | "/goal" | "/report" | "/setting" | "/transaction" | "/";
+  fullPaths:
+    | ""
+    | "/login"
+    | "/register"
+    | "/dashboard"
+    | "/goal"
+    | "/macro"
+    | "/report"
+    | "/setting"
+    | "/transaction"
+    | "/";
   fileRoutesByTo: FileRoutesByTo;
-  to: "" | "/login" | "/register" | "/dashboard" | "/goal" | "/report" | "/setting" | "/transaction" | "/";
+  to: "" | "/login" | "/register" | "/dashboard" | "/goal" | "/macro" | "/report" | "/setting" | "/transaction" | "/";
   id:
     | "__root__"
     | "/_auth"
@@ -272,6 +301,7 @@ export interface FileRouteTypes {
     | "/_auth/register"
     | "/_private/dashboard"
     | "/_private/goal"
+    | "/_private/macro"
     | "/_private/report"
     | "/_private/setting"
     | "/_private/transaction"
@@ -322,6 +352,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "children": [
         "/_private/dashboard",
         "/_private/goal",
+        "/_private/macro",
         "/_private/report",
         "/_private/setting",
         "/_private/transaction"
@@ -341,6 +372,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/_private/goal": {
       "filePath": "_private.goal.lazy.tsx",
+      "parent": "/_private"
+    },
+    "/_private/macro": {
+      "filePath": "_private.macro.lazy.tsx",
       "parent": "/_private"
     },
     "/_private/report": {
