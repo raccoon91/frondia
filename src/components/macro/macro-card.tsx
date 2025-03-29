@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 
 interface MacroCardProps {
+  isLoading: boolean;
   macro: Macro;
   currency: Nullable<Currency>;
   type: Nullable<TransactionType>;
@@ -12,17 +13,17 @@ interface MacroCardProps {
   onToggleActive: (macroId: number, active: boolean) => Promise<void>;
 }
 
-export const MacroCard: FC<MacroCardProps> = ({ macro, currency, type, category, onToggleActive }) => {
+export const MacroCard: FC<MacroCardProps> = ({ isLoading, macro, currency, type, category, onToggleActive }) => {
   const handleMacroChecked = (checked: boolean) => {
     onToggleActive(macro.id, checked);
   };
 
   return (
-    <Card className="min-w-xs bg-background">
+    <Card className="bg-background">
       <CardHeader>
         <div className="flex items-center justify-start gap-2">
           <CardTitle>{macro.name}</CardTitle>
-          <Switch size="sm" checked={macro.active} onCheckedChange={handleMacroChecked} />
+          <Switch disabled={isLoading} size="sm" checked={macro.active} onCheckedChange={handleMacroChecked} />
         </div>
       </CardHeader>
 

@@ -1,15 +1,17 @@
 import { useEffect, useMemo } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
-import { Wrench } from "lucide-react";
+import { ToggleLeft, ToggleRight, Wrench } from "lucide-react";
 import { z } from "zod";
 
 import { MACRO_FILE_ROUTE } from "@/constants/route";
+import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { macroFormSchema } from "@/schema/macro.schema";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useMacroStore } from "@/stores/macro.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MacroCard } from "@/components/macro/macro-card";
 import { MacroSheet } from "@/components/macro/macro-sheet";
 
@@ -25,15 +27,18 @@ const MacroPage = () => {
         getCategories: state.getCategories,
       })),
     );
-  const { isLoading, allMacros, getAllMacros, createMacro, toggleMacroActive } = useMacroStore(
-    useShallow((state) => ({
-      isLoading: state.isLoading,
-      allMacros: state.allMacros,
-      getAllMacros: state.getAllMacros,
-      createMacro: state.createMacro,
-      toggleMacroActive: state.toggleMacroActive,
-    })),
-  );
+  const { isLoading, activeStatus, allMacros, changeActiveStatus, getAllMacros, createMacro, toggleMacroActive } =
+    useMacroStore(
+      useShallow((state) => ({
+        isLoading: state.isLoading,
+        activeStatus: state.activeStatus,
+        allMacros: state.allMacros,
+        changeActiveStatus: state.changeActiveStatus,
+        getAllMacros: state.getAllMacros,
+        createMacro: state.createMacro,
+        toggleMacroActive: state.toggleMacroActive,
+      })),
+    );
 
   const currencyMap = useMemo(
     () =>
@@ -65,6 +70,11 @@ const MacroPage = () => {
     getAllMacros();
   }, []);
 
+  const handleChangeActiveStatus = (value: string) => {
+    changeActiveStatus(value);
+    getAllMacros();
+  };
+
   const handleCreateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
     await createMacro(formdata);
 
@@ -84,7 +94,21 @@ const MacroPage = () => {
       </div>
 
       <div className="grid grid-rows-[32px_auto] gap-4">
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-between gap-2">
+          <Tabs defaultValue={activeStatus} onValueChange={handleChangeActiveStatus}>
+            <TabsList>
+              <TabsTrigger value={MACRO_ACTIVE_STATUS.ALL}>
+                <p className="font-bold">All</p>
+              </TabsTrigger>
+              <TabsTrigger value={MACRO_ACTIVE_STATUS.ACTIVE}>
+                <ToggleRight />
+              </TabsTrigger>
+              <TabsTrigger value={MACRO_ACTIVE_STATUS.INACTIVE}>
+                <ToggleLeft />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
           <MacroSheet
             isLoading={isLoading}
             currencies={currencies}
@@ -92,7 +116,7 @@ const MacroPage = () => {
             categories={categories}
             onCreate={handleCreateMacro}
           >
-            <Button variant="outline" size="sm">
+            <Button disabled={isLoading} variant="outline" size="sm">
               <Wrench />
               <p>Macro</p>
             </Button>
@@ -100,10 +124,11 @@ const MacroPage = () => {
         </div>
 
         <Card>
-          <CardContent className="flex flex-wrap gap-2">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {allMacros.map((macro) => (
               <MacroCard
                 key={macro.id}
+                isLoading={isLoading}
                 macro={macro}
                 currency={macro.currency_id ? currencyMap[macro.currency_id] : null}
                 type={macro.type_id ? typeMap[macro.type_id] : null}

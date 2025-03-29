@@ -57,7 +57,7 @@ export const MacroSheet: FC<PropsWithChildren<MacroSheetProps>> = ({
         {children ? (
           children
         ) : (
-          <Button size="icon" variant="outline" className="w-8 h-8">
+          <Button disabled={isLoading} size="icon" variant="outline" className="w-8 h-8">
             <Wrench />
           </Button>
         )}

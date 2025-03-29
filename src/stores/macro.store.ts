@@ -5,12 +5,16 @@ import { z } from "zod";
 import { STORE_NAME } from "@/constants/store";
 import { macroFormSchema } from "@/schema/macro.schema";
 import { supabase } from "@/lib/supabase/client";
+import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 
 interface MacroStore {
   isLoading: boolean;
+  activeStatus: string;
 
   macros: Macro[];
   allMacros: Macro[];
+
+  changeActiveStatus: (status: string) => void;
 
   getMacros: () => Promise<void>;
   getAllMacros: () => Promise<void>;
@@ -21,11 +25,16 @@ interface MacroStore {
 export const useMacroStore = create<MacroStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         isLoading: false,
+        activeStatus: MACRO_ACTIVE_STATUS.ALL,
 
         macros: [],
         allMacros: [],
+
+        changeActiveStatus: (status: string) => {
+          set({ activeStatus: status });
+        },
 
         getMacros: async () => {
           try {
@@ -40,7 +49,17 @@ export const useMacroStore = create<MacroStore>()(
         },
         getAllMacros: async () => {
           try {
-            const { data, error } = await supabase.from("macros").select("*").order("created_at", { ascending: true });
+            const activeStatus = get().activeStatus;
+
+            const builder = supabase.from("macros").select("*");
+
+            if (activeStatus === MACRO_ACTIVE_STATUS.ACTIVE) {
+              builder.eq("active", true);
+            } else if (activeStatus === MACRO_ACTIVE_STATUS.INACTIVE) {
+              builder.eq("active", false);
+            }
+
+            const { data, error } = await builder.order("created_at", { ascending: true });
 
             if (error) throw error;
 
@@ -102,6 +121,7 @@ export const useMacroStore = create<MacroStore>()(
         name: STORE_NAME.MACRO,
         storage: createJSONStorage(() => sessionStorage),
         partialize: (state) => ({
+          activeStatus: state.activeStatus,
           macros: state.macros,
           allMacros: state.allMacros,
         }),
