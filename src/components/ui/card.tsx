@@ -6,10 +6,17 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card"
-      className={cn("bg-card text-card-foreground flex flex-col gap-6 rounded-md border py-6 shadow-sm", className)}
+      className={cn(
+        "relative bg-card text-card-foreground flex flex-col gap-6 rounded-md border py-6 shadow-sm",
+        className,
+      )}
       {...props}
     />
   );
+}
+
+function CardMenu({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="card-menu" className={cn("absolute top-0 right-0 z-1", className)} {...props} />;
 }
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
@@ -53,4 +60,4 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };
+export { Card, CardMenu, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };

@@ -20,6 +20,7 @@ interface MacroStore {
   getAllMacros: () => Promise<void>;
   createMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
   toggleMacroActive: (macroId: number, active: boolean) => Promise<void>;
+  removeMacro: (macroId: number) => Promise<void>;
 }
 
 export const useMacroStore = create<MacroStore>()(
@@ -114,6 +115,21 @@ export const useMacroStore = create<MacroStore>()(
             console.error(error);
 
             set({ isLoading: false }, false, "toggleMacroActive");
+          }
+        },
+        removeMacro: async (macroId: number) => {
+          try {
+            set({ isLoading: true }, false, "removeMacro");
+
+            const { error } = await supabase.from("macros").delete().eq("id", macroId);
+
+            if (error) throw error;
+
+            set({ isLoading: false }, false, "removeMacro");
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "removeMacro");
           }
         },
       }),

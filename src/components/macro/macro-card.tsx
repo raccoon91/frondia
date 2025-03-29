@@ -1,8 +1,10 @@
 import { FC } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Trash } from "lucide-react";
 
 interface MacroCardProps {
   isLoading: boolean;
@@ -11,15 +13,34 @@ interface MacroCardProps {
   type: Nullable<TransactionType>;
   category: Nullable<Category>;
   onToggleActive: (macroId: number, active: boolean) => Promise<void>;
+  onDelete: (macroId: number) => void;
 }
 
-export const MacroCard: FC<MacroCardProps> = ({ isLoading, macro, currency, type, category, onToggleActive }) => {
+export const MacroCard: FC<MacroCardProps> = ({
+  isLoading,
+  macro,
+  currency,
+  type,
+  category,
+  onToggleActive,
+  onDelete,
+}) => {
   const handleMacroChecked = (checked: boolean) => {
     onToggleActive(macro.id, checked);
   };
 
+  const handleDeleteMarco = () => {
+    onDelete(macro.id);
+  };
+
   return (
     <Card className="bg-background">
+      <CardMenu className="top-2 right-2">
+        <Button disabled={isLoading} size="icon" variant="ghost" className="w-8 h-8" onClick={handleDeleteMarco}>
+          <Trash />
+        </Button>
+      </CardMenu>
+
       <CardHeader>
         <div className="flex items-center justify-start gap-2">
           <CardTitle>{macro.name}</CardTitle>

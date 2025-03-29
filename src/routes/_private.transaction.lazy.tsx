@@ -10,7 +10,7 @@ import { useMacroStore } from "@/stores/macro.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardMenu } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TransactionTable } from "@/components/transaction/transaction-table";
 
@@ -292,14 +292,14 @@ const TransactionPage = () => {
 
         {/* <div className="sticky top-[20px] grid grid-rows-[32px_auto] gap-4"></div> */}
 
-        <Card className="pt-0 gap-4">
-          <div className="flex justify-end">
+        <Card className="pt-8 gap-4">
+          <CardMenu>
             <Button asChild size="icon" variant="ghost" className="w-8 h-8">
               <Link to={ROUTE.MACRO}>
                 <Settings />
               </Link>
             </Button>
-          </div>
+          </CardMenu>
 
           <CardContent className="flex flex-col gap-2">
             {macros.map((macro) => (
