@@ -11,3 +11,15 @@ export const macroFormSchema = z.object({
   hour: z.string().default(""),
   minute: z.string().default(""),
 });
+
+export const macroFormDefaultValues = {
+  name: "",
+  type_id: "",
+  category_id: "",
+  currency_id: "",
+  amount: "",
+  memo: "",
+  day: "",
+  hour: "",
+  minute: "",
+};

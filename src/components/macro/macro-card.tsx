@@ -12,6 +12,7 @@ interface MacroCardProps {
   currency: Nullable<Currency>;
   type: Nullable<TransactionType>;
   category: Nullable<Category>;
+  onEdit: (macroId: number) => void;
   onToggleActive: (macroId: number, active: boolean) => Promise<void>;
   onDelete: (macroId: number) => void;
 }
@@ -22,9 +23,14 @@ export const MacroCard: FC<MacroCardProps> = ({
   currency,
   type,
   category,
+  onEdit,
   onToggleActive,
   onDelete,
 }) => {
+  const handleEditMarco = () => {
+    onEdit(macro.id);
+  };
+
   const handleMacroChecked = (checked: boolean) => {
     onToggleActive(macro.id, checked);
   };
@@ -43,7 +49,9 @@ export const MacroCard: FC<MacroCardProps> = ({
 
       <CardHeader>
         <div className="flex items-center justify-start gap-2">
-          <CardTitle>{macro.name}</CardTitle>
+          <CardTitle className="underline cursor-pointer" onClick={handleEditMarco}>
+            {macro.name}
+          </CardTitle>
           <Switch disabled={isLoading} size="sm" checked={macro.active} onCheckedChange={handleMacroChecked} />
         </div>
       </CardHeader>

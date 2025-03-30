@@ -19,6 +19,7 @@ interface MacroStore {
   getMacros: () => Promise<void>;
   getAllMacros: () => Promise<void>;
   createMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
+  updateMacro: (macro: Macro, formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
   toggleMacroActive: (macroId: number, active: boolean) => Promise<void>;
   removeMacro: (macroId: number) => Promise<void>;
 }
@@ -100,6 +101,36 @@ export const useMacroStore = create<MacroStore>()(
             console.error(error);
 
             set({ isLoading: false }, false, "createMacro");
+          }
+        },
+        updateMacro: async (macro: Macro, formdata: z.infer<typeof macroFormSchema>) => {
+          try {
+            set({ isLoading: true }, false, "updateMacro");
+
+            const { error: macroError } = await supabase
+              .from("macros")
+              .update({
+                user_id: macro.user_id,
+                name: formdata.name,
+                type_id: formdata.type_id ? Number(formdata.type_id) : null,
+                category_id: formdata.category_id ? Number(formdata.category_id) : null,
+                currency_id: formdata.currency_id ? Number(formdata.currency_id) : null,
+                amount: formdata.amount ? Number(formdata.amount) : null,
+                memo: formdata.memo,
+                day: formdata.day ? Number(formdata.day) : null,
+                hour: formdata.hour ? Number(formdata.hour) : null,
+                minute: formdata.minute ? Number(formdata.minute) : null,
+                active: macro.active,
+              })
+              .eq("id", macro.id);
+
+            if (macroError) throw macroError;
+
+            set({ isLoading: false }, false, "updateMacro");
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "updateMacro");
           }
         },
         toggleMacroActive: async (macroId: number, active: boolean) => {

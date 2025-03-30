@@ -1,68 +1,73 @@
-import { FC, PropsWithChildren, useMemo, useState } from "react";
-import { Wrench } from "lucide-react";
+import { FC, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { macroFormSchema } from "@/schema/macro.schema";
+import { macroFormDefaultValues, macroFormSchema } from "@/schema/macro.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LoadingDot } from "@/components/ui/loading-dot";
 
 interface MacroSheetProps {
   isLoading: boolean;
+  isOpen: boolean;
   currencies: Currency[];
   transactionTypes: TransactionType[];
   categories: Category[];
+  selectedMarco: Macro | null;
+  onClose: (open?: boolean) => void;
   onCreate: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
+  onUpdate: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
 }
 
-export const MacroSheet: FC<PropsWithChildren<MacroSheetProps>> = ({
+export const MacroSheet: FC<MacroSheetProps> = ({
   isLoading,
+  isOpen,
   currencies,
   transactionTypes,
   categories,
+  selectedMarco,
+  onClose,
   onCreate,
-  children,
+  onUpdate,
 }) => {
-  const [isOpenMacroSheet, setIsOpenMacroSheet] = useState(false);
-
   const form = useForm<z.infer<typeof macroFormSchema>>({
     resolver: zodResolver(macroFormSchema),
+    defaultValues: macroFormDefaultValues,
   });
+
+  useEffect(() => {
+    if (!selectedMarco) return;
+
+    Object.keys(macroFormDefaultValues).forEach((key) => {
+      const formKey = key as keyof typeof macroFormDefaultValues;
+      const formValue =
+        typeof selectedMarco[formKey] === "number" ? selectedMarco[formKey].toString() : (selectedMarco[formKey] ?? "");
+
+      form.setValue(formKey, formValue);
+    });
+  }, [selectedMarco]);
 
   const filteredCategories = useMemo(
     () => categories?.filter((category) => category.type_id.toString() === form.getValues("type_id")) ?? [],
     [categories, form.watch("type_id")],
   );
 
-  const handleToggleSheet = (open: boolean) => {
-    setIsOpenMacroSheet(open);
-  };
-
   const handleSubmitMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
-    await onCreate(formdata);
+    if (selectedMarco) {
+      await onUpdate(formdata);
+    } else {
+      await onCreate(formdata);
+    }
 
     form.reset();
-
-    setIsOpenMacroSheet(false);
   };
 
   return (
-    <Sheet open={isOpenMacroSheet} onOpenChange={handleToggleSheet}>
-      <SheetTrigger asChild>
-        {children ? (
-          children
-        ) : (
-          <Button disabled={isLoading} size="icon" variant="outline" className="w-8 h-8">
-            <Wrench />
-          </Button>
-        )}
-      </SheetTrigger>
-
+    <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="flex flex-col gap-2 w-[400px] sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>Macro</SheetTitle>
@@ -239,7 +244,7 @@ export const MacroSheet: FC<PropsWithChildren<MacroSheetProps>> = ({
 
             <div className="relative mt-auto px-4">
               <Button type="submit" className="w-full" disabled={isLoading || !form.formState.isValid}>
-                Create Macro
+                {selectedMarco ? "Update" : "Create"} Macro
               </Button>
 
               {isLoading ? (

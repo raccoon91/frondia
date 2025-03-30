@@ -12,13 +12,14 @@ import { useMacroStore } from "@/stores/macro.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { MacroCard } from "@/components/macro/macro-card";
 import { MacroSheet } from "@/components/macro/macro-sheet";
 
 const MacroPage = () => {
-  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);
+  const [isOpenMacroSheet, setIsOpenMacroSheet] = useState(false);
+  const [isOpenDeleteMacroDialog, setIsOpenDeleteMacroDialog] = useState(false);
 
   const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
     useTransactionOptionStore(
@@ -38,6 +39,7 @@ const MacroPage = () => {
     changeActiveStatus,
     getAllMacros,
     createMacro,
+    updateMacro,
     toggleMacroActive,
     removeMacro,
   } = useMacroStore(
@@ -48,6 +50,7 @@ const MacroPage = () => {
       changeActiveStatus: state.changeActiveStatus,
       getAllMacros: state.getAllMacros,
       createMacro: state.createMacro,
+      updateMacro: state.updateMacro,
       toggleMacroActive: state.toggleMacroActive,
       removeMacro: state.removeMacro,
     })),
@@ -88,31 +91,61 @@ const MacroPage = () => {
     getAllMacros();
   };
 
-  const handleCreateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
-    await createMacro(formdata);
-
-    getAllMacros();
-  };
-
   const handleToggleMacroActive = async (macroId: number, active: boolean) => {
     await toggleMacroActive(macroId, active);
 
     getAllMacros();
   };
 
-  const handleOpenDeleteModal = (macroId: number) => {
+  const handleOpenMacroSheet = () => {
+    setIsOpenMacroSheet(true);
+  };
+
+  const handleOpenEditMacroSheet = (macroId: number) => {
     const macro = allMacros.find((macro) => macro.id === macroId) ?? null;
 
     if (!macro) return;
 
-    setIsOpenDeleteModal(true);
+    setIsOpenMacroSheet(true);
     setSelectedMacro(macro);
   };
 
-  const handleCloseDeleteModal = (open?: boolean) => {
+  const handleCloseMacroSheet = (open?: boolean) => {
     if (open) return;
 
-    setIsOpenDeleteModal(false);
+    setIsOpenMacroSheet(false);
+    setSelectedMacro(null);
+  };
+
+  const handleCreateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
+    await createMacro(formdata);
+    await getAllMacros();
+
+    handleCloseMacroSheet();
+  };
+
+  const handleUpdateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
+    if (selectedMacro) {
+      await updateMacro(selectedMacro, formdata);
+      await getAllMacros();
+    }
+
+    handleCloseMacroSheet();
+  };
+
+  const handleOpenDeleteMacroDialog = (macroId: number) => {
+    const macro = allMacros.find((macro) => macro.id === macroId) ?? null;
+
+    if (!macro) return;
+
+    setIsOpenDeleteMacroDialog(true);
+    setSelectedMacro(macro);
+  };
+
+  const handleCloseDeleteMacroDialog = (open?: boolean) => {
+    if (open) return;
+
+    setIsOpenDeleteMacroDialog(false);
     setSelectedMacro(null);
   };
 
@@ -122,29 +155,33 @@ const MacroPage = () => {
       await getAllMacros();
     }
 
-    setIsOpenDeleteModal(false);
-    setSelectedMacro(null);
+    handleCloseDeleteMacroDialog();
   };
 
   return (
     <>
-      <Dialog open={isOpenDeleteModal} onOpenChange={handleCloseDeleteModal}>
-        <DialogContent className="w-sm">
-          <DialogHeader>
-            <DialogTitle>Delete Macro</DialogTitle>
-          </DialogHeader>
+      <DeleteDialog
+        isOpen={isOpenDeleteMacroDialog}
+        title="Delete Macro"
+        onClose={handleCloseDeleteMacroDialog}
+        onConfirm={handleDeleteMacro}
+      >
+        <p className="text-sm">
+          Do you want to delete macro <span className="font-bold">{selectedMacro?.name}</span> ?
+        </p>
+      </DeleteDialog>
 
-          <p className="text-sm">
-            Do you want to delete macro <span className="font-bold">{selectedMacro?.name}</span> ?
-          </p>
-
-          <DialogFooter>
-            <Button size="sm" variant="destructive" onClick={handleDeleteMacro}>
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <MacroSheet
+        isLoading={isLoading}
+        isOpen={isOpenMacroSheet}
+        currencies={currencies}
+        transactionTypes={transactionTypes}
+        categories={categories}
+        selectedMarco={selectedMacro}
+        onClose={handleCloseMacroSheet}
+        onCreate={handleCreateMacro}
+        onUpdate={handleUpdateMacro}
+      />
 
       <div className="grid grid-rows-[60px_auto] gap-6">
         <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
@@ -167,18 +204,10 @@ const MacroPage = () => {
               </TabsList>
             </Tabs>
 
-            <MacroSheet
-              isLoading={isLoading}
-              currencies={currencies}
-              transactionTypes={transactionTypes}
-              categories={categories}
-              onCreate={handleCreateMacro}
-            >
-              <Button disabled={isLoading} variant="outline" size="sm">
-                <Wrench />
-                <p>Macro</p>
-              </Button>
-            </MacroSheet>
+            <Button disabled={isLoading} variant="outline" size="sm" onClick={handleOpenMacroSheet}>
+              <Wrench />
+              <p>Macro</p>
+            </Button>
           </div>
 
           <Card>
@@ -191,8 +220,9 @@ const MacroPage = () => {
                   currency={macro.currency_id ? currencyMap[macro.currency_id] : null}
                   type={macro.type_id ? typeMap[macro.type_id] : null}
                   category={macro.category_id ? categoryMap[macro.category_id] : null}
+                  onEdit={handleOpenEditMacroSheet}
                   onToggleActive={handleToggleMacroActive}
-                  onDelete={handleOpenDeleteModal}
+                  onDelete={handleOpenDeleteMacroDialog}
                 />
               ))}
             </CardContent>
