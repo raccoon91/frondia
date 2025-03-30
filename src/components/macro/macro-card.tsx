@@ -1,10 +1,12 @@
 import { FC } from "react";
+import { Link } from "@tanstack/react-router";
+import { Trash } from "lucide-react";
 
+import { ROUTE } from "@/constants/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Trash } from "lucide-react";
 
 interface MacroCardProps {
   isLoading: boolean;
@@ -12,7 +14,6 @@ interface MacroCardProps {
   currency: Nullable<Currency>;
   type: Nullable<TransactionType>;
   category: Nullable<Category>;
-  onEdit: (macroId: number) => void;
   onToggleActive: (macroId: number, active: boolean) => Promise<void>;
   onDelete: (macroId: number) => void;
 }
@@ -23,14 +24,9 @@ export const MacroCard: FC<MacroCardProps> = ({
   currency,
   type,
   category,
-  onEdit,
   onToggleActive,
   onDelete,
 }) => {
-  const handleEditMarco = () => {
-    onEdit(macro.id);
-  };
-
   const handleMacroChecked = (checked: boolean) => {
     onToggleActive(macro.id, checked);
   };
@@ -49,9 +45,9 @@ export const MacroCard: FC<MacroCardProps> = ({
 
       <CardHeader>
         <div className="flex items-center justify-start gap-2">
-          <CardTitle className="underline cursor-pointer" onClick={handleEditMarco}>
-            {macro.name}
-          </CardTitle>
+          <Link to={ROUTE.MACRO_UPDATE} params={{ id: macro.id }} className="underline">
+            <CardTitle>{macro.name}</CardTitle>
+          </Link>
           <Switch disabled={isLoading} size="sm" checked={macro.active} onCheckedChange={handleMacroChecked} />
         </div>
       </CardHeader>

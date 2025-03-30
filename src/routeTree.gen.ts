@@ -8,320 +8,398 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from "./routes/__root";
-import { Route as PrivateImport } from "./routes/_private";
-import { Route as MainImport } from "./routes/_main";
-import { Route as AuthImport } from "./routes/_auth";
+import { Route as rootRoute } from './routes/__root'
+import { Route as PrivateImport } from './routes/_private'
+import { Route as MainImport } from './routes/_main'
+import { Route as AuthImport } from './routes/_auth'
+import { Route as PrivateMacroCreateImport } from './routes/_private.macro.create'
+import { Route as PrivateMacroIdImport } from './routes/_private.macro.$id'
 
 // Create Virtual Routes
 
-const MainIndexLazyImport = createFileRoute("/_main/")();
-const PrivateTransactionLazyImport = createFileRoute("/_private/transaction")();
-const PrivateSettingLazyImport = createFileRoute("/_private/setting")();
-const PrivateReportLazyImport = createFileRoute("/_private/report")();
-const PrivateMacroLazyImport = createFileRoute("/_private/macro")();
-const PrivateGoalLazyImport = createFileRoute("/_private/goal")();
-const PrivateDashboardLazyImport = createFileRoute("/_private/dashboard")();
-const AuthRegisterLazyImport = createFileRoute("/_auth/register")();
-const AuthLoginLazyImport = createFileRoute("/_auth/login")();
+const MainIndexLazyImport = createFileRoute('/_main/')()
+const PrivateTransactionLazyImport = createFileRoute('/_private/transaction')()
+const PrivateSettingLazyImport = createFileRoute('/_private/setting')()
+const PrivateReportLazyImport = createFileRoute('/_private/report')()
+const PrivateMacroLazyImport = createFileRoute('/_private/macro')()
+const PrivateGoalLazyImport = createFileRoute('/_private/goal')()
+const PrivateDashboardLazyImport = createFileRoute('/_private/dashboard')()
+const AuthRegisterLazyImport = createFileRoute('/_auth/register')()
+const AuthLoginLazyImport = createFileRoute('/_auth/login')()
 
 // Create/Update Routes
 
 const PrivateRoute = PrivateImport.update({
-  id: "/_private",
+  id: '/_private',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const MainRoute = MainImport.update({
-  id: "/_main",
+  id: '/_main',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const AuthRoute = AuthImport.update({
-  id: "/_auth",
+  id: '/_auth',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const MainIndexLazyRoute = MainIndexLazyImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => MainRoute,
-} as any).lazy(() => import("./routes/_main.index.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_main.index.lazy').then((d) => d.Route))
 
 const PrivateTransactionLazyRoute = PrivateTransactionLazyImport.update({
-  id: "/transaction",
-  path: "/transaction",
+  id: '/transaction',
+  path: '/transaction',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() => import("./routes/_private.transaction.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_private.transaction.lazy').then((d) => d.Route),
+)
 
 const PrivateSettingLazyRoute = PrivateSettingLazyImport.update({
-  id: "/setting",
-  path: "/setting",
+  id: '/setting',
+  path: '/setting',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() => import("./routes/_private.setting.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_private.setting.lazy').then((d) => d.Route),
+)
 
 const PrivateReportLazyRoute = PrivateReportLazyImport.update({
-  id: "/report",
-  path: "/report",
+  id: '/report',
+  path: '/report',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() => import("./routes/_private.report.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_private.report.lazy').then((d) => d.Route),
+)
 
 const PrivateMacroLazyRoute = PrivateMacroLazyImport.update({
-  id: "/macro",
-  path: "/macro",
+  id: '/macro',
+  path: '/macro',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() => import("./routes/_private.macro.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_private.macro.lazy').then((d) => d.Route),
+)
 
 const PrivateGoalLazyRoute = PrivateGoalLazyImport.update({
-  id: "/goal",
-  path: "/goal",
+  id: '/goal',
+  path: '/goal',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() => import("./routes/_private.goal.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_private.goal.lazy').then((d) => d.Route))
 
 const PrivateDashboardLazyRoute = PrivateDashboardLazyImport.update({
-  id: "/dashboard",
-  path: "/dashboard",
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => PrivateRoute,
-} as any).lazy(() => import("./routes/_private.dashboard.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_private.dashboard.lazy').then((d) => d.Route),
+)
 
 const AuthRegisterLazyRoute = AuthRegisterLazyImport.update({
-  id: "/register",
-  path: "/register",
+  id: '/register',
+  path: '/register',
   getParentRoute: () => AuthRoute,
-} as any).lazy(() => import("./routes/_auth.register.lazy").then((d) => d.Route));
+} as any).lazy(() =>
+  import('./routes/_auth.register.lazy').then((d) => d.Route),
+)
 
 const AuthLoginLazyRoute = AuthLoginLazyImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => AuthRoute,
-} as any).lazy(() => import("./routes/_auth.login.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/_auth.login.lazy').then((d) => d.Route))
+
+const PrivateMacroCreateRoute = PrivateMacroCreateImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => PrivateMacroLazyRoute,
+} as any)
+
+const PrivateMacroIdRoute = PrivateMacroIdImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PrivateMacroLazyRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/_auth": {
-      id: "/_auth";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof AuthImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/_main": {
-      id: "/_main";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof MainImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/_private": {
-      id: "/_private";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof PrivateImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/_auth/login": {
-      id: "/_auth/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof AuthLoginLazyImport;
-      parentRoute: typeof AuthImport;
-    };
-    "/_auth/register": {
-      id: "/_auth/register";
-      path: "/register";
-      fullPath: "/register";
-      preLoaderRoute: typeof AuthRegisterLazyImport;
-      parentRoute: typeof AuthImport;
-    };
-    "/_private/dashboard": {
-      id: "/_private/dashboard";
-      path: "/dashboard";
-      fullPath: "/dashboard";
-      preLoaderRoute: typeof PrivateDashboardLazyImport;
-      parentRoute: typeof PrivateImport;
-    };
-    "/_private/goal": {
-      id: "/_private/goal";
-      path: "/goal";
-      fullPath: "/goal";
-      preLoaderRoute: typeof PrivateGoalLazyImport;
-      parentRoute: typeof PrivateImport;
-    };
-    "/_private/macro": {
-      id: "/_private/macro";
-      path: "/macro";
-      fullPath: "/macro";
-      preLoaderRoute: typeof PrivateMacroLazyImport;
-      parentRoute: typeof PrivateImport;
-    };
-    "/_private/report": {
-      id: "/_private/report";
-      path: "/report";
-      fullPath: "/report";
-      preLoaderRoute: typeof PrivateReportLazyImport;
-      parentRoute: typeof PrivateImport;
-    };
-    "/_private/setting": {
-      id: "/_private/setting";
-      path: "/setting";
-      fullPath: "/setting";
-      preLoaderRoute: typeof PrivateSettingLazyImport;
-      parentRoute: typeof PrivateImport;
-    };
-    "/_private/transaction": {
-      id: "/_private/transaction";
-      path: "/transaction";
-      fullPath: "/transaction";
-      preLoaderRoute: typeof PrivateTransactionLazyImport;
-      parentRoute: typeof PrivateImport;
-    };
-    "/_main/": {
-      id: "/_main/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof MainIndexLazyImport;
-      parentRoute: typeof MainImport;
-    };
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/_main': {
+      id: '/_main'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MainImport
+      parentRoute: typeof rootRoute
+    }
+    '/_private': {
+      id: '/_private'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PrivateImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginLazyImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/register': {
+      id: '/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterLazyImport
+      parentRoute: typeof AuthImport
+    }
+    '/_private/dashboard': {
+      id: '/_private/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof PrivateDashboardLazyImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/goal': {
+      id: '/_private/goal'
+      path: '/goal'
+      fullPath: '/goal'
+      preLoaderRoute: typeof PrivateGoalLazyImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/macro': {
+      id: '/_private/macro'
+      path: '/macro'
+      fullPath: '/macro'
+      preLoaderRoute: typeof PrivateMacroLazyImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/report': {
+      id: '/_private/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof PrivateReportLazyImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/setting': {
+      id: '/_private/setting'
+      path: '/setting'
+      fullPath: '/setting'
+      preLoaderRoute: typeof PrivateSettingLazyImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/transaction': {
+      id: '/_private/transaction'
+      path: '/transaction'
+      fullPath: '/transaction'
+      preLoaderRoute: typeof PrivateTransactionLazyImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_main/': {
+      id: '/_main/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof MainIndexLazyImport
+      parentRoute: typeof MainImport
+    }
+    '/_private/macro/$id': {
+      id: '/_private/macro/$id'
+      path: '/$id'
+      fullPath: '/macro/$id'
+      preLoaderRoute: typeof PrivateMacroIdImport
+      parentRoute: typeof PrivateMacroLazyImport
+    }
+    '/_private/macro/create': {
+      id: '/_private/macro/create'
+      path: '/create'
+      fullPath: '/macro/create'
+      preLoaderRoute: typeof PrivateMacroCreateImport
+      parentRoute: typeof PrivateMacroLazyImport
+    }
   }
 }
 
 // Create and export the route tree
 
 interface AuthRouteChildren {
-  AuthLoginLazyRoute: typeof AuthLoginLazyRoute;
-  AuthRegisterLazyRoute: typeof AuthRegisterLazyRoute;
+  AuthLoginLazyRoute: typeof AuthLoginLazyRoute
+  AuthRegisterLazyRoute: typeof AuthRegisterLazyRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthLoginLazyRoute: AuthLoginLazyRoute,
   AuthRegisterLazyRoute: AuthRegisterLazyRoute,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainRouteChildren {
-  MainIndexLazyRoute: typeof MainIndexLazyRoute;
+  MainIndexLazyRoute: typeof MainIndexLazyRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainIndexLazyRoute: MainIndexLazyRoute,
-};
+}
 
-const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren);
+const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
+
+interface PrivateMacroLazyRouteChildren {
+  PrivateMacroIdRoute: typeof PrivateMacroIdRoute
+  PrivateMacroCreateRoute: typeof PrivateMacroCreateRoute
+}
+
+const PrivateMacroLazyRouteChildren: PrivateMacroLazyRouteChildren = {
+  PrivateMacroIdRoute: PrivateMacroIdRoute,
+  PrivateMacroCreateRoute: PrivateMacroCreateRoute,
+}
+
+const PrivateMacroLazyRouteWithChildren =
+  PrivateMacroLazyRoute._addFileChildren(PrivateMacroLazyRouteChildren)
 
 interface PrivateRouteChildren {
-  PrivateDashboardLazyRoute: typeof PrivateDashboardLazyRoute;
-  PrivateGoalLazyRoute: typeof PrivateGoalLazyRoute;
-  PrivateMacroLazyRoute: typeof PrivateMacroLazyRoute;
-  PrivateReportLazyRoute: typeof PrivateReportLazyRoute;
-  PrivateSettingLazyRoute: typeof PrivateSettingLazyRoute;
-  PrivateTransactionLazyRoute: typeof PrivateTransactionLazyRoute;
+  PrivateDashboardLazyRoute: typeof PrivateDashboardLazyRoute
+  PrivateGoalLazyRoute: typeof PrivateGoalLazyRoute
+  PrivateMacroLazyRoute: typeof PrivateMacroLazyRouteWithChildren
+  PrivateReportLazyRoute: typeof PrivateReportLazyRoute
+  PrivateSettingLazyRoute: typeof PrivateSettingLazyRoute
+  PrivateTransactionLazyRoute: typeof PrivateTransactionLazyRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateDashboardLazyRoute: PrivateDashboardLazyRoute,
   PrivateGoalLazyRoute: PrivateGoalLazyRoute,
-  PrivateMacroLazyRoute: PrivateMacroLazyRoute,
+  PrivateMacroLazyRoute: PrivateMacroLazyRouteWithChildren,
   PrivateReportLazyRoute: PrivateReportLazyRoute,
   PrivateSettingLazyRoute: PrivateSettingLazyRoute,
   PrivateTransactionLazyRoute: PrivateTransactionLazyRoute,
-};
+}
 
-const PrivateRouteWithChildren = PrivateRoute._addFileChildren(PrivateRouteChildren);
+const PrivateRouteWithChildren =
+  PrivateRoute._addFileChildren(PrivateRouteChildren)
 
 export interface FileRoutesByFullPath {
-  "": typeof PrivateRouteWithChildren;
-  "/login": typeof AuthLoginLazyRoute;
-  "/register": typeof AuthRegisterLazyRoute;
-  "/dashboard": typeof PrivateDashboardLazyRoute;
-  "/goal": typeof PrivateGoalLazyRoute;
-  "/macro": typeof PrivateMacroLazyRoute;
-  "/report": typeof PrivateReportLazyRoute;
-  "/setting": typeof PrivateSettingLazyRoute;
-  "/transaction": typeof PrivateTransactionLazyRoute;
-  "/": typeof MainIndexLazyRoute;
+  '': typeof PrivateRouteWithChildren
+  '/login': typeof AuthLoginLazyRoute
+  '/register': typeof AuthRegisterLazyRoute
+  '/dashboard': typeof PrivateDashboardLazyRoute
+  '/goal': typeof PrivateGoalLazyRoute
+  '/macro': typeof PrivateMacroLazyRouteWithChildren
+  '/report': typeof PrivateReportLazyRoute
+  '/setting': typeof PrivateSettingLazyRoute
+  '/transaction': typeof PrivateTransactionLazyRoute
+  '/': typeof MainIndexLazyRoute
+  '/macro/$id': typeof PrivateMacroIdRoute
+  '/macro/create': typeof PrivateMacroCreateRoute
 }
 
 export interface FileRoutesByTo {
-  "": typeof PrivateRouteWithChildren;
-  "/login": typeof AuthLoginLazyRoute;
-  "/register": typeof AuthRegisterLazyRoute;
-  "/dashboard": typeof PrivateDashboardLazyRoute;
-  "/goal": typeof PrivateGoalLazyRoute;
-  "/macro": typeof PrivateMacroLazyRoute;
-  "/report": typeof PrivateReportLazyRoute;
-  "/setting": typeof PrivateSettingLazyRoute;
-  "/transaction": typeof PrivateTransactionLazyRoute;
-  "/": typeof MainIndexLazyRoute;
+  '': typeof PrivateRouteWithChildren
+  '/login': typeof AuthLoginLazyRoute
+  '/register': typeof AuthRegisterLazyRoute
+  '/dashboard': typeof PrivateDashboardLazyRoute
+  '/goal': typeof PrivateGoalLazyRoute
+  '/macro': typeof PrivateMacroLazyRouteWithChildren
+  '/report': typeof PrivateReportLazyRoute
+  '/setting': typeof PrivateSettingLazyRoute
+  '/transaction': typeof PrivateTransactionLazyRoute
+  '/': typeof MainIndexLazyRoute
+  '/macro/$id': typeof PrivateMacroIdRoute
+  '/macro/create': typeof PrivateMacroCreateRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  "/_auth": typeof AuthRouteWithChildren;
-  "/_main": typeof MainRouteWithChildren;
-  "/_private": typeof PrivateRouteWithChildren;
-  "/_auth/login": typeof AuthLoginLazyRoute;
-  "/_auth/register": typeof AuthRegisterLazyRoute;
-  "/_private/dashboard": typeof PrivateDashboardLazyRoute;
-  "/_private/goal": typeof PrivateGoalLazyRoute;
-  "/_private/macro": typeof PrivateMacroLazyRoute;
-  "/_private/report": typeof PrivateReportLazyRoute;
-  "/_private/setting": typeof PrivateSettingLazyRoute;
-  "/_private/transaction": typeof PrivateTransactionLazyRoute;
-  "/_main/": typeof MainIndexLazyRoute;
+  __root__: typeof rootRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/_main': typeof MainRouteWithChildren
+  '/_private': typeof PrivateRouteWithChildren
+  '/_auth/login': typeof AuthLoginLazyRoute
+  '/_auth/register': typeof AuthRegisterLazyRoute
+  '/_private/dashboard': typeof PrivateDashboardLazyRoute
+  '/_private/goal': typeof PrivateGoalLazyRoute
+  '/_private/macro': typeof PrivateMacroLazyRouteWithChildren
+  '/_private/report': typeof PrivateReportLazyRoute
+  '/_private/setting': typeof PrivateSettingLazyRoute
+  '/_private/transaction': typeof PrivateTransactionLazyRoute
+  '/_main/': typeof MainIndexLazyRoute
+  '/_private/macro/$id': typeof PrivateMacroIdRoute
+  '/_private/macro/create': typeof PrivateMacroCreateRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | ""
-    | "/login"
-    | "/register"
-    | "/dashboard"
-    | "/goal"
-    | "/macro"
-    | "/report"
-    | "/setting"
-    | "/transaction"
-    | "/";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "" | "/login" | "/register" | "/dashboard" | "/goal" | "/macro" | "/report" | "/setting" | "/transaction" | "/";
+    | ''
+    | '/login'
+    | '/register'
+    | '/dashboard'
+    | '/goal'
+    | '/macro'
+    | '/report'
+    | '/setting'
+    | '/transaction'
+    | '/'
+    | '/macro/$id'
+    | '/macro/create'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | ''
+    | '/login'
+    | '/register'
+    | '/dashboard'
+    | '/goal'
+    | '/macro'
+    | '/report'
+    | '/setting'
+    | '/transaction'
+    | '/'
+    | '/macro/$id'
+    | '/macro/create'
   id:
-    | "__root__"
-    | "/_auth"
-    | "/_main"
-    | "/_private"
-    | "/_auth/login"
-    | "/_auth/register"
-    | "/_private/dashboard"
-    | "/_private/goal"
-    | "/_private/macro"
-    | "/_private/report"
-    | "/_private/setting"
-    | "/_private/transaction"
-    | "/_main/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/_auth'
+    | '/_main'
+    | '/_private'
+    | '/_auth/login'
+    | '/_auth/register'
+    | '/_private/dashboard'
+    | '/_private/goal'
+    | '/_private/macro'
+    | '/_private/report'
+    | '/_private/setting'
+    | '/_private/transaction'
+    | '/_main/'
+    | '/_private/macro/$id'
+    | '/_private/macro/create'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren;
-  MainRoute: typeof MainRouteWithChildren;
-  PrivateRoute: typeof PrivateRouteWithChildren;
+  AuthRoute: typeof AuthRouteWithChildren
+  MainRoute: typeof MainRouteWithChildren
+  PrivateRoute: typeof PrivateRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   MainRoute: MainRouteWithChildren,
   PrivateRoute: PrivateRouteWithChildren,
-};
+}
 
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -376,7 +454,11 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/_private/macro": {
       "filePath": "_private.macro.lazy.tsx",
-      "parent": "/_private"
+      "parent": "/_private",
+      "children": [
+        "/_private/macro/$id",
+        "/_private/macro/create"
+      ]
     },
     "/_private/report": {
       "filePath": "_private.report.lazy.tsx",
@@ -393,6 +475,14 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/_main/": {
       "filePath": "_main.index.lazy.tsx",
       "parent": "/_main"
+    },
+    "/_private/macro/$id": {
+      "filePath": "_private.macro.$id.tsx",
+      "parent": "/_private/macro"
+    },
+    "/_private/macro/create": {
+      "filePath": "_private.macro.create.tsx",
+      "parent": "/_private/macro"
     }
   }
 }

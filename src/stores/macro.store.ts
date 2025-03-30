@@ -18,6 +18,7 @@ interface MacroStore {
 
   getMacros: () => Promise<void>;
   getAllMacros: () => Promise<void>;
+  getMacro: (macroId: number) => Promise<Nullish<Macro>>;
   createMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
   updateMacro: (macro: Macro, formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
   toggleMacroActive: (macroId: number, active: boolean) => Promise<void>;
@@ -68,6 +69,23 @@ export const useMacroStore = create<MacroStore>()(
             set({ allMacros: data ?? [] }, false, "getAllMacros");
           } catch (error) {
             console.error(error);
+          }
+        },
+        getMacro: async (macroId: number) => {
+          try {
+            set({ isLoading: true }, false, "getMacro");
+
+            const { data, error } = await supabase.from("macros").select("*").eq("id", macroId).maybeSingle();
+
+            if (error) throw error;
+
+            set({ isLoading: false }, false, "getMacro");
+
+            return data;
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "getMacro");
           }
         },
         createMacro: async (formdata: z.infer<typeof macroFormSchema>) => {

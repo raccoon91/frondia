@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useShallow } from "zustand/shallow";
 import { ToggleLeft, ToggleRight, Wrench } from "lucide-react";
-import { z } from "zod";
 
-import { MACRO_FILE_ROUTE } from "@/constants/route";
+import { MACRO_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
-import { macroFormSchema } from "@/schema/macro.schema";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useMacroStore } from "@/stores/macro.store";
 import { Button } from "@/components/ui/button";
@@ -14,11 +12,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { MacroCard } from "@/components/macro/macro-card";
-import { MacroSheet } from "@/components/macro/macro-sheet";
 
 const MacroPage = () => {
   const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);
-  const [isOpenMacroSheet, setIsOpenMacroSheet] = useState(false);
   const [isOpenDeleteMacroDialog, setIsOpenDeleteMacroDialog] = useState(false);
 
   const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
@@ -32,29 +28,18 @@ const MacroPage = () => {
         getCategories: state.getCategories,
       })),
     );
-  const {
-    isLoading,
-    activeStatus,
-    allMacros,
-    changeActiveStatus,
-    getAllMacros,
-    createMacro,
-    updateMacro,
-    toggleMacroActive,
-    removeMacro,
-  } = useMacroStore(
-    useShallow((state) => ({
-      isLoading: state.isLoading,
-      activeStatus: state.activeStatus,
-      allMacros: state.allMacros,
-      changeActiveStatus: state.changeActiveStatus,
-      getAllMacros: state.getAllMacros,
-      createMacro: state.createMacro,
-      updateMacro: state.updateMacro,
-      toggleMacroActive: state.toggleMacroActive,
-      removeMacro: state.removeMacro,
-    })),
-  );
+  const { isLoading, activeStatus, allMacros, changeActiveStatus, getAllMacros, toggleMacroActive, removeMacro } =
+    useMacroStore(
+      useShallow((state) => ({
+        isLoading: state.isLoading,
+        activeStatus: state.activeStatus,
+        allMacros: state.allMacros,
+        changeActiveStatus: state.changeActiveStatus,
+        getAllMacros: state.getAllMacros,
+        toggleMacroActive: state.toggleMacroActive,
+        removeMacro: state.removeMacro,
+      })),
+    );
 
   const currencyMap = useMemo(
     () =>
@@ -97,42 +82,6 @@ const MacroPage = () => {
     getAllMacros();
   };
 
-  const handleOpenMacroSheet = () => {
-    setIsOpenMacroSheet(true);
-  };
-
-  const handleOpenEditMacroSheet = (macroId: number) => {
-    const macro = allMacros.find((macro) => macro.id === macroId) ?? null;
-
-    if (!macro) return;
-
-    setIsOpenMacroSheet(true);
-    setSelectedMacro(macro);
-  };
-
-  const handleCloseMacroSheet = (open?: boolean) => {
-    if (open) return;
-
-    setIsOpenMacroSheet(false);
-    setSelectedMacro(null);
-  };
-
-  const handleCreateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
-    await createMacro(formdata);
-    await getAllMacros();
-
-    handleCloseMacroSheet();
-  };
-
-  const handleUpdateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
-    if (selectedMacro) {
-      await updateMacro(selectedMacro, formdata);
-      await getAllMacros();
-    }
-
-    handleCloseMacroSheet();
-  };
-
   const handleOpenDeleteMacroDialog = (macroId: number) => {
     const macro = allMacros.find((macro) => macro.id === macroId) ?? null;
 
@@ -171,18 +120,6 @@ const MacroPage = () => {
         </p>
       </DeleteDialog>
 
-      <MacroSheet
-        isLoading={isLoading}
-        isOpen={isOpenMacroSheet}
-        currencies={currencies}
-        transactionTypes={transactionTypes}
-        categories={categories}
-        selectedMarco={selectedMacro}
-        onClose={handleCloseMacroSheet}
-        onCreate={handleCreateMacro}
-        onUpdate={handleUpdateMacro}
-      />
-
       <div className="grid grid-rows-[60px_auto] gap-6">
         <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
           <p className="font-bold">Macro</p>
@@ -204,9 +141,11 @@ const MacroPage = () => {
               </TabsList>
             </Tabs>
 
-            <Button disabled={isLoading} variant="outline" size="sm" onClick={handleOpenMacroSheet}>
-              <Wrench />
-              <p>Macro</p>
+            <Button disabled={isLoading} variant="outline" size="sm" asChild>
+              <Link to={ROUTE.MACRO_CREATE}>
+                <Wrench />
+                <p>Macro</p>
+              </Link>
             </Button>
           </div>
 
@@ -220,7 +159,6 @@ const MacroPage = () => {
                   currency={macro.currency_id ? currencyMap[macro.currency_id] : null}
                   type={macro.type_id ? typeMap[macro.type_id] : null}
                   category={macro.category_id ? categoryMap[macro.category_id] : null}
-                  onEdit={handleOpenEditMacroSheet}
                   onToggleActive={handleToggleMacroActive}
                   onDelete={handleOpenDeleteMacroDialog}
                 />
@@ -229,6 +167,8 @@ const MacroPage = () => {
           </Card>
         </div>
       </div>
+
+      <Outlet />
     </>
   );
 };
