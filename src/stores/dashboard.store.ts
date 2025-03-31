@@ -167,7 +167,12 @@ export const useDashboardStore = create<DashboardStore>()(
             const { data: goals, error: goalErorr } = await supabase
               .from("goals")
               .select(
-                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
+                `
+                  *,
+                  type: type_id (*),
+                  currency: currency_id (*),
+                  map: goal_category_map (id, category: categories (*))
+                `,
               )
               .lte("start", endOfMonth)
               .gte("end", startOfMonth);

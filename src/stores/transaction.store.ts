@@ -48,9 +48,14 @@ export const useTransactionStore = create<TransactionStore>()(
             const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
-            let builder = supabase
-              .from("transactions")
-              .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)");
+            let builder = supabase.from("transactions").select(
+              `
+                *,
+                currency: currency_id (*),
+                transactionType: type_id (*),
+                category: category_id (*)
+              `,
+            );
 
             if (selectedTransactionTypeId) {
               builder = builder.eq("type_id", Number(selectedTransactionTypeId));
@@ -422,7 +427,14 @@ export const useTransactionStore = create<TransactionStore>()(
                 memo: dataset.memo,
                 amount: dataset.amount,
               })
-              .select("*, currency: currency_id (*), transactionType: type_id (*), category: category_id (*)")
+              .select(
+                `
+                  *,
+                  currency: currency_id (*),
+                  transactionType: type_id (*),
+                  category: category_id (*)
+                `,
+              )
               .maybeSingle();
 
             if (!newTransaction) return;
