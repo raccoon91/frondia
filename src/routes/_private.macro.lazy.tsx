@@ -82,9 +82,7 @@ const MacroPage = () => {
     getAllMacros();
   };
 
-  const handleOpenDeleteMacroDialog = (macroId: number) => {
-    const macro = allMacros.find((macro) => macro.id === macroId) ?? null;
-
+  const handleOpenDeleteMacroDialog = (macro: Macro) => {
     if (!macro) return;
 
     setIsOpenDeleteMacroDialog(true);

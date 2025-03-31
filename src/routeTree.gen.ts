@@ -19,6 +19,7 @@ import { Route as AuthImport } from './routes/_auth'
 import { Route as PrivateMacroCreateImport } from './routes/_private.macro.create'
 import { Route as PrivateMacroIdImport } from './routes/_private.macro.$id'
 import { Route as PrivateGoalCreateImport } from './routes/_private.goal.create'
+import { Route as PrivateGoalIdImport } from './routes/_private.goal.$id'
 
 // Create Virtual Routes
 
@@ -133,6 +134,12 @@ const PrivateGoalCreateRoute = PrivateGoalCreateImport.update({
   getParentRoute: () => PrivateGoalLazyRoute,
 } as any)
 
+const PrivateGoalIdRoute = PrivateGoalIdImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PrivateGoalLazyRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -221,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexLazyImport
       parentRoute: typeof MainImport
     }
+    '/_private/goal/$id': {
+      id: '/_private/goal/$id'
+      path: '/$id'
+      fullPath: '/goal/$id'
+      preLoaderRoute: typeof PrivateGoalIdImport
+      parentRoute: typeof PrivateGoalLazyImport
+    }
     '/_private/goal/create': {
       id: '/_private/goal/create'
       path: '/create'
@@ -270,10 +284,12 @@ const MainRouteChildren: MainRouteChildren = {
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 
 interface PrivateGoalLazyRouteChildren {
+  PrivateGoalIdRoute: typeof PrivateGoalIdRoute
   PrivateGoalCreateRoute: typeof PrivateGoalCreateRoute
 }
 
 const PrivateGoalLazyRouteChildren: PrivateGoalLazyRouteChildren = {
+  PrivateGoalIdRoute: PrivateGoalIdRoute,
   PrivateGoalCreateRoute: PrivateGoalCreateRoute,
 }
 
@@ -326,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/setting': typeof PrivateSettingLazyRoute
   '/transaction': typeof PrivateTransactionLazyRoute
   '/': typeof MainIndexLazyRoute
+  '/goal/$id': typeof PrivateGoalIdRoute
   '/goal/create': typeof PrivateGoalCreateRoute
   '/macro/$id': typeof PrivateMacroIdRoute
   '/macro/create': typeof PrivateMacroCreateRoute
@@ -342,6 +359,7 @@ export interface FileRoutesByTo {
   '/setting': typeof PrivateSettingLazyRoute
   '/transaction': typeof PrivateTransactionLazyRoute
   '/': typeof MainIndexLazyRoute
+  '/goal/$id': typeof PrivateGoalIdRoute
   '/goal/create': typeof PrivateGoalCreateRoute
   '/macro/$id': typeof PrivateMacroIdRoute
   '/macro/create': typeof PrivateMacroCreateRoute
@@ -361,6 +379,7 @@ export interface FileRoutesById {
   '/_private/setting': typeof PrivateSettingLazyRoute
   '/_private/transaction': typeof PrivateTransactionLazyRoute
   '/_main/': typeof MainIndexLazyRoute
+  '/_private/goal/$id': typeof PrivateGoalIdRoute
   '/_private/goal/create': typeof PrivateGoalCreateRoute
   '/_private/macro/$id': typeof PrivateMacroIdRoute
   '/_private/macro/create': typeof PrivateMacroCreateRoute
@@ -379,6 +398,7 @@ export interface FileRouteTypes {
     | '/setting'
     | '/transaction'
     | '/'
+    | '/goal/$id'
     | '/goal/create'
     | '/macro/$id'
     | '/macro/create'
@@ -394,6 +414,7 @@ export interface FileRouteTypes {
     | '/setting'
     | '/transaction'
     | '/'
+    | '/goal/$id'
     | '/goal/create'
     | '/macro/$id'
     | '/macro/create'
@@ -411,6 +432,7 @@ export interface FileRouteTypes {
     | '/_private/setting'
     | '/_private/transaction'
     | '/_main/'
+    | '/_private/goal/$id'
     | '/_private/goal/create'
     | '/_private/macro/$id'
     | '/_private/macro/create'
@@ -484,6 +506,7 @@ export const routeTree = rootRoute
       "filePath": "_private.goal.lazy.tsx",
       "parent": "/_private",
       "children": [
+        "/_private/goal/$id",
         "/_private/goal/create"
       ]
     },
@@ -510,6 +533,10 @@ export const routeTree = rootRoute
     "/_main/": {
       "filePath": "_main.index.lazy.tsx",
       "parent": "/_main"
+    },
+    "/_private/goal/$id": {
+      "filePath": "_private.goal.$id.tsx",
+      "parent": "/_private/goal"
     },
     "/_private/goal/create": {
       "filePath": "_private.goal.create.tsx",

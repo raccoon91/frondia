@@ -46,7 +46,7 @@ export const GoalForm: FC<GoalFormProps> = ({
   return (
     <Form {...goalForm}>
       <form className="overflow-hidden flex flex-col flex-1 gap-6 pb-6" onSubmit={goalForm.handleSubmit(onSubmitGoal)}>
-        <div className="overflow-auto flex flex-col gap-4 flex-1 px-4">
+        <div className="overflow-auto flex flex-col gap-4 flex-1 px-4 pb-1">
           <FormField
             control={goalForm.control}
             name="rule"
@@ -56,7 +56,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                   <p>Rule</p>
                   <span className="text-destructive">*</span>
                 </FormLabel>
-                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
                       <SelectValue placeholder="Select Rule" />
@@ -100,7 +100,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                   <p>Transaction Type</p>
                   <span className="text-destructive">*</span>
                 </FormLabel>
-                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
                       <SelectValue placeholder="Select Type" />
@@ -133,7 +133,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                     placeholder="Select Category"
                     disabled={!goalForm.watch("type_id")}
                     options={categoryOptions}
-                    defaultValue={field.value}
+                    values={field.value}
                     onSelectValue={field.onChange}
                   />
                 </FormControl>
@@ -167,7 +167,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                     <p>Currency</p>
                     <span className="text-destructive">*</span>
                   </FormLabel>
-                  <Select defaultValue={field.value} onValueChange={field.onChange}>
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
                         <SelectValue placeholder="Currency" />
@@ -252,7 +252,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <Select
-                    defaultValue={field.value}
+                    value={field.value}
                     onValueChange={(value: string) => {
                       const period = goalForm.getValues("period");
                       const start = goalForm.getValues("start");
@@ -302,7 +302,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                       size="default"
                       hideIcon
                       disabled={!goalForm.watch("period") || !goalForm.watch("date_unit")}
-                      defaultValue={field.value}
+                      value={field.value}
                       dateFormat="YYYY-MM-DD"
                       onValueChange={(value: Nullable<string>) => {
                         if (!value) {

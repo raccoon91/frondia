@@ -79,5 +79,5 @@ interface Goal {
 
   currency?: Currency;
   type?: TransactionType;
-  map?: { category: Category }[];
+  map?: { id: number; category: Category }[];
 }

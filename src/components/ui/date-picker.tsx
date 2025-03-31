@@ -14,6 +14,7 @@ interface DatePickerProps extends VariantProps<typeof buttonVariants> {
   hideIcon?: boolean;
   disabled?: boolean;
   defaultValue?: string;
+  value?: string;
   dateFormat?: string;
   className?: string;
   onValueChange?: (date: Nullable<string>) => void;
@@ -23,12 +24,19 @@ export function DatePicker({
   hideIcon,
   disabled,
   defaultValue,
+  value,
   dateFormat,
   className,
   onValueChange,
   ...props
 }: DatePickerProps) {
   const [date, setDate] = React.useState<Date | undefined>(defaultValue ? dayjs(defaultValue).toDate() : undefined);
+
+  React.useEffect(() => {
+    if (!value) return;
+
+    setDate(dayjs(value).toDate());
+  }, [value]);
 
   const handleChangeDate = (value?: Date) => {
     if (!value) {

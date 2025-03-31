@@ -1,12 +1,13 @@
 import { FC, useMemo } from "react";
-import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
-import { Input } from "../ui/input";
-import { LoadingDot } from "../ui/loading-dot";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+
 import { macroFormSchema } from "@/schema/macro.schema";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { LoadingDot } from "@/components/ui/loading-dot";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MacroFormProps {
   isLoading: boolean;
@@ -38,7 +39,7 @@ export const MacroForm: FC<MacroFormProps> = ({
         className="overflow-hidden flex flex-col flex-1 gap-6 pb-6"
         onSubmit={macroForm.handleSubmit(onSubmitMacro)}
       >
-        <div className="overflow-auto flex flex-col gap-4 flex-1 px-4">
+        <div className="overflow-auto flex flex-col gap-4 flex-1 px-4 pb-1">
           <FormField
             control={macroForm.control}
             name="name"

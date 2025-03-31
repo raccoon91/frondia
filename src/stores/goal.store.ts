@@ -17,7 +17,10 @@ interface GoalStore {
   goalsInDone: Goal[];
 
   getGoals: () => Promise<void>;
+  getGoal: (goalId: number) => Promise<Nullish<Goal>>;
   createGoal: (formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
+  updateGoal: (goal: Goal, formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
+  removeGoal: (goalId: number) => Promise<void>;
 
   movePrevMonth: (date: string) => void;
   moveNextMonth: (date: string) => void;
@@ -44,10 +47,12 @@ export const useGoalStore = create<GoalStore>()(
             const { data: goals, error: goalErorr } = await supabase
               .from("goals")
               .select(
-                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (category:categories (*))",
+                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (id, category:categories (*))",
               )
               .lte("start", endOfMonth)
-              .gte("end", startOfMonth);
+              .gte("end", startOfMonth)
+              .order("start", { ascending: true })
+              .order("created_at", { ascending: true });
 
             if (goalErorr) throw goalErorr;
 
@@ -112,6 +117,29 @@ export const useGoalStore = create<GoalStore>()(
             console.error(error);
           }
         },
+        getGoal: async (goalId: number) => {
+          try {
+            set({ isLoading: true }, false, "getGoal");
+
+            const { data, error } = await supabase
+              .from("goals")
+              .select(
+                "*, type: type_id (*), currency: currency_id (*), map:goal_category_map (id, category:categories (*))",
+              )
+              .eq("id", goalId)
+              .maybeSingle();
+
+            if (error) throw error;
+
+            set({ isLoading: false }, false, "getGoal");
+
+            return data;
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "getGoal");
+          }
+        },
         createGoal: async (formdata) => {
           try {
             set({ isLoading: true }, false, "createGoal");
@@ -154,6 +182,85 @@ export const useGoalStore = create<GoalStore>()(
             console.error(error);
 
             set({ isLoading: false }, false, "createGoal");
+          }
+        },
+        updateGoal: async (goal: Goal, formdata: z.infer<typeof goalFormSchema>) => {
+          try {
+            set({ isLoading: true }, false, "updateGoal");
+
+            const { error: macroError } = await supabase
+              .from("goals")
+              .update({
+                user_id: goal.user_id,
+                name: formdata.name,
+                type_id: Number(formdata.type_id),
+                currency_id: Number(formdata.currency_id),
+                amount: Number(formdata.amount),
+                rule: formdata.rule,
+                period: Number(formdata.period),
+                date_unit: formdata.date_unit,
+                start: formdata.start,
+                end: formdata.end,
+                status: formdata.status,
+              })
+              .eq("id", goal.id);
+
+            if (macroError) throw macroError;
+
+            const created = formdata.categories.reduce<{ goal_id: number; category_id: number }[]>(
+              (created, categoryId) => {
+                if (goal.map?.find((map) => map.category.id.toString() === categoryId)) return created;
+
+                created.push({
+                  goal_id: goal.id,
+                  category_id: Number(categoryId),
+                });
+
+                return created;
+              },
+              [],
+            );
+
+            const deleted = goal.map?.reduce<number[]>((deleted, map) => {
+              if (formdata.categories.find((categoryId) => categoryId == map.category.id.toString())) return deleted;
+
+              deleted.push(map.id);
+
+              return deleted;
+            }, []);
+
+            if (created?.length) {
+              const { error: mapErorr } = await supabase.from("goal_category_map").insert(created);
+
+              if (mapErorr) throw mapErorr;
+            }
+
+            if (deleted?.length) {
+              const { error: mapErorr } = await supabase.from("goal_category_map").delete().in("id", deleted);
+
+              if (mapErorr) throw mapErorr;
+            }
+
+            set({ isLoading: false }, false, "updateGoal");
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "updateGoal");
+          }
+        },
+        removeGoal: async (goalId: number) => {
+          try {
+            set({ isLoading: true }, false, "removeGoal");
+
+            const { error } = await supabase.from("goals").delete().eq("id", goalId);
+
+            if (error) throw error;
+
+            set({ isLoading: false }, false, "removeGoal");
+          } catch (error) {
+            console.error(error);
+
+            set({ isLoading: false }, false, "removeGoal");
           }
         },
 

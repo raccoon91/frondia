@@ -1,16 +1,22 @@
 import { FC, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import dayjs from "dayjs";
 
-import { Badge } from "@/components/ui/badge";
+import { ROUTE } from "@/constants/route";
 import { GOAL_RULES } from "@/constants/goal";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
 
 interface GoalCardProps {
+  isLoading: boolean;
   goal: Goal;
+  onDelete: (goal: Goal) => void;
 }
 
-export const GoalCard: FC<GoalCardProps> = ({ goal }) => {
+export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
   const [openCategory, setOpenCategory] = useState(false);
 
   const rule = GOAL_RULES.find((rule) => rule.value === goal.rule);
@@ -19,15 +25,31 @@ export const GoalCard: FC<GoalCardProps> = ({ goal }) => {
     setOpenCategory((prev) => !prev);
   };
 
+  const handleDeleteGoal = () => {
+    onDelete(goal);
+  };
+
   return (
-    <div className="overflow-hidden relative p-4 border rounded-md bg-background shadow-sm">
-      <div className={cn("absolute top-0 right-0 py-1 px-2 rounded-bl-sm", rule?.bg ?? "bg-background")}>
+    <Card className="overflow-hidden gap-4 pt-6 pb-4 bg-background">
+      <div className={cn("absolute top-0 left-0 py-0.5 px-2 rounded-br-sm", rule?.bg ?? "bg-background")}>
         <p className="text-xs">{rule?.label ?? ""}</p>
       </div>
 
-      <p className="font-bold">{goal.name}</p>
+      <CardMenu className="top-1 right-1">
+        <Button disabled={isLoading} size="icon" variant="ghost" className="w-8 h-8" onClick={handleDeleteGoal}>
+          <Trash />
+        </Button>
+      </CardMenu>
 
-      <div className="flex flex-col gap-2">
+      <CardHeader className="px-4">
+        <CardTitle>
+          <Link to={ROUTE.GOAL_UPDATE} params={{ id: goal.id }} className="underline">
+            {goal.name}
+          </Link>
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="flex flex-col gap-2 px-4">
         <div className="flex justify-end">
           <p className="text-sm">
             {goal.amount.toLocaleString("en-US")} {goal.currency?.symbol}
@@ -69,7 +91,7 @@ export const GoalCard: FC<GoalCardProps> = ({ goal }) => {
             {goal.end ? <p>{dayjs(goal.end).format("YYYY-MM-DD")}</p> : null}
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

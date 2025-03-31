@@ -1,4 +1,4 @@
-import React, { forwardRef, KeyboardEvent, useMemo } from "react";
+import React, { forwardRef, KeyboardEvent, useEffect, useMemo } from "react";
 import { CheckIcon, ChevronDown, XIcon } from "lucide-react";
 import { cva, VariantProps } from "class-variance-authority";
 
@@ -46,6 +46,7 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       variant,
       options = [],
       defaultValues = [],
+      values = [],
       placeholder = "Select options",
       maxCount = 3,
       className,
@@ -61,6 +62,12 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       () => options.filter((option) => selectedValues.includes(option.value)),
       [selectedValues, options],
     );
+
+    useEffect(() => {
+      if (!values.length) return;
+
+      setSelectedValues(values);
+    }, [values]);
 
     const handleChangeKeyword = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {

@@ -15,7 +15,7 @@ interface MacroCardProps {
   type: Nullable<TransactionType>;
   category: Nullable<Category>;
   onToggleActive: (macroId: number, active: boolean) => Promise<void>;
-  onDelete: (macroId: number) => void;
+  onDelete: (macro: Macro) => void;
 }
 
 export const MacroCard: FC<MacroCardProps> = ({
@@ -32,7 +32,7 @@ export const MacroCard: FC<MacroCardProps> = ({
   };
 
   const handleDeleteMarco = () => {
-    onDelete(macro.id);
+    onDelete(macro);
   };
 
   return (
@@ -45,9 +45,11 @@ export const MacroCard: FC<MacroCardProps> = ({
 
       <CardHeader>
         <div className="flex items-center justify-start gap-2">
-          <Link to={ROUTE.MACRO_UPDATE} params={{ id: macro.id }} className="underline">
-            <CardTitle>{macro.name}</CardTitle>
-          </Link>
+          <CardTitle>
+            <Link to={ROUTE.MACRO_UPDATE} params={{ id: macro.id }} className="underline">
+              {macro.name}
+            </Link>
+          </CardTitle>
           <Switch disabled={isLoading} size="sm" checked={macro.active} onCheckedChange={handleMacroChecked} />
         </div>
       </CardHeader>

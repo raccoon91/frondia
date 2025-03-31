@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createLazyFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Goal } from "lucide-react";
 import { useShallow } from "zustand/shallow";
@@ -9,9 +9,13 @@ import { useGoalStore } from "@/stores/goal.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { GoalCard } from "@/components/goal/goal-card";
 
 const GoalPage = () => {
+  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+  const [isOpenDeleteGoalDialog, setIsOpenDeleteGoalDialog] = useState(false);
+
   const localDate = useLocalStore((state) => state.localDate);
   const { getCurrencies, getTransactionTypes, getCategories } = useTransactionOptionStore(
     useShallow((state) => ({
@@ -21,16 +25,19 @@ const GoalPage = () => {
     })),
   );
 
-  const { goalsInReady, goalsInProgress, goalsInDone, getGoals, movePrevMonth, moveNextMonth } = useGoalStore(
-    useShallow((state) => ({
-      goalsInReady: state.goalsInReady,
-      goalsInProgress: state.goalsInProgress,
-      goalsInDone: state.goalsInDone,
-      getGoals: state.getGoals,
-      movePrevMonth: state.movePrevMonth,
-      moveNextMonth: state.moveNextMonth,
-    })),
-  );
+  const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, removeGoal, movePrevMonth, moveNextMonth } =
+    useGoalStore(
+      useShallow((state) => ({
+        isLoading: state.isLoading,
+        goalsInReady: state.goalsInReady,
+        goalsInProgress: state.goalsInProgress,
+        goalsInDone: state.goalsInDone,
+        getGoals: state.getGoals,
+        removeGoal: state.removeGoal,
+        movePrevMonth: state.movePrevMonth,
+        moveNextMonth: state.moveNextMonth,
+      })),
+    );
 
   useEffect(() => {
     Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
@@ -49,8 +56,42 @@ const GoalPage = () => {
     getGoals();
   };
 
+  const handleOpenDeleteGoalDialog = (goal: Goal) => {
+    if (!goal) return;
+
+    setIsOpenDeleteGoalDialog(true);
+    setSelectedGoal(goal);
+  };
+
+  const handleCloseDeleteGoalDialog = (open?: boolean) => {
+    if (open) return;
+
+    setIsOpenDeleteGoalDialog(false);
+    setSelectedGoal(null);
+  };
+
+  const handleDeleteGoal = async () => {
+    if (selectedGoal) {
+      await removeGoal(selectedGoal.id);
+      await getGoals();
+    }
+
+    handleCloseDeleteGoalDialog();
+  };
+
   return (
     <>
+      <DeleteDialog
+        isOpen={isOpenDeleteGoalDialog}
+        title="Delete Goal"
+        onClose={handleCloseDeleteGoalDialog}
+        onConfirm={handleDeleteGoal}
+      >
+        <p className="text-sm">
+          Do you want to delete goal <span className="font-bold">{selectedGoal?.name}</span> ?
+        </p>
+      </DeleteDialog>
+
       <div className="grid grid-rows-[60px_auto] gap-6">
         <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
           <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
@@ -82,7 +123,7 @@ const GoalPage = () => {
 
               <CardContent className="flex flex-col gap-2">
                 {goalsInReady.map((goal) => (
-                  <GoalCard key={goal.id} goal={goal} />
+                  <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
                 ))}
               </CardContent>
             </Card>
@@ -93,7 +134,7 @@ const GoalPage = () => {
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                 {goalsInProgress.map((goal) => (
-                  <GoalCard key={goal.id} goal={goal} />
+                  <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
                 ))}
               </CardContent>
             </Card>
@@ -104,7 +145,7 @@ const GoalPage = () => {
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                 {goalsInDone.map((goal) => (
-                  <GoalCard key={goal.id} goal={goal} />
+                  <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
                 ))}
               </CardContent>
             </Card>
