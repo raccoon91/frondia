@@ -20,23 +20,16 @@ type StatisticsMap = Record<number, StatisticsType>;
 
 type Statistics = StatisticsType[];
 
-interface CalendarTypePosition {
-  name: string;
-  color: string;
-  top?: number;
-  right?: number;
-  bottom?: number;
-  left?: number;
-}
-
-type CalendarMap = Record<number, { type: TransactionType; position: CalendarTypePosition; count: number }>;
+type CalendarMap = Record<number, { type: TransactionType; count: number }>;
 
 type CalendarStatisticsMap = Record<string, CalendarMap>;
+
+type CalendarStatisticsByTypeMap = Record<number, { type: TransactionType; count: number; amount: number }>;
 
 interface GoalInProgress {
   id: number;
   name: string;
-  rule: string;
+  rule?: GoalRule;
   result: "success" | "failure";
   value: number;
   remain: number;

@@ -10,15 +10,16 @@ import { useLocalStore } from "@/stores/local.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useDashboardStore } from "@/stores/dashboard.store";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
 import { GoalProgress } from "@/components/dashboard/goal-progress";
 
 const DashboardPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
-  const { getTransactionTypes, getCategories } = useTransactionOptionStore(
+  const { transactionTypes, getTransactionTypes, getCategories } = useTransactionOptionStore(
     useShallow((state) => ({
+      transactionTypes: state.transactionTypes,
       getTransactionTypes: state.getTransactionTypes,
       getCategories: state.getCategories,
     })),
@@ -26,6 +27,7 @@ const DashboardPage = () => {
   const {
     statistics,
     calendarStatisticsMap,
+    calendarStatisticsByTypeMap,
     goalsInProgress,
     getTransactions,
     getStatistics,
@@ -37,6 +39,7 @@ const DashboardPage = () => {
     useShallow((state) => ({
       statistics: state.statistics,
       calendarStatisticsMap: state.calendarStatisticsMap,
+      calendarStatisticsByTypeMap: state.calendarStatisticsByTypeMap,
       goalsInProgress: state.goalsInProgress,
       getTransactions: state.getTransactions,
       getStatistics: state.getStatistics,
@@ -157,20 +160,20 @@ const DashboardPage = () => {
                       <div className="relative flex items-center justify-center w-full h-full">
                         <p>{displayDate}</p>
 
-                        {Object.values(calendarMap ?? {}).map(({ type, position }) => (
+                        {Object.values(calendarMap ?? {}).map(({ type }) => (
                           <div
                             key={type.id}
+                            style={{
+                              top: type.config?.top,
+                              right: type.config?.right,
+                              bottom: type.config?.bottom,
+                              left: type.config?.left,
+                            }}
                             className={cn(
                               "absolute flex items-center justify-center min-w-1.5 min-h-1.5 rounded-sm z-1",
-                              position.color,
+                              type.config?.color ?? "",
                             )}
-                            style={{
-                              top: position?.top,
-                              right: position?.right,
-                              bottom: position?.bottom,
-                              left: position?.left,
-                            }}
-                          ></div>
+                          />
                         ))}
                       </div>
                     );
@@ -178,6 +181,15 @@ const DashboardPage = () => {
                 }}
               />
             </CardContent>
+            <CardFooter className="flex flex-wrap gap-2">
+              {transactionTypes.map((type) => (
+                <div key={type.id} className="flex items-center gap-1">
+                  <div key={type.id} className={cn("w-3 h-1.5 rounded-sm", type.config?.color ?? "")} />
+                  <p className="text-xs">{type.name}</p>
+                  <p className="text-xs">{calendarStatisticsByTypeMap?.[type.id]?.count ?? "--"}</p>
+                </div>
+              ))}
+            </CardFooter>
           </Card>
 
           <Card>

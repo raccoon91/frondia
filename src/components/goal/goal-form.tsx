@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import dayjs, { ManipulateType } from "dayjs";
 import { z } from "zod";
 
-import { GOAL_DATE_UNIT_OPTIONS, GOAL_RULES, GOAL_STATUS } from "@/constants/goal";
+import { GOAL_DATE_UNIT_OPTIONS, GOAL_STATUS } from "@/constants/goal";
 import { goalFormSchema } from "@/schema/goal.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { LoadingDot } from "@/components/ui/loading-dot";
 
 interface GoalFormProps {
   isLoading: boolean;
+  goalRules: GoalRule[];
   currencies: Currency[];
   transactionTypes: TransactionType[];
   categories: Category[];
@@ -25,6 +26,7 @@ interface GoalFormProps {
 
 export const GoalForm: FC<GoalFormProps> = ({
   isLoading,
+  goalRules,
   currencies,
   transactionTypes,
   categories,
@@ -49,7 +51,7 @@ export const GoalForm: FC<GoalFormProps> = ({
         <div className="overflow-auto flex flex-col gap-4 flex-1 px-4 pb-1">
           <FormField
             control={goalForm.control}
-            name="rule"
+            name="rule_id"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="gap-1">
@@ -64,9 +66,9 @@ export const GoalForm: FC<GoalFormProps> = ({
                   </FormControl>
 
                   <SelectContent className="max-h-[240px]">
-                    {GOAL_RULES?.map((rule) => (
-                      <SelectItem key={rule.value} value={rule.value}>
-                        {rule.label}
+                    {goalRules?.map((rule) => (
+                      <SelectItem key={rule.id} value={`${rule.id}`}>
+                        {rule.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

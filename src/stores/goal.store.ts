@@ -49,6 +49,7 @@ export const useGoalStore = create<GoalStore>()(
               .select(
                 `
                   *,
+                  rule: rule_id (*),
                   type: type_id (*),
                   currency: currency_id (*),
                   map: goal_category_map (id, category: categories (*))
@@ -103,6 +104,7 @@ export const useGoalStore = create<GoalStore>()(
                   id: goal.id,
                   user_id: goal.user_id,
                   name: goal.name,
+                  rule_id: goal.rule_id,
                   type_id: goal.type_id,
                   currency_id: goal.currency_id,
                   amount: goal.amount,
@@ -111,7 +113,6 @@ export const useGoalStore = create<GoalStore>()(
                   end: goal.end,
                   status: goal.status,
                   created_at: goal.created_at,
-                  rule: goal.rule,
                   date_unit: goal.date_unit,
                 })),
               );
@@ -131,6 +132,7 @@ export const useGoalStore = create<GoalStore>()(
               .select(
                 `
                   *,
+                  rule: rule_id (*),
                   type: type_id (*),
                   currency: currency_id (*),
                   map: goal_category_map (id, category: categories (*))
@@ -158,10 +160,10 @@ export const useGoalStore = create<GoalStore>()(
               .from("goals")
               .insert({
                 name: formdata.name,
+                rule_id: Number(formdata.rule_id),
                 type_id: Number(formdata.type_id),
                 currency_id: Number(formdata.currency_id),
                 amount: Number(formdata.amount),
-                rule: formdata.rule,
                 period: Number(formdata.period),
                 date_unit: formdata.date_unit,
                 start: formdata.start,
@@ -203,10 +205,10 @@ export const useGoalStore = create<GoalStore>()(
               .update({
                 user_id: goal.user_id,
                 name: formdata.name,
+                rule_id: Number(formdata.rule_id),
                 type_id: Number(formdata.type_id),
                 currency_id: Number(formdata.currency_id),
                 amount: Number(formdata.amount),
-                rule: formdata.rule,
                 period: Number(formdata.period),
                 date_unit: formdata.date_unit,
                 start: formdata.start,

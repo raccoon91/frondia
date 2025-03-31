@@ -4,7 +4,6 @@ import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import dayjs from "dayjs";
 
 import { ROUTE } from "@/constants/route";
-import { GOAL_RULES } from "@/constants/goal";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,8 +18,6 @@ interface GoalCardProps {
 export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
   const [openCategory, setOpenCategory] = useState(false);
 
-  const rule = GOAL_RULES.find((rule) => rule.value === goal.rule);
-
   const handleToggleCategory = () => {
     setOpenCategory((prev) => !prev);
   };
@@ -31,8 +28,8 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
 
   return (
     <Card className="overflow-hidden gap-4 pt-6 pb-4 bg-background">
-      <div className={cn("absolute top-0 left-0 py-0.5 px-2 rounded-br-sm", rule?.bg ?? "bg-background")}>
-        <p className="text-xs">{rule?.label ?? ""}</p>
+      <div className={cn("absolute top-0 left-0 py-0.5 px-2 rounded-br-sm", goal.rule?.color ?? "bg-background")}>
+        <p className="text-xs">{goal?.rule?.name ?? ""}</p>
       </div>
 
       <CardMenu className="top-1 right-1">

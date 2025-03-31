@@ -3,8 +3,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import dayjs from "dayjs";
 
 import { STORE_NAME } from "@/constants/store";
-import { CALENDAR_TYPE_POSITION } from "@/constants/calendar";
-import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
+import { GOAL_RULE_NAME, GOAL_STATUS } from "@/constants/goal";
 import { supabase } from "@/lib/supabase/client";
 import { useLocalStore } from "./local.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
@@ -13,6 +12,7 @@ interface DashboardStore {
   transactions: Transaction[];
   statistics: Statistics;
   calendarStatisticsMap: CalendarStatisticsMap;
+  calendarStatisticsByTypeMap: CalendarStatisticsByTypeMap;
   goalsInProgress: GoalInProgress[];
 
   getTransactions: () => Promise<void>;
@@ -31,6 +31,7 @@ export const useDashboardStore = create<DashboardStore>()(
         transactions: [],
         statistics: [],
         calendarStatisticsMap: {},
+        calendarStatisticsByTypeMap: {},
         goalsInProgress: [],
 
         getTransactions: async () => {
@@ -114,6 +115,8 @@ export const useDashboardStore = create<DashboardStore>()(
             const transactions = get().transactions;
 
             const calendarStatisticsMap: CalendarStatisticsMap = {};
+            const calendarStatisticsByTypeMap: CalendarStatisticsByTypeMap = {};
+
             const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
               typeMap[type.id] = type;
 
@@ -130,15 +133,20 @@ export const useDashboardStore = create<DashboardStore>()(
               if (!calendarStatisticsMap?.[date]?.[type.id]) {
                 calendarStatisticsMap[date][type.id] = {
                   type,
-                  position: CALENDAR_TYPE_POSITION[type.id],
                   count: 0,
                 };
               }
 
+              if (!calendarStatisticsByTypeMap?.[type.id]) {
+                calendarStatisticsByTypeMap[type.id] = { type, count: 0, amount: 0 };
+              }
+
               calendarStatisticsMap[date][type.id].count += 1;
+              calendarStatisticsByTypeMap[type.id].count += 1;
+              calendarStatisticsByTypeMap[type.id].amount += transaction.amount;
             });
 
-            set({ calendarStatisticsMap }, false, "getCalendarStatistics");
+            set({ calendarStatisticsMap, calendarStatisticsByTypeMap }, false, "getCalendarStatistics");
           } catch (error) {
             console.error(error);
           }
@@ -169,6 +177,7 @@ export const useDashboardStore = create<DashboardStore>()(
               .select(
                 `
                   *,
+                  rule: rule_id (*),
                   type: type_id (*),
                   currency: currency_id (*),
                   map: goal_category_map (id, category: categories (*))
@@ -214,16 +223,16 @@ export const useDashboardStore = create<DashboardStore>()(
                     });
                   });
 
-                  if (goal.rule === GOAL_RULE.FIXED_AMOUNT) {
+                  if (goal.rule.name === GOAL_RULE_NAME.FIXED_AMOUNT) {
                     result = totalAmount >= goal.amount ? "success" : "failure";
                     value = (totalAmount / goal.amount) * 100;
-                  } else if (goal.rule === GOAL_RULE.SPENDING_LIMIT) {
+                  } else if (goal.rule.name === GOAL_RULE_NAME.SPENDING_LIMIT) {
                     result = totalAmount <= goal.amount ? "success" : "failure";
                     value = (totalAmount / goal.amount) * 100;
-                  } else if (goal.rule === GOAL_RULE.COUNT_AMOUNT) {
+                  } else if (goal.rule.name === GOAL_RULE_NAME.COUNT_AMOUNT) {
                     result = totalCount >= goal.amount ? "success" : "failure";
                     value = (totalCount / goal.amount) * 100;
-                  } else if (goal.rule === GOAL_RULE.COUNT_LIMIT) {
+                  } else if (goal.rule.name === GOAL_RULE_NAME.COUNT_LIMIT) {
                     result = totalCount < goal.amount ? "success" : "failure";
                     value = (totalCount / goal.amount) * 100;
                   }
@@ -249,6 +258,7 @@ export const useDashboardStore = create<DashboardStore>()(
                   id: goal.id,
                   user_id: goal.user_id,
                   name: goal.name,
+                  rule_id: goal.rule_id,
                   type_id: goal.type_id,
                   currency_id: goal.currency_id,
                   amount: goal.amount,
@@ -257,7 +267,6 @@ export const useDashboardStore = create<DashboardStore>()(
                   end: goal.end,
                   status: goal.status,
                   created_at: goal.created_at,
-                  rule: goal.rule,
                   date_unit: goal.date_unit,
                 })),
               );

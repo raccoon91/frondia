@@ -8,6 +8,7 @@ import { z } from "zod";
 import { GOAL_CREATE_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { goalFormDefaultValues, goalFormSchema } from "@/schema/goal.schema";
 import { useGoalStore } from "@/stores/goal.store";
+import { useGoalRuleStore } from "@/stores/goal-rule.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { GoalForm } from "@/components/goal/goal-form";
@@ -16,6 +17,11 @@ const GoalCreatePage = () => {
   const navigate = useNavigate();
   const [isOpenGoalCreateSheet, setIsOpenGoalCreateSheet] = useState(true);
 
+  const { goalRules } = useGoalRuleStore(
+    useShallow((state) => ({
+      goalRules: state.goalRules,
+    })),
+  );
   const { currencies, transactionTypes, categories } = useTransactionOptionStore(
     useShallow((state) => ({
       currencies: state.currencies,
@@ -63,6 +69,7 @@ const GoalCreatePage = () => {
 
         <GoalForm
           isLoading={isLoading}
+          goalRules={goalRules}
           currencies={currencies}
           transactionTypes={transactionTypes}
           categories={categories}

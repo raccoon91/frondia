@@ -107,6 +107,27 @@ export type Database = {
           },
         ]
       }
+      goal_rules: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           amount: number
@@ -117,7 +138,7 @@ export type Database = {
           id: number
           name: string
           period: number
-          rule: string
+          rule_id: number
           start: string
           status: string
           type_id: number
@@ -132,7 +153,7 @@ export type Database = {
           id?: number
           name: string
           period: number
-          rule: string
+          rule_id: number
           start: string
           status: string
           type_id: number
@@ -147,7 +168,7 @@ export type Database = {
           id?: number
           name?: string
           period?: number
-          rule?: string
+          rule_id?: number
           start?: string
           status?: string
           type_id?: number
@@ -159,6 +180,13 @@ export type Database = {
             columns: ["currency_id"]
             isOneToOne: false
             referencedRelation: "currencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goals_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "goal_rules"
             referencedColumns: ["id"]
           },
           {
@@ -241,18 +269,21 @@ export type Database = {
       }
       transaction_types: {
         Row: {
+          config: Json | null
           created_at: string
           id: number
           name: string
           order: number | null
         }
         Insert: {
+          config?: Json | null
           created_at?: string
           id?: number
           name: string
           order?: number | null
         }
         Update: {
+          config?: Json | null
           created_at?: string
           id?: number
           name?: string

@@ -7,10 +7,26 @@ export const DEFAULT_CURRENCIES = [
 ];
 
 export const DEFAULT_TRANSACTION_TYPES = [
-  { name: "income", order: 1 },
-  { name: "expense", order: 2 },
-  { name: "savings", order: 3 },
-  { name: "investment", order: 4 },
+  {
+    name: "income",
+    order: 1,
+    config: { name: "top-left", color: "bg-red-300", top: 2, left: 2 },
+  },
+  {
+    name: "expense",
+    order: 2,
+    config: { name: "top-right", color: "bg-amber-300", top: 2, right: 2 },
+  },
+  {
+    name: "savings",
+    order: 3,
+    config: { name: "bottom-left", color: "bg-green-300", bottom: 2, left: 2 },
+  },
+  {
+    name: "investment",
+    order: 4,
+    config: { name: "bottom-right", color: "bg-blue-300", bottom: 2, right: 2 },
+  },
 ];
 
 export const DEFAULT_CATEGORY_MAP: Record<string, { name: string; order: number }[]> = {
@@ -55,3 +71,10 @@ export const DEFAULT_CATEGORY_MAP: Record<string, { name: string; order: number 
     { name: "Other Investment", order: 32 },
   ],
 };
+
+export const DEFAULT_GOAL_RULES = [
+  { name: "Fixed Amount", color: "bg-emerald-300" },
+  { name: "Spending Limit", color: "bg-rose-300" },
+  { name: "Count Above", color: "bg-indigo-300" },
+  { name: "Count Limit", color: "bg-amber-300" },
+];

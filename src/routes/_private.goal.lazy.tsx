@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { GoalCard } from "@/components/goal/goal-card";
+import { useGoalRuleStore } from "@/stores/goal-rule.store";
 
 const GoalPage = () => {
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
@@ -24,7 +25,11 @@ const GoalPage = () => {
       getCategories: state.getCategories,
     })),
   );
-
+  const { getGoalRules } = useGoalRuleStore(
+    useShallow((state) => ({
+      getGoalRules: state.getGoalRules,
+    })),
+  );
   const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, removeGoal, movePrevMonth, moveNextMonth } =
     useGoalStore(
       useShallow((state) => ({
@@ -40,7 +45,7 @@ const GoalPage = () => {
     );
 
   useEffect(() => {
-    Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
+    Promise.all([getCurrencies(), getTransactionTypes(), getCategories(), getGoalRules()]);
     getGoals();
   }, []);
 
