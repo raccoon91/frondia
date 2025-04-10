@@ -27,7 +27,9 @@ export const TransactionAmount: FC<CellContext<TransactionData, unknown>> = memo
 
     if (!currency) return <p className="h-8 p-2 leading-4">{amount}</p>;
 
-    return <p className="h-8 p-2 leading-4">{`${amount.toLocaleString("en-US")} ${currency?.symbol}`}</p>;
+    return (
+      <p className="h-8 p-2 leading-4">{`${currency?.symbol ? `${currency?.symbol} ` : ""}${amount.toLocaleString("en-US")}`}</p>
+    );
   },
   (prev, next) =>
     prev.row.original.id === next.row.original.id &&
