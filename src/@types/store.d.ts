@@ -1,24 +1,52 @@
-interface StatisticsTransaction {
-  amount: number;
-  count: number;
-}
+type StatisticsMap = {
+  [typeId: number]: {
+    type: TransactionType;
+    summaryMap: {
+      [currencyId: number]: {
+        currency: Currency;
+        totalCount: number;
+        totalAmount: number;
+      };
+    };
+    categoryMap: {
+      [categoryId: number]: {
+        category: Category;
+        currencyMap: {
+          [currencyId: number]: {
+            currency: Currency;
+            transaction: {
+              count: number;
+              amount: number;
+            };
+          };
+        };
+      };
+    };
+  };
+};
 
-interface StatisticsCategory {
-  category: Category;
-  transaction: StatisticsTransaction;
-}
-
-interface StatisticsType {
+type Statistics = {
   type: TransactionType;
-  totalAmount: number;
-  totalCount: number;
-  categoryMap?: Record<number, StatisticsCategory>;
-  categories?: StatisticsCategory[];
-}
-
-type StatisticsMap = Record<number, StatisticsType>;
-
-type Statistics = StatisticsType[];
+  summaries: {
+    currency: Currency;
+    totalCount: number;
+    totalAmount: number;
+  }[];
+  categories: {
+    category: Category;
+    currencies: {
+      currency: Currency;
+      summary: {
+        totalCount: number;
+        totalAmount: number;
+      };
+      transaction: {
+        count: number;
+        amount: number;
+      };
+    }[];
+  }[];
+}[];
 
 type CalendarMap = Record<number, { type: TransactionType; count: number }>;
 

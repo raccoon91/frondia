@@ -17,11 +17,12 @@ import { GoalProgress } from "@/components/dashboard/goal-progress";
 
 const DashboardPage = () => {
   const localDate = useLocalStore((state) => state.localDate);
-  const { transactionTypes, getTransactionTypes, getCategories } = useTransactionOptionStore(
+  const { transactionTypes, getTransactionTypes, getCategories, getCurrencies } = useTransactionOptionStore(
     useShallow((state) => ({
       transactionTypes: state.transactionTypes,
       getTransactionTypes: state.getTransactionTypes,
       getCategories: state.getCategories,
+      getCurrencies: state.getCurrencies,
     })),
   );
   const {
@@ -51,7 +52,7 @@ const DashboardPage = () => {
   );
 
   useEffect(() => {
-    Promise.all([getTransactionTypes(), getCategories(), getTransactions()]).then(() => {
+    Promise.all([getTransactionTypes(), getCategories(), getCurrencies(), getTransactions()]).then(() => {
       getStatistics();
       getCalendarStatistics();
       getGoalsInProgress();
@@ -98,39 +99,57 @@ const DashboardPage = () => {
           <CardContent>
             <table className="-mt-4">
               <tbody>
-                {statistics.map(({ type, totalAmount, categories }) => (
+                {statistics.map(({ type, summaries, categories }) => (
                   <Fragment key={type.id}>
                     <tr>
-                      <td className="text-left pt-4">
+                      <td className="text-left pt-4 align-top">
                         <p className="text-sm font-bold">{type.name}</p>
                       </td>
-                      <td className="text-right pt-4">
-                        <p className="text-sm font-bold">{`Total : ${totalAmount.toLocaleString("en-US")}`}</p>
+                      <td className="text-right pt-4 align-top">
+                        {summaries.map(({ currency, totalAmount }) => (
+                          <p
+                            key={currency.id}
+                            className="text-sm font-bold"
+                          >{`${currency.code} : ${totalAmount.toLocaleString("en-US")}`}</p>
+                        ))}
                       </td>
-                      <td className="pt-4">
+                      <td className="pt-4 align-top">
                         <p className="text-sm font-bold text-right pl-4">Amount</p>
                       </td>
-                      <td className="pt-4">
+                      <td className="pt-4 align-top">
                         <p className="text-sm font-bold text-right pl-4">Count</p>
                       </td>
                     </tr>
 
-                    {categories?.map(({ category, transaction }) => (
+                    {categories?.map(({ category, currencies }) => (
                       <tr key={category.id}>
-                        <td className="w-[1%] whitespace-nowrap pt-1">
+                        <td className="w-[1%] whitespace-nowrap pt-1 align-top">
                           <p className="text-sm pl-6 pr-4">{category.name}</p>
                         </td>
 
-                        <td className="pt-1">
-                          <Progress value={(transaction.amount / totalAmount) * 100} />
+                        <td className="pt-1 align-top">
+                          {currencies?.map(({ currency, summary, transaction }) => (
+                            <div key={currency.id} className="flex items-center h-4">
+                              <Progress value={(transaction.amount / summary.totalAmount) * 100} />
+                            </div>
+                          ))}
                         </td>
 
-                        <td className="w-[1%] whitespace-nowrap pt-1">
-                          <p className="text-sm text-right pl-4">{transaction.amount.toLocaleString("en-US")}</p>
+                        <td className="w-[1%] whitespace-nowrap pt-1 align-top">
+                          {currencies?.map(({ currency, transaction }) => (
+                            <p
+                              key={currency.id}
+                              className="text-sm text-right pl-4"
+                            >{`${currency.symbol} ${transaction.amount.toLocaleString("en-US")}`}</p>
+                          ))}
                         </td>
 
-                        <td className="w-[1%] whitespace-nowrap pt-1">
-                          <p className="text-sm text-right pl-4">{transaction.count.toLocaleString("en-US")}</p>
+                        <td className="w-[1%] whitespace-nowrap pt-1 align-top">
+                          {currencies?.map(({ currency, transaction }) => (
+                            <p key={currency.id} className="text-sm text-right pl-4">
+                              {transaction.count.toLocaleString("en-US")}
+                            </p>
+                          ))}
                         </td>
                       </tr>
                     ))}

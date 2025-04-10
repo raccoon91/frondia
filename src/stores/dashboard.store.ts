@@ -58,48 +58,85 @@ export const useDashboardStore = create<DashboardStore>()(
           try {
             const types = useTransactionOptionStore.getState().transactionTypes;
             const categories = useTransactionOptionStore.getState().categories;
+            const currencies = useTransactionOptionStore.getState().currencies;
 
             const transactions = get().transactions;
 
             const statisticsMap: StatisticsMap = {};
 
             types?.forEach((type) => {
-              statisticsMap[type.id] = { type, totalAmount: 0, totalCount: 0, categoryMap: {} };
+              statisticsMap[type.id] = {
+                type,
+                summaryMap: {},
+                categoryMap: {},
+              };
             });
 
             categories?.forEach((category) => {
               if (!statisticsMap?.[category.type_id]?.categoryMap) return;
 
-              statisticsMap[category.type_id].categoryMap![category.id] = {
+              statisticsMap[category.type_id].categoryMap[category.id] = {
                 category,
-                transaction: { amount: 0, count: 0 },
+                currencyMap: {},
               };
             });
+
+            const currencyMapById = currencies?.reduce<Record<number, Currency>>((mapById, currency) => {
+              mapById[currency.id] = currency;
+              return mapById;
+            }, {});
 
             transactions?.forEach((transaction) => {
               const typeId = transaction.type_id;
               const categoryId = transaction.category_id;
+              const currencyId = transaction.currency_id;
 
-              if (!statisticsMap?.[typeId]?.categoryMap?.[categoryId]?.transaction) return;
+              if (!statisticsMap?.[typeId]?.categoryMap?.[categoryId]) return;
+              if (!statisticsMap?.[typeId]?.summaryMap?.[currencyId]) {
+                statisticsMap[typeId].summaryMap[currencyId] = {
+                  currency: currencyMapById[currencyId],
+                  totalAmount: 0,
+                  totalCount: 0,
+                };
+              }
+              if (!statisticsMap?.[typeId]?.categoryMap?.[categoryId]?.currencyMap?.[currencyId]) {
+                statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId] = {
+                  currency: currencyMapById[currencyId],
+                  transaction: {
+                    count: 0,
+                    amount: 0,
+                  },
+                };
+              }
 
-              statisticsMap[typeId].totalAmount += transaction.amount;
-              statisticsMap[typeId].totalCount += 1;
+              statisticsMap[typeId].summaryMap[currencyId].totalAmount += transaction.amount;
+              statisticsMap[typeId].summaryMap[currencyId].totalCount += 1;
 
-              statisticsMap[typeId].categoryMap[categoryId].transaction.amount += transaction.amount;
-              statisticsMap[typeId].categoryMap[categoryId].transaction.count += 1;
+              statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId].transaction.amount +=
+                transaction.amount;
+              statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId].transaction.count += 1;
             });
 
             const statistics = Object.values(statisticsMap)
-              .filter((statistic) => statistic.totalCount)
-              .map(({ type, totalAmount, totalCount, categoryMap }) => ({
+              .filter(({ summaryMap }) => Object.values(summaryMap).length)
+              .map(({ type, summaryMap, categoryMap }) => ({
                 type,
-                totalAmount,
-                totalCount,
+                summaries: Object.values(summaryMap ?? {}).map(({ currency, totalCount, totalAmount }) => ({
+                  currency,
+                  totalCount,
+                  totalAmount,
+                })),
                 categories: Object.values(categoryMap ?? {})
-                  .filter(({ transaction }) => transaction.count)
-                  .map(({ category, transaction }) => ({
+                  .filter(({ currencyMap }) => Object.values(currencyMap).length)
+                  .map(({ category, currencyMap }) => ({
                     category,
-                    transaction,
+                    currencies: Object.values(currencyMap)
+                      .filter(({ transaction }) => transaction.amount)
+                      .map(({ currency, transaction }) => ({
+                        currency,
+                        summary: summaryMap[currency.id],
+                        transaction,
+                      })),
                   })),
               }));
 
