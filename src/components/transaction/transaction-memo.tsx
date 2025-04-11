@@ -23,7 +23,11 @@ export const TransactionMemo: FC<CellContext<TransactionData, unknown>> = memo(
       );
     }
 
-    return <p className="h-8 p-2 leading-4">{memo}</p>;
+    return (
+      <p className="flex gap-2 h-8 p-2 leading-4 truncate" title={memo ?? undefined}>
+        {memo}
+      </p>
+    );
   },
   (prev, next) =>
     prev.row.original.id === next.row.original.id &&

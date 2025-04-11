@@ -38,7 +38,11 @@ export const TransactionCategorySelect: FC<CellContext<TransactionData, unknown>
       );
     }
 
-    return <p className="h-8 p-2 leading-4 truncate">{category?.name}</p>;
+    return (
+      <p className="h-8 p-2 leading-4 truncate" title={category?.name ?? undefined}>
+        {category?.name}
+      </p>
+    );
   },
   (prev, next) =>
     prev.row.original.id === next.row.original.id &&

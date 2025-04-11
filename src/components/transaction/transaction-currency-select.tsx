@@ -1,5 +1,6 @@
 import { FC, memo } from "react";
 import { CellContext } from "@tanstack/react-table";
+import { Info } from "lucide-react";
 
 import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,7 @@ export const TransactionCurrencySelect: FC<CellContext<TransactionData, unknown>
     const status = row.original.status;
     const currencies = row.original.currencies;
     const currency = row.original.currency;
+    const rate = row.original.usd_rate;
 
     const handleChange = (value: string) => {
       table.options.meta?.changeInput(id, "currency", value);
@@ -33,7 +35,17 @@ export const TransactionCurrencySelect: FC<CellContext<TransactionData, unknown>
       );
     }
 
-    return <p className="h-8 p-2 leading-4">{currency?.code}</p>;
+    return (
+      <div className="flex items-center gap-2 h-8 p-2 leading-4">
+        <p>{currency?.code}</p>
+
+        {rate !== null ? (
+          <div title={rate.toString()}>
+            <Info size={16} className="text-muted-foreground" />
+          </div>
+        ) : null}
+      </div>
+    );
   },
   (prev, next) =>
     prev.row.original.id === next.row.original.id &&

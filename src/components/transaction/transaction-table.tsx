@@ -43,6 +43,7 @@ export const columns: ColumnDef<TransactionData>[] = [
     accessorKey: "memo",
     header: "Memo",
     minSize: 120,
+    maxSize: 120,
     cell: TransactionMemo,
   },
   {

@@ -70,6 +70,7 @@ interface TransactionData {
   date: Nullable<string>;
   memo: Nullable<string>;
   amount: number;
+  usd_rate: Nullable<number>;
 
   transactionType?: Nullable<TransactionType>;
   category?: Category;
