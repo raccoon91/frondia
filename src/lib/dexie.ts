@@ -5,7 +5,7 @@ const dexie = new Dexie("currency_rate") as Dexie & {
 };
 
 dexie.version(1).stores({
-  currencies: "++id, [date+code], rate",
+  currencies: "[date+code]",
 });
 
 export { dexie };
