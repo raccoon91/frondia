@@ -114,32 +114,36 @@ export const useTransactionStore = create<TransactionStore>()(
           const localTransactionType = useLocalStore.getState().localTransactionType;
           const localCurrency = useLocalStore.getState().localCurrency;
 
+          const transactionDatasets = get().transactionDatasets;
+          const editableTransaction = get().editableTransaction;
+
           if (localTransactionType) {
             categories = categories.filter((category) => category.type_id === localTransactionType.id);
           }
 
-          const datasets = [
-            {
-              id: dayjs().valueOf(),
-              status: TRANSACTION_STATUS.NEW,
-              checked: false,
-              date: dayjs().format("YYYY-MM-DD HH:mm:00"),
-              amount: 0,
-              memo: null,
-              usd_rate: null,
+          const newTransaction: TransactionData = {
+            id: dayjs().valueOf(),
+            status: TRANSACTION_STATUS.NEW,
+            checked: false,
+            date: dayjs().format("YYYY-MM-DD HH:mm:00"),
+            amount: 0,
+            memo: null,
+            usd_rate: null,
 
-              transactionType: localTransactionType,
-              category: undefined,
-              currency: localCurrency,
+            transactionType: localTransactionType,
+            category: undefined,
+            currency: localCurrency,
 
-              transactionTypes,
-              categories,
-              currencies,
-            },
-            ...(get().transactionDatasets ?? []),
-          ];
+            transactionTypes,
+            categories,
+            currencies,
+          };
 
-          set({ transactionDatasets: datasets }, false, "addTransaction");
+          editableTransaction[newTransaction.id] = newTransaction;
+
+          const datasets = [newTransaction].concat(transactionDatasets);
+
+          set({ transactionDatasets: datasets, editableTransaction }, false, "addTransaction");
         },
         saveAllTransaction: async () => {
           try {
@@ -150,6 +154,8 @@ export const useTransactionStore = create<TransactionStore>()(
             const upserts: Omit<Transaction, "user_id" | "created_at" | "updated_at">[] = [];
 
             for (const dataset of transactionDatasets) {
+              if (!editableTransaction[dataset.id]) continue;
+
               if (!dataset.date || !dataset.transactionType || !dataset.category || !dataset.currency) continue;
 
               const currencyRate = await useCurrencyRateStore
@@ -177,9 +183,9 @@ export const useTransactionStore = create<TransactionStore>()(
                   amount: dataset.amount,
                   usd_rate: currencyRate?.rate?.usd,
                 });
-
-                delete editableTransaction[dataset.id];
               }
+
+              delete editableTransaction[dataset.id];
             }
 
             const { error: insertError } = await supabase.from("transactions").insert(inserts);
@@ -270,6 +276,8 @@ export const useTransactionStore = create<TransactionStore>()(
           const category = categories.find((category) => category.id === macro.category_id);
           const currency = currencies.find((currency) => currency.id === macro.currency_id);
 
+          const transactionDatasets = get().transactionDatasets;
+
           if (transactionType) {
             categories = categories.filter((category) => category.type_id === transactionType.id);
           }
@@ -297,9 +305,8 @@ export const useTransactionStore = create<TransactionStore>()(
               transactionTypes,
               categories,
               currencies,
-            },
-            ...(get().transactionDatasets ?? []),
-          ];
+            } as TransactionData,
+          ].concat(transactionDatasets);
 
           set({ transactionDatasets: datasets }, false, "macroTransaction");
         },
@@ -307,7 +314,7 @@ export const useTransactionStore = create<TransactionStore>()(
         editTransaction: (rowId: number) => {
           const currencies = useTransactionOptionStore.getState().currencies;
           const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
-          const categories = useTransactionOptionStore.getState().categories;
+          let categories = useTransactionOptionStore.getState().categories;
 
           const transactionDatasets = get().transactionDatasets;
           const editableTransaction = get().editableTransaction;
@@ -316,6 +323,10 @@ export const useTransactionStore = create<TransactionStore>()(
             if (dataset.id !== rowId) return dataset;
 
             editableTransaction[dataset.id] = dataset;
+
+            if (dataset.transactionType?.id) {
+              categories = categories.filter((category) => category.type_id === dataset.transactionType?.id);
+            }
 
             return {
               id: dataset.id,
@@ -340,6 +351,7 @@ export const useTransactionStore = create<TransactionStore>()(
         },
         cancelEditTransaction: (rowId: number) => {
           const transactionDatasets = get().transactionDatasets;
+          const editableTransaction = get().editableTransaction;
 
           const targetDataset = transactionDatasets.find((dataset) => dataset.id === rowId);
 
@@ -348,10 +360,10 @@ export const useTransactionStore = create<TransactionStore>()(
           if (targetDataset.status === TRANSACTION_STATUS.NEW) {
             const filtered = transactionDatasets.filter((dataset) => dataset.id !== rowId);
 
-            set({ transactionDatasets: filtered }, false, "cancelEditTransaction");
-          } else if (targetDataset.status === TRANSACTION_STATUS.EDIT) {
-            const editableTransaction = get().editableTransaction;
+            delete editableTransaction[rowId];
 
+            set({ transactionDatasets: filtered, editableTransaction }, false, "cancelEditTransaction");
+          } else if (targetDataset.status === TRANSACTION_STATUS.EDIT) {
             const originDataset = editableTransaction[rowId];
 
             if (!originDataset) return;

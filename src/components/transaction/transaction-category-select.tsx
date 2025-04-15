@@ -44,9 +44,14 @@ export const TransactionCategorySelect: FC<CellContext<TransactionData, unknown>
       </p>
     );
   },
-  (prev, next) =>
-    prev.row.original.id === next.row.original.id &&
-    prev.row.original.status === next.row.original.status &&
-    prev.row.original.transactionType?.id === next.row.original.transactionType?.id &&
-    prev.row.original.category?.id === next.row.original.category?.id,
+  (prev, next) => {
+    return (
+      prev.row.original.id === next.row.original.id &&
+      prev.row.original.status === next.row.original.status &&
+      prev.row.original.category !== undefined &&
+      next.row.original.category !== undefined &&
+      prev.row.original.category?.id === next.row.original.category?.id &&
+      prev.row.original.categories?.length === next.row.original.categories?.length
+    );
+  },
 );
