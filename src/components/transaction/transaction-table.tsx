@@ -150,7 +150,7 @@ export const TransactionTable: FC<TransactionTableProps> = ({ data, onCheck, onC
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-32 text-center">
+              <TableCell colSpan={columns.length} className="text-center py-12 font-semibold">
                 No Transaction Data
               </TableCell>
             </TableRow>

@@ -148,20 +148,26 @@ const MacroPage = () => {
           </div>
 
           <Card>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {allMacros.map((macro) => (
-                <MacroCard
-                  key={macro.id}
-                  isLoading={isLoading}
-                  macro={macro}
-                  currency={macro.currency_id ? currencyMap[macro.currency_id] : null}
-                  type={macro.type_id ? typeMap[macro.type_id] : null}
-                  category={macro.category_id ? categoryMap[macro.category_id] : null}
-                  onToggleActive={handleToggleMacroActive}
-                  onDelete={handleOpenDeleteMacroDialog}
-                />
-              ))}
-            </CardContent>
+            {allMacros?.length ? (
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {allMacros.map((macro) => (
+                  <MacroCard
+                    key={macro.id}
+                    isLoading={isLoading}
+                    macro={macro}
+                    currency={macro.currency_id ? currencyMap[macro.currency_id] : null}
+                    type={macro.type_id ? typeMap[macro.type_id] : null}
+                    category={macro.category_id ? categoryMap[macro.category_id] : null}
+                    onToggleActive={handleToggleMacroActive}
+                    onDelete={handleOpenDeleteMacroDialog}
+                  />
+                ))}
+              </CardContent>
+            ) : (
+              <CardContent className="flex justify-center py-12">
+                <p className="text-sm font-semibold">No Macro</p>
+              </CardContent>
+            )}
           </Card>
         </div>
       </div>

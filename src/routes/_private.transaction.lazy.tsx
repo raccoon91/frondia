@@ -302,16 +302,22 @@ const TransactionPage = () => {
           </CardMenu>
 
           <CardContent className="flex flex-col gap-2">
-            {macros.map((macro) => (
-              <div
-                key={macro.id}
-                data-macro-id={macro.id}
-                className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
-                onClick={handleClickMacro}
-              >
-                <p className="text-sm">{macro.name}</p>
-              </div>
-            ))}
+            {macros?.length ? (
+              macros.map((macro) => (
+                <div
+                  key={macro.id}
+                  data-macro-id={macro.id}
+                  className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
+                  onClick={handleClickMacro}
+                >
+                  <p className="text-sm">{macro.name}</p>
+                </div>
+              ))
+            ) : (
+              <Button asChild size="sm" variant="outline">
+                <Link to={ROUTE.MACRO_CREATE}>Create Macro</Link>
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
