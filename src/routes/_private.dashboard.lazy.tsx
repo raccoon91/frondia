@@ -12,7 +12,7 @@ import { useDashboardStore } from "@/stores/dashboard.store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
-import { Progress } from "@/components/ui/progress";
+import { MultiProgress } from "@/components/ui/multi-progress";
 import { GoalProgress } from "@/components/dashboard/goal-progress";
 
 const DashboardPage = () => {
@@ -99,18 +99,18 @@ const DashboardPage = () => {
           <CardContent>
             <table className="-mt-4">
               <tbody>
-                {statistics.map(({ type, summaries, categories }) => (
+                {statistics.map(({ type, totalUsd, totalSummaries, categories }) => (
                   <Fragment key={type.id}>
                     <tr>
                       <td className="text-left pt-4 align-top">
                         <p className="text-sm font-bold">{type.name}</p>
                       </td>
-                      <td className="text-right pt-4 align-top">
-                        {summaries.map(({ currency, totalAmount }) => (
-                          <p
+                      <td className="text-right pt-4 space-x-2">
+                        {totalSummaries?.map(({ currency, totalAmount }) => (
+                          <span
                             key={currency.id}
                             className="text-sm font-bold"
-                          >{`${currency.code} : ${totalAmount.toLocaleString("en-US")}`}</p>
+                          >{`${currency.code} : ${totalAmount.toLocaleString("en-US")}`}</span>
                         ))}
                       </td>
                       <td className="pt-4 align-top">
@@ -128,11 +128,9 @@ const DashboardPage = () => {
                         </td>
 
                         <td className="pt-1 align-top">
-                          {currencies?.map(({ currency, summary, transaction }) => (
-                            <div key={currency.id} className="flex items-center h-4">
-                              <Progress value={(transaction.amount / summary.totalAmount) * 100} />
-                            </div>
-                          ))}
+                          <MultiProgress
+                            values={currencies?.map(({ transaction }) => (transaction.usd / totalUsd) * 100)}
+                          />
                         </td>
 
                         <td className="w-[1%] whitespace-nowrap pt-1 align-top">

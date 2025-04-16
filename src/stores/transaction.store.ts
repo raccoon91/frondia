@@ -128,7 +128,7 @@ export const useTransactionStore = create<TransactionStore>()(
             date: dayjs().format("YYYY-MM-DD HH:mm:00"),
             amount: 0,
             memo: null,
-            usd_rate: null,
+            usd_rate: 0,
 
             transactionType: localTransactionType,
             category: undefined,
@@ -155,7 +155,6 @@ export const useTransactionStore = create<TransactionStore>()(
 
             for (const dataset of transactionDatasets) {
               if (!editableTransaction[dataset.id]) continue;
-
               if (!dataset.date || !dataset.transactionType || !dataset.category || !dataset.currency) continue;
 
               const currencyRate = await useCurrencyRateStore
@@ -296,7 +295,7 @@ export const useTransactionStore = create<TransactionStore>()(
               date: date.format("YYYY-MM-DD HH:mm:00"),
               amount: macro.amount ?? 0,
               memo: macro.memo,
-              usd_rate: null,
+              usd_rate: 0,
 
               transactionType,
               category,

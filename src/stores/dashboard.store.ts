@@ -67,7 +67,8 @@ export const useDashboardStore = create<DashboardStore>()(
             types?.forEach((type) => {
               statisticsMap[type.id] = {
                 type,
-                summaryMap: {},
+                totalUsd: 0,
+                totalSummaryMap: {},
                 categoryMap: {},
               };
             });
@@ -92,8 +93,8 @@ export const useDashboardStore = create<DashboardStore>()(
               const currencyId = transaction.currency_id;
 
               if (!statisticsMap?.[typeId]?.categoryMap?.[categoryId]) return;
-              if (!statisticsMap?.[typeId]?.summaryMap?.[currencyId]) {
-                statisticsMap[typeId].summaryMap[currencyId] = {
+              if (!statisticsMap?.[typeId]?.totalSummaryMap?.[currencyId]) {
+                statisticsMap[typeId].totalSummaryMap[currencyId] = {
                   currency: currencyMapById[currencyId],
                   totalAmount: 0,
                   totalCount: 0,
@@ -103,25 +104,31 @@ export const useDashboardStore = create<DashboardStore>()(
                 statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId] = {
                   currency: currencyMapById[currencyId],
                   transaction: {
+                    usd: 0,
                     count: 0,
                     amount: 0,
                   },
                 };
               }
 
-              statisticsMap[typeId].summaryMap[currencyId].totalAmount += transaction.amount;
-              statisticsMap[typeId].summaryMap[currencyId].totalCount += 1;
+              statisticsMap[typeId].totalUsd += transaction.amount * transaction.usd_rate;
 
+              statisticsMap[typeId].totalSummaryMap[currencyId].totalCount += 1;
+              statisticsMap[typeId].totalSummaryMap[currencyId].totalAmount += transaction.amount;
+
+              statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId].transaction.usd +=
+                transaction.amount * transaction.usd_rate;
+              statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId].transaction.count += 1;
               statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId].transaction.amount +=
                 transaction.amount;
-              statisticsMap[typeId].categoryMap[categoryId].currencyMap[currencyId].transaction.count += 1;
             });
 
             const statistics = Object.values(statisticsMap)
-              .filter(({ summaryMap }) => Object.values(summaryMap).length)
-              .map(({ type, summaryMap, categoryMap }) => ({
+              .filter(({ totalUsd }) => totalUsd)
+              .map(({ type, totalUsd, totalSummaryMap, categoryMap }) => ({
                 type,
-                summaries: Object.values(summaryMap ?? {}).map(({ currency, totalCount, totalAmount }) => ({
+                totalUsd,
+                totalSummaries: Object.values(totalSummaryMap ?? {}).map(({ currency, totalCount, totalAmount }) => ({
                   currency,
                   totalCount,
                   totalAmount,
@@ -131,10 +138,9 @@ export const useDashboardStore = create<DashboardStore>()(
                   .map(({ category, currencyMap }) => ({
                     category,
                     currencies: Object.values(currencyMap)
-                      .filter(({ transaction }) => transaction.amount)
+                      .filter(({ transaction }) => transaction.count)
                       .map(({ currency, transaction }) => ({
                         currency,
-                        summary: summaryMap[currency.id],
                         transaction,
                       })),
                   })),

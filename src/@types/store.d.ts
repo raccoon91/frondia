@@ -1,24 +1,32 @@
+type StatisticsSummary = {
+  currency: Currency;
+  totalCount: number;
+  totalAmount: number;
+};
+
+type StatisticsCurrency = {
+  currency: Currency;
+  transaction: StatisticsTransaction;
+};
+
+type StatisticsTransaction = {
+  usd: number;
+  count: number;
+  amount: number;
+};
+
 type StatisticsMap = {
   [typeId: number]: {
     type: TransactionType;
-    summaryMap: {
-      [currencyId: number]: {
-        currency: Currency;
-        totalCount: number;
-        totalAmount: number;
-      };
+    totalUsd: number;
+    totalSummaryMap: {
+      [currencyId: number]: StatisticsSummary;
     };
     categoryMap: {
       [categoryId: number]: {
         category: Category;
         currencyMap: {
-          [currencyId: number]: {
-            currency: Currency;
-            transaction: {
-              count: number;
-              amount: number;
-            };
-          };
+          [currencyId: number]: StatisticsCurrency;
         };
       };
     };
@@ -27,24 +35,11 @@ type StatisticsMap = {
 
 type Statistics = {
   type: TransactionType;
-  summaries: {
-    currency: Currency;
-    totalCount: number;
-    totalAmount: number;
-  }[];
+  totalUsd: number;
+  totalSummaries: StatisticsSummary[];
   categories: {
     category: Category;
-    currencies: {
-      currency: Currency;
-      summary: {
-        totalCount: number;
-        totalAmount: number;
-      };
-      transaction: {
-        count: number;
-        amount: number;
-      };
-    }[];
+    currencies: StatisticsCurrency[];
   }[];
 }[];
 
@@ -70,7 +65,7 @@ interface TransactionData {
   date: Nullable<string>;
   memo: Nullable<string>;
   amount: number;
-  usd_rate: Nullable<number>;
+  usd_rate: number;
 
   transactionType?: Nullable<TransactionType>;
   category?: Category;

@@ -302,7 +302,7 @@ export type Database = {
           memo: string | null
           type_id: number
           updated_at: string
-          usd_rate: number | null
+          usd_rate: number
           user_id: string
         }
         Insert: {
@@ -315,7 +315,7 @@ export type Database = {
           memo?: string | null
           type_id: number
           updated_at?: string
-          usd_rate?: number | null
+          usd_rate: number
           user_id?: string
         }
         Update: {
@@ -328,7 +328,7 @@ export type Database = {
           memo?: string | null
           type_id?: number
           updated_at?: string
-          usd_rate?: number | null
+          usd_rate?: number
           user_id?: string
         }
         Relationships: [

@@ -48,7 +48,7 @@ interface Transaction {
   amount: number;
   date: Nullable<string>;
   memo: Nullable<string>;
-  usd_rate: Nullable<number>;
+  usd_rate: number;
   created_at: string;
   updated_at: string;
 
