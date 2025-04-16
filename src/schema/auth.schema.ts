@@ -5,10 +5,15 @@ export const loginFormSchema = z.object({
   password: z.string().nonempty(),
 });
 
+export const loginFormDefaultValues = {
+  email: "",
+  password: "",
+};
+
 export const registerFormSchema = z
   .object({
     email: z.string().email().nonempty(),
-    name: z.string().default(""),
+    name: z.string(),
     password: z.string().min(6).max(20),
     passwordConfirm: z.string().min(6).max(20),
   })
@@ -16,3 +21,10 @@ export const registerFormSchema = z
     message: "Passwords don't match",
     path: ["passwordConfirm"],
   });
+
+export const registerFormDefaultValues = {
+  email: "",
+  name: "",
+  password: "",
+  passwordConfirm: "",
+};

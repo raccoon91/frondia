@@ -3,15 +3,15 @@ import { useShallow } from "zustand/shallow";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { registerFormSchema } from "@/schema/auth.schema";
+import { registerFormDefaultValues, registerFormSchema } from "@/schema/auth.schema";
 import { useAuthStore } from "@/stores/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
 import { LoadingDot } from "@/components/ui/loading-dot";
-import { toast } from "sonner";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -24,13 +24,16 @@ const RegisterPage = () => {
 
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
+    defaultValues: registerFormDefaultValues,
   });
 
   const handleSubmitRegister = async (formdata: z.infer<typeof registerFormSchema>) => {
     const isSuccess = await register(formdata);
 
     if (isSuccess) {
-      toast.success("Email sent successfully! Please check your inbox");
+      toast.success("Email sent successfully!", {
+        description: "Please check your inbox",
+      });
 
       navigate({ to: ROUTE.HOME });
     }

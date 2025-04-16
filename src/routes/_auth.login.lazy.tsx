@@ -3,9 +3,10 @@ import { useShallow } from "zustand/shallow";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { loginFormSchema } from "@/schema/auth.schema";
+import { loginFormDefaultValues, loginFormSchema } from "@/schema/auth.schema";
 import { useAuthStore } from "@/stores/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,12 +26,19 @@ const LoginPage = () => {
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
+    defaultValues: loginFormDefaultValues,
   });
 
   const handleSubmitLogin = async (formdata: z.infer<typeof loginFormSchema>) => {
     const isSuccess = await login(formdata);
 
-    if (isSuccess) navigate({ to: ROUTE.DASHBOARD });
+    if (isSuccess) {
+      navigate({ to: ROUTE.DASHBOARD });
+    } else {
+      toast.warning("Login Failed!", {
+        description: "Please check your email and password",
+      });
+    }
   };
 
   // const handleSubmitLoginWithGoogle = async () => {
