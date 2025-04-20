@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 
+import GATracker from "@/lib/google-analytics";
 import { Toaster } from "@/components/ui/sonner";
 
 const TanStackRouterDevtools =
@@ -20,6 +21,8 @@ export const Route = createRootRoute({
       <Toaster position="top-right" />
 
       <TanStackRouterDevtools position="bottom-right" />
+
+      <GATracker />
     </>
   ),
 });
