@@ -15,7 +15,7 @@ const GATracker = () => {
 
     if (ReactGA.isInitialized) return;
 
-    ReactGA.initialize(process.env.VITE_GA_TRACKING_ID as string);
+    ReactGA.initialize(import.meta.env.VITE_GA_TRACKING_ID);
   }, [excluded]);
 
   useEffect(() => {
