@@ -77,7 +77,7 @@ program.command("deploy").action(() => {
     "deploy",
     "goals",
     "--project-ref",
-    process.env.VITE_SUPABASE_PROJECT_ID,
+    process.env.SUPABASE_PROJECT_ID,
     "--workdir",
     "src/lib",
   ]);
@@ -109,9 +109,9 @@ program.command("link").action(() => {
     "supabase",
     "link",
     "--project-ref",
-    process.env.VITE_SUPABASE_PROJECT_ID,
+    process.env.SUPABASE_PROJECT_ID,
     "--password",
-    process.env.VITE_SUPABASE_DATABASE_PASSWORD,
+    process.env.SUPABASE_DATABASE_PASSWORD,
     "--workdir",
     "src/lib",
   ]);
@@ -159,7 +159,7 @@ program.command("types").action(() => {
     "types",
     "typescript",
     "--project-id",
-    process.env.VITE_SUPABASE_PROJECT_ID,
+    process.env.SUPABASE_PROJECT_ID,
   ]);
 
   run.stdout.on("data", (data) => {
