@@ -21,12 +21,12 @@ export const HeroSection = () => {
 
   return (
     <section className="flex flex-col items-center container mx-auto pt-50 pb-40">
-      <h2 className="text-7xl">
+      <h1 className="text-7xl">
         Record your <span className="text-primary">spending</span>
-      </h2>
-      <h2 className="text-7xl mt-2">
+      </h1>
+      <h1 className="text-7xl mt-2">
         and achieve your <span className="text-primary">goals</span>
-      </h2>
+      </h1>
 
       <p className="mt-10 text-lg">
         <span className="text-primary font-semibold">Snowball</span> helps you review your spending habits and set
