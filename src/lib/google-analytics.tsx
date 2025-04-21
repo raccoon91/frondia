@@ -7,10 +7,6 @@ const GATracker = () => {
   const excluded = useMemo(() => {
     const isDev = process.env.NODE_ENV === "development";
 
-    console.log("exclude_me", getCookie("exclude_me") === "true");
-    console.log("isDev", isDev);
-    console.log("excluded", getCookie("exclude_me") === "true" || isDev);
-
     return getCookie("exclude_me") === "true" || isDev;
   }, []);
 
