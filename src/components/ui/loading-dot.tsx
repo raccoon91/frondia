@@ -6,10 +6,9 @@ import { cn } from "@/lib/utils";
 const dotVariants = cva("rounded-full animate-bounce", {
   variants: {
     variant: {
-      default: "bg-primary-foreground",
-      destructive: "bg-primary-foreground",
-      outline: "bg-background-foreground",
-      secondary: "bg-secondary-foreground",
+      default: "bg-background",
+      primary: "bg-primary",
+      secondary: "bg-secondary",
     },
     size: {
       default: "size-3",

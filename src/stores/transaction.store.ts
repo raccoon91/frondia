@@ -10,6 +10,8 @@ import { useCurrencyRateStore } from "./currency-rate.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface TransactionStore {
+  isLoading: boolean;
+
   transactionDatasets: TransactionData[];
   editableTransaction: Record<number, TransactionData>;
 
@@ -35,11 +37,15 @@ export const useTransactionStore = create<TransactionStore>()(
   devtools(
     persist(
       (set, get) => ({
+        isLoading: false,
+
         transactionDatasets: [],
         editableTransaction: {},
 
         getTransactions: async () => {
           try {
+            set({ isLoading: true }, false, "getTransactions");
+
             const localDate = useLocalStore.getState().localDate;
 
             const selectedTransactionTypeId = useTransactionOptionStore.getState().selectedTransactionTypeId;
@@ -93,9 +99,11 @@ export const useTransactionStore = create<TransactionStore>()(
                 currency: transaction.currency,
               })) ?? [];
 
-            set({ transactionDatasets: datasets }, false, "getTransactions");
+            set({ isLoading: false, transactionDatasets: datasets }, false, "getTransactions");
           } catch (error) {
             console.error(error);
+
+            set({ isLoading: false }, false, "getTransactions");
           }
         },
 
@@ -147,6 +155,8 @@ export const useTransactionStore = create<TransactionStore>()(
         },
         saveAllTransaction: async () => {
           try {
+            set({ isLoading: true }, false, "saveAllTransaction");
+
             const transactionDatasets = get().transactionDatasets;
             const editableTransaction = get().editableTransaction;
 
@@ -200,6 +210,8 @@ export const useTransactionStore = create<TransactionStore>()(
             get().getTransactions();
           } catch (error) {
             console.error(error);
+
+            set({ isLoading: false }, false, "saveAllTransaction");
           }
         },
         cancelAllTransaction: () => {
@@ -433,6 +445,8 @@ export const useTransactionStore = create<TransactionStore>()(
         },
         saveTransaction: async (rowId: number) => {
           try {
+            set({ isLoading: true }, false, "saveTransaction");
+
             const transactionDatasets = get().transactionDatasets;
             const editableTransaction = get().editableTransaction;
 
@@ -491,9 +505,11 @@ export const useTransactionStore = create<TransactionStore>()(
               };
             });
 
-            set({ transactionDatasets: datasets, editableTransaction }, false, "saveTransaction");
+            set({ isLoading: false, transactionDatasets: datasets, editableTransaction }, false, "saveTransaction");
           } catch (error) {
             console.error(error);
+
+            set({ isLoading: false }, false, "saveTransaction");
           }
         },
       }),

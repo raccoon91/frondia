@@ -12,6 +12,7 @@ import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardMenu } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LoadingDot } from "@/components/ui/loading-dot";
 import { TransactionTable } from "@/components/transaction/transaction-table";
 
 const TransactionPage = () => {
@@ -51,6 +52,7 @@ const TransactionPage = () => {
     })),
   );
   const {
+    isLoading,
     transactionDatasets,
     getTransactions,
     movePrevMonth,
@@ -62,6 +64,7 @@ const TransactionPage = () => {
     macroTransaction,
   } = useTransactionStore(
     useShallow((state) => ({
+      isLoading: state.isLoading,
       transactionDatasets: state.transactionDatasets,
       getTransactions: state.getTransactions,
       movePrevMonth: state.movePrevMonth,
@@ -152,6 +155,12 @@ const TransactionPage = () => {
 
   return (
     <div className="grid grid-rows-[60px_auto] gap-6">
+      {isLoading ? (
+        <div className="pointer-events-none fixed top-0 left-0 flex items-center justify-center w-full h-full z-10">
+          <LoadingDot variant="primary" />
+        </div>
+      ) : null}
+
       <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
         <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
           <ChevronLeft />
