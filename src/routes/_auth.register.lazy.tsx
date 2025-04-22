@@ -1,17 +1,17 @@
-import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useShallow } from "zustand/shallow";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import type { z } from "zod";
+import { useShallow } from "zustand/shallow";
 
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { LoadingDot } from "@/components/ui/loading-dot";
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { registerFormDefaultValues, registerFormSchema } from "@/schema/auth.schema";
 import { useAuthStore } from "@/stores/auth.store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
-import { LoadingDot } from "@/components/ui/loading-dot";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const RegisterPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden lg:flex lg:items-center lg:justify-center bg-muted ">
-        <img src="/images/snowball.png" alt="snowball image" className="max-w-2xs opacity-50" />
+        <img src="/images/snowball.png" alt="snowball" className="max-w-2xs opacity-50" />
       </div>
 
       <div className="flex flex-col gap-4 p-6 md:p-10">

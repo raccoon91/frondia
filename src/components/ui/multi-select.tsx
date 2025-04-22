@@ -1,13 +1,13 @@
-import React, { forwardRef, KeyboardEvent, useEffect, useMemo } from "react";
+import { type VariantProps, cva } from "class-variance-authority";
 import { CheckIcon, ChevronDown, XIcon } from "lucide-react";
-import { cva, VariantProps } from "class-variance-authority";
+import React, { forwardRef, type KeyboardEvent, useEffect, useMemo } from "react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "./badge";
 import { Button } from "./button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./command";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Separator } from "./separator";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./command";
 
 const multiSelectVariants = cva("mx-1", {
   variants: {

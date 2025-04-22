@@ -1,19 +1,19 @@
-import { Fragment, useEffect } from "react";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ChevronLeft, ChevronRight, Settings } from "lucide-react";
-import { useShallow } from "zustand/shallow";
+import { Link, createLazyFileRoute } from "@tanstack/react-router";
 import dayjs from "dayjs";
+import { ArrowRight, ChevronLeft, ChevronRight, Settings } from "lucide-react";
+import { Fragment, useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
+import { GoalProgress } from "@/components/dashboard/goal-progress";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardFooter, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
+import { MultiProgress } from "@/components/ui/multi-progress";
 import { DASHBOARD_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
+import { useDashboardStore } from "@/stores/dashboard.store";
 import { useLocalStore } from "@/stores/local.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { useDashboardStore } from "@/stores/dashboard.store";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
-import { MultiProgress } from "@/components/ui/multi-progress";
-import { GoalProgress } from "@/components/dashboard/goal-progress";
 
 const DashboardPage = () => {
   const localDate = useLocalStore((state) => state.localDate);

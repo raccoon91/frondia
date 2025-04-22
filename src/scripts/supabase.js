@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import { writeFileSync } from "fs";
-import { program } from "commander";
 import chalk from "chalk";
+import { program } from "commander";
 
 program.version("1.0.0");
 

@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { createLazyFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, createLazyFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Goal } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
-import { GOAL_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { useLocalStore } from "@/stores/local.store";
-import { useGoalStore } from "@/stores/goal.store";
-import { useTransactionOptionStore } from "@/stores/transaction-option.store";
+import { GoalCard } from "@/components/goal/goal-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
-import { GoalCard } from "@/components/goal/goal-card";
+import { GOAL_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { useGoalRuleStore } from "@/stores/goal-rule.store";
+import { useGoalStore } from "@/stores/goal.store";
+import { useLocalStore } from "@/stores/local.store";
+import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const GoalPage = () => {
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);

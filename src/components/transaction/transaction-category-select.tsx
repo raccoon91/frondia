@@ -1,8 +1,8 @@
-import { FC, memo } from "react";
-import { CellContext } from "@tanstack/react-table";
+import type { CellContext } from "@tanstack/react-table";
+import { type FC, memo } from "react";
 
-import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 
 export const TransactionCategorySelect: FC<CellContext<TransactionData, unknown>> = memo(
   ({ row, table }) => {

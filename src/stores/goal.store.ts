@@ -1,12 +1,12 @@
+import dayjs from "dayjs";
+import type { z } from "zod";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import { z } from "zod";
-import dayjs from "dayjs";
 
-import { STORE_NAME } from "@/constants/store";
 import { GOAL_STATUS } from "@/constants/goal";
-import { goalFormSchema } from "@/schema/goal.schema";
+import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
+import type { goalFormSchema } from "@/schema/goal.schema";
 import { useLocalStore } from "./local.store";
 
 interface GoalStore {
@@ -234,7 +234,7 @@ export const useGoalStore = create<GoalStore>()(
             );
 
             const deleted = goal.map?.reduce<number[]>((deleted, map) => {
-              if (formdata.categories.find((categoryId) => categoryId == map.category.id.toString())) return deleted;
+              if (formdata.categories.find((categoryId) => categoryId === map.category.id.toString())) return deleted;
 
               deleted.push(map.id);
 

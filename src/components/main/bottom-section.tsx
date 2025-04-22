@@ -1,9 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ROUTE } from "@/constants/route";
 import { useAuthStore } from "@/stores/auth.store";
-import { Button } from "@/components/ui/button";
 
 export const BottomSection = () => {
   const navigate = useNavigate();

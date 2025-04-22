@@ -1,9 +1,9 @@
-import { FC, memo } from "react";
-import { CellContext } from "@tanstack/react-table";
+import type { CellContext } from "@tanstack/react-table";
 import { Info } from "lucide-react";
+import { type FC, memo } from "react";
 
-import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TRANSACTION_STATUS } from "@/constants/transaction";
 
 export const TransactionCurrencySelect: FC<CellContext<TransactionData, unknown>> = memo(
   ({ row, table }) => {

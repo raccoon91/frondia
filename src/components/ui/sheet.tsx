@@ -1,6 +1,6 @@
-import * as React from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -20,11 +20,8 @@ function SheetPortal({ ...props }: React.ComponentProps<typeof SheetPrimitive.Po
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
 }
 
-const SheetOverlay = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof SheetPrimitive.Overlay>>(function (
-  { className, ...props },
-  ref,
-) {
-  return (
+const SheetOverlay = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof SheetPrimitive.Overlay>>(
+  ({ className, ...props }, ref) => (
     <SheetPrimitive.Overlay
       ref={ref}
       data-slot="sheet-overlay"
@@ -34,8 +31,8 @@ const SheetOverlay = React.forwardRef<HTMLDivElement, React.ComponentProps<typeo
       )}
       {...props}
     />
-  );
-});
+  ),
+);
 
 function SheetContent({
   className,

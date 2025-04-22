@@ -1,13 +1,13 @@
 "use client";
 
-import * as React from "react";
-import { CalendarIcon } from "lucide-react";
 import dayjs from "dayjs";
+import { CalendarIcon } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface DateTimePickerProps {
   hideIcon?: boolean;
@@ -39,7 +39,7 @@ export function DateTimePicker({ hideIcon, defaultValue, onValueChange }: DateTi
   const handleClickHour = (e: React.MouseEvent<HTMLDivElement>) => {
     const dataset = e.currentTarget.dataset;
 
-    const hour = dataset["hour"];
+    const hour = dataset.hour;
 
     if (!hour) return;
 
@@ -52,7 +52,7 @@ export function DateTimePicker({ hideIcon, defaultValue, onValueChange }: DateTi
   const handleClickMinute = (e: React.MouseEvent<HTMLDivElement>) => {
     const dataset = e.currentTarget.dataset;
 
-    const minute = dataset["minute"];
+    const minute = dataset.minute;
 
     if (!minute) return;
 

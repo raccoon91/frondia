@@ -1,15 +1,15 @@
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 
-import { ROUTE, SETTING_FILE_ROUTE } from "@/constants/route";
-import { useAuthStore } from "@/stores/auth.store";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ROUTE, SETTING_FILE_ROUTE } from "@/constants/route";
+import { useAuthStore } from "@/stores/auth.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { useShallow } from "zustand/shallow";
-import { useEffect, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
+import { useEffect, useMemo } from "react";
+import { useShallow } from "zustand/shallow";
 
 const SettingPage = () => {
   const navigate = useNavigate();

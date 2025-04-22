@@ -1,12 +1,12 @@
-import { FC } from "react";
 import { Link } from "@tanstack/react-router";
 import { Trash } from "lucide-react";
+import type { FC } from "react";
 
-import { ROUTE } from "@/constants/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { ROUTE } from "@/constants/route";
 
 interface MacroCardProps {
   isLoading: boolean;

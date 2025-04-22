@@ -9,7 +9,7 @@ const ReportPage = () => {
         <p className="font-bold">Report</p>
       </div>
 
-      <div></div>
+      <div />
     </div>
   );
 };

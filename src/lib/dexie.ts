@@ -1,4 +1,4 @@
-import Dexie, { EntityTable } from "dexie";
+import Dexie, { type EntityTable } from "dexie";
 
 const dexie = new Dexie("currency_rate") as Dexie & {
   currencies: EntityTable<CurrencyRate, "id">;

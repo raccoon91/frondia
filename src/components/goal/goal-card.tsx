@@ -1,13 +1,13 @@
-import { FC, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import dayjs from "dayjs";
+import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { type FC, useState } from "react";
 
-import { ROUTE } from "@/constants/route";
-import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
+import { ROUTE } from "@/constants/route";
+import { cn } from "@/lib/utils";
 
 interface GoalCardProps {
   isLoading: boolean;

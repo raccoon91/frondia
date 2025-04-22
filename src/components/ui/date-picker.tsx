@@ -1,14 +1,14 @@
 "use client";
 
-import * as React from "react";
-import { CalendarIcon } from "lucide-react";
 import dayjs from "dayjs";
+import { CalendarIcon } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, type buttonVariants } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import type { VariantProps } from "class-variance-authority";
 
 interface DatePickerProps extends VariantProps<typeof buttonVariants> {
   hideIcon?: boolean;

@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useShallow } from "zustand/shallow";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
+import { useShallow } from "zustand/shallow";
 
+import { GoalForm } from "@/components/goal/goal-form";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { GOAL_CREATE_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { goalFormDefaultValues, goalFormSchema } from "@/schema/goal.schema";
-import { useGoalStore } from "@/stores/goal.store";
 import { useGoalRuleStore } from "@/stores/goal-rule.store";
+import { useGoalStore } from "@/stores/goal.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { GoalForm } from "@/components/goal/goal-form";
 
 const GoalCreatePage = () => {
   const navigate = useNavigate();

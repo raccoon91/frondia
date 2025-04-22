@@ -1,11 +1,11 @@
+import type { z } from "zod";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import { z } from "zod";
 
-import { STORE_NAME } from "@/constants/store";
-import { macroFormSchema } from "@/schema/macro.schema";
-import { supabase } from "@/lib/supabase/client";
 import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
+import { STORE_NAME } from "@/constants/store";
+import { supabase } from "@/lib/supabase/client";
+import type { macroFormSchema } from "@/schema/macro.schema";
 
 interface MacroStore {
   isLoading: boolean;

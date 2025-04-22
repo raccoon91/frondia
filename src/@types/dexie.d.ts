@@ -2,5 +2,5 @@ interface CurrencyRate {
   id?: number;
   date: string;
   code: string;
-  rate: Record<string, any>;
+  rate: Record<string, number>;
 }

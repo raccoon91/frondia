@@ -1,11 +1,11 @@
+import type { User } from "@supabase/supabase-js";
+import type { z } from "zod";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { User } from "@supabase/supabase-js";
-import { z } from "zod";
 
-import { loginFormSchema, registerFormSchema } from "@/schema/auth.schema";
 import { supabase } from "@/lib/supabase/client";
 import { generateCategories } from "@/lib/supabase/seed";
+import type { loginFormSchema, registerFormSchema } from "@/schema/auth.schema";
 
 interface AuthStore {
   isLoading: boolean;
@@ -91,18 +91,42 @@ export const useAuthStore = create<AuthStore>()(
     },
     loginWithGoogle: async () => {
       try {
-        const { error } = await supabase.auth.signInWithOAuth({
+        set({ isLoading: true }, false, "loginWithGoogle");
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: `${import.meta.env.VITE_SNOWBALL_URL}/dashboard`,
+            skipBrowserRedirect: true,
           },
         });
 
         if (error) throw error;
 
+        if (!data) throw new Error("Google Login failed");
+
+        supabase.auth.onAuthStateChange(async (event, session) => {
+          if (event === "SIGNED_IN" && session?.user) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("user_id", session.user.id)
+              .single();
+
+            if (!profile) {
+              await supabase.from("profiles").insert({
+                user_id: session.user.id,
+              });
+            }
+          }
+        });
+
+        set({ isLoading: false }, false, "loginWithGoogle");
+
         return true;
       } catch (error) {
         console.error(error);
+
+        set({ isLoading: false }, false, "loginWithGoogle");
       }
     },
 
@@ -132,6 +156,11 @@ export const useAuthStore = create<AuthStore>()(
         if (error) throw error;
 
         if (!data?.user) throw new Error("Register failed");
+
+        await supabase.from("profiles").insert({
+          user_id: data.user.id,
+          name: formdata.name,
+        });
 
         set({ isLoading: false }, false, "register");
 

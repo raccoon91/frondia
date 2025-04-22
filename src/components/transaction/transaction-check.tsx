@@ -1,5 +1,5 @@
-import { FC, memo } from "react";
-import { CellContext } from "@tanstack/react-table";
+import type { CellContext } from "@tanstack/react-table";
+import { type FC, memo } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 

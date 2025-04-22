@@ -1,8 +1,8 @@
-import * as React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
+import type * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { cva, VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 
 const progressVariants = cva("overflow-hidden relative w-full rounded-full", {
   variants: {

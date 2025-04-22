@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { createLazyFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useShallow } from "zustand/shallow";
+import { Link, Outlet, createLazyFileRoute } from "@tanstack/react-router";
 import { ToggleLeft, ToggleRight, Wrench } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useShallow } from "zustand/shallow";
 
-import { MACRO_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
-import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { useMacroStore } from "@/stores/macro.store";
+import { MacroCard } from "@/components/macro/macro-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
-import { MacroCard } from "@/components/macro/macro-card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
+import { MACRO_FILE_ROUTE, ROUTE } from "@/constants/route";
+import { useMacroStore } from "@/stores/macro.store";
+import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const MacroPage = () => {
   const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);

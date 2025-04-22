@@ -1,5 +1,5 @@
-import { FC } from "react";
 import dayjs from "dayjs";
+import type { FC } from "react";
 
 import { Badge } from "@/components/ui/badge";
 

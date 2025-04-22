@@ -1,17 +1,17 @@
-import { ChangeEvent, FC, useMemo } from "react";
-import { UseFormReturn } from "react-hook-form";
-import dayjs, { ManipulateType } from "dayjs";
-import { z } from "zod";
+import dayjs, { type ManipulateType } from "dayjs";
+import { type ChangeEvent, type FC, useMemo } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import type { z } from "zod";
 
-import { GOAL_DATE_UNIT_OPTIONS, GOAL_STATUS } from "@/constants/goal";
-import { goalFormSchema } from "@/schema/goal.schema";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MultiSelect } from "@/components/ui/multi-select";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { LoadingDot } from "@/components/ui/loading-dot";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { GOAL_DATE_UNIT_OPTIONS, GOAL_STATUS } from "@/constants/goal";
+import type { goalFormSchema } from "@/schema/goal.schema";
 
 interface GoalFormProps {
   isLoading: boolean;
@@ -20,7 +20,7 @@ interface GoalFormProps {
   transactionTypes: TransactionType[];
   categories: Category[];
   submitText: string;
-  goalForm: UseFormReturn<z.infer<typeof goalFormSchema>, any, undefined>;
+  goalForm: UseFormReturn<z.infer<typeof goalFormSchema>, unknown, undefined>;
   onSubmitGoal: (formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
 }
 

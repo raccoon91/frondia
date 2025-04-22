@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { cva, VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
+import type { FC } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -27,9 +27,9 @@ interface LoadingDotProps extends VariantProps<typeof dotVariants> {
 export const LoadingDot: FC<LoadingDotProps> = ({ gap = "gap-1", variant, size }) => {
   return (
     <div className={cn("flex justify-center items-center dark:invert", gap)}>
-      <div className={cn(dotVariants({ variant, size }), "[animation-delay:-0.3s]")}></div>
-      <div className={cn(dotVariants({ variant, size }), "[animation-delay:-0.15s]")}></div>
-      <div className={cn(dotVariants({ variant, size }))}></div>
+      <div className={cn(dotVariants({ variant, size }), "[animation-delay:-0.3s]")} />
+      <div className={cn(dotVariants({ variant, size }), "[animation-delay:-0.15s]")} />
+      <div className={cn(dotVariants({ variant, size }))} />
     </div>
   );
 };

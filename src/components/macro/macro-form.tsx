@@ -1,13 +1,13 @@
-import { FC, useMemo } from "react";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { type FC, useMemo } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import type { z } from "zod";
 
-import { macroFormSchema } from "@/schema/macro.schema";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoadingDot } from "@/components/ui/loading-dot";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { macroFormSchema } from "@/schema/macro.schema";
 
 interface MacroFormProps {
   isLoading: boolean;
@@ -15,7 +15,7 @@ interface MacroFormProps {
   transactionTypes: TransactionType[];
   categories: Category[];
   submitText: string;
-  macroForm: UseFormReturn<z.infer<typeof macroFormSchema>, any, undefined>;
+  macroForm: UseFormReturn<z.infer<typeof macroFormSchema>, unknown, undefined>;
   onSubmitMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
 }
 

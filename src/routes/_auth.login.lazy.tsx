@@ -1,22 +1,22 @@
-import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { useShallow } from "zustand/shallow";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import type { z } from "zod";
+import { useShallow } from "zustand/shallow";
 
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { LoadingDot } from "@/components/ui/loading-dot";
+import { Separator } from "@/components/ui/separator";
 import { LOGIN_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { loginFormDefaultValues, loginFormSchema } from "@/schema/auth.schema";
 import { useAuthStore } from "@/stores/auth.store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormMessage, FormControl, FormLabel, FormItem, FormField } from "@/components/ui/form";
-import { LoadingDot } from "@/components/ui/loading-dot";
-// import { Separator } from "@/components/ui/separator";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { isLoading, login } = useAuthStore(
+  const { isLoading, login, loginWithGoogle } = useAuthStore(
     useShallow((state) => ({
       isLoading: state.isLoading,
       login: state.login,
@@ -41,14 +41,22 @@ const LoginPage = () => {
     }
   };
 
-  // const handleSubmitLoginWithGoogle = async () => {
-  //   await loginWithGoogle();
-  // };
+  const handleSubmitLoginWithGoogle = async () => {
+    const isSuccess = await loginWithGoogle();
+
+    if (isSuccess) {
+      navigate({ to: ROUTE.DASHBOARD });
+    } else {
+      toast.warning("Login Failed!", {
+        description: "Please check your email and password",
+      });
+    }
+  };
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden lg:flex lg:items-center lg:justify-center bg-muted ">
-        <img src="/images/snowball.png" alt="snowball image" className="max-w-2xs opacity-50" />
+        <img src="/images/snowball.png" alt="snowball" className="max-w-2xs opacity-50" />
       </div>
 
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -106,7 +114,7 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-                {/* <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <Separator className="flex-1" />
                     <p className="text-sm text-muted-foreground">or continue with</p>
@@ -125,14 +133,14 @@ const LoginPage = () => {
                       Google
                     </p>
                   </Button>
-                </div> */}
+                </div>
 
-                {/* <div className="text-center text-sm">
+                <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
                   <Link to={ROUTE.REGISTER} className="underline">
                     Sign up
                   </Link>
-                </div> */}
+                </div>
               </form>
             </Form>
           </div>
