@@ -1,7 +1,8 @@
 import { spawn } from "child_process";
-import { writeFileSync } from "fs";
+import { readdirSync, writeFileSync } from "fs";
 import chalk from "chalk";
 import { program } from "commander";
+import { select } from "@inquirer/prompts";
 
 program.version("1.0.0");
 
@@ -67,15 +68,30 @@ program.command("serve").action(() => {
   });
 });
 
-program.command("deploy").action(() => {
+program.command("deploy").action(async () => {
   console.log(chalk.blue("Supabase Deploy Edge Functions"));
+
+  const dir = readdirSync("src/lib/supabase/functions", { withFileTypes: true });
+
+  const functions = dir
+    .filter((file) => file.isDirectory())
+    .map((file) => ({
+      value: file.name,
+      name: file.name,
+    }));
+
+  const selectedFunction = await select({
+    message: "Edge Function Name",
+    pageSize: 20,
+    choices: functions,
+  });
 
   const run = spawn("pnpm", [
     "dlx",
     "supabase",
     "functions",
     "deploy",
-    "goals",
+    selectedFunction,
     "--project-ref",
     process.env.SUPABASE_PROJECT_ID,
     "--workdir",
