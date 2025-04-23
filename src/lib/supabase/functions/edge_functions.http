@@ -2,9 +2,9 @@
 @ANON_KEY = {{$dotenv VITE_SUPABASE_ANON_KEY}}
 
 ###
-# @name postGoals
-POST {{URL}}/functions/v1/goals
+# @name ping
+POST {{URL}}/functions/v1/ping
 Authorization: Bearer {{ANON_KEY}}
 Content-Type: application/json
 
-{ "name": "goals" }
+{ "name": "ping" }

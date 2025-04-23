@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@inquirer/prompts": "^7.4.1",
     "@tailwindcss/postcss": "^4.0.14",
     "@tanstack/react-router-devtools": "^1.114.23",
     "@tanstack/router-plugin": "^1.95.1",

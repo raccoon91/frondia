@@ -8,31 +8,16 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 Deno.serve(async (req) => {
   try {
-    const { name } = await req.json();
-
     const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
       global: { headers: { Authorization: req.headers.get("Authorization")! } },
     });
 
-    const { data: currencies, error: currencyError } = await supabase.from("currencies").select("*");
+    const payload = await req.json();
 
-    if (currencyError) throw currencyError;
-
-    const { data: goals, error: goalError } = await supabase.from("goals").select("*");
-
-    if (goalError) throw goalError;
-
-    return new Response(
-      JSON.stringify({
-        message: `Function: ${name}`,
-        currencies,
-        goals,
-      }),
-      {
-        headers: { "Content-Type": "application/json" },
-        status: 200,
-      },
-    );
+    return new Response(JSON.stringify({ ...payload, message: "pong" }), {
+      headers: { "Content-Type": "application/json" },
+      status: 200,
+    });
   } catch (error) {
     return new Response(String(error?.message ?? error), { status: 500 });
   }
