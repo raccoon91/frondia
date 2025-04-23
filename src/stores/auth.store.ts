@@ -4,7 +4,6 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 import { supabase } from "@/lib/supabase/client";
-import { generateCategories } from "@/lib/supabase/seed";
 import type { loginFormSchema, registerFormSchema } from "@/schema/auth.schema";
 
 interface AuthStore {
@@ -43,21 +42,7 @@ export const useAuthStore = create<AuthStore>()(
 
         if (profileError) throw profileError;
 
-        if (!profileData) {
-          await generateCategories(data.user);
-
-          const { data: newProfileData, error: newProfileError } = await supabase
-            .from("profiles")
-            .insert({ user_id: user.id, created_at: user.created_at })
-            .select("*")
-            .maybeSingle();
-
-          if (newProfileError) throw newProfileError;
-
-          user.profile = newProfileData;
-        } else {
-          user.profile = profileData;
-        }
+        user.profile = profileData;
 
         set({ user, isLoading: false }, false, "getUser");
 
@@ -96,29 +81,13 @@ export const useAuthStore = create<AuthStore>()(
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            skipBrowserRedirect: true,
+            redirectTo: `${import.meta.env.VITE_SNOWBALL_URL}/dashboard`,
           },
         });
 
         if (error) throw error;
 
         if (!data) throw new Error("Google Login failed");
-
-        supabase.auth.onAuthStateChange(async (event, session) => {
-          if (event === "SIGNED_IN" && session?.user) {
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("*")
-              .eq("user_id", session.user.id)
-              .single();
-
-            if (!profile) {
-              await supabase.from("profiles").insert({
-                user_id: session.user.id,
-              });
-            }
-          }
-        });
 
         set({ isLoading: false }, false, "loginWithGoogle");
 
@@ -151,16 +120,16 @@ export const useAuthStore = create<AuthStore>()(
         const { data, error } = await supabase.auth.signUp({
           email: formdata.email,
           password: formdata.password,
+          options: {
+            data: {
+              name: formdata.name ?? "",
+            },
+          },
         });
 
         if (error) throw error;
 
         if (!data?.user) throw new Error("Register failed");
-
-        await supabase.from("profiles").insert({
-          user_id: data.user.id,
-          name: formdata.name,
-        });
 
         set({ isLoading: false }, false, "register");
 

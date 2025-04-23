@@ -42,15 +42,7 @@ const LoginPage = () => {
   };
 
   const handleSubmitLoginWithGoogle = async () => {
-    const isSuccess = await loginWithGoogle();
-
-    if (isSuccess) {
-      navigate({ to: ROUTE.DASHBOARD });
-    } else {
-      toast.warning("Login Failed!", {
-        description: "Please check your email and password",
-      });
-    }
+    await loginWithGoogle();
   };
 
   return (
