@@ -4,11 +4,7 @@ import ReactGA from "react-ga4";
 import { getCookie } from "@/utils/get-cookie";
 
 const GATracker = () => {
-  const excluded = useMemo(() => {
-    const isDev = process.env.NODE_ENV === "development";
-
-    return getCookie("exclude_me") === "true" || isDev;
-  }, []);
+  const excluded = useMemo(() => getCookie("exclude_me") === "true", []);
 
   useEffect(() => {
     if (excluded) return;
