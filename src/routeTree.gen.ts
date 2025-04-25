@@ -16,10 +16,10 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as PrivateImport } from './routes/_private'
 import { Route as MainImport } from './routes/_main'
 import { Route as AuthImport } from './routes/_auth'
-import { Route as PrivateMacroMacroCreateImport } from './routes/_private/macro/macro.create'
-import { Route as PrivateMacroMacroIdImport } from './routes/_private/macro/macro.$id'
-import { Route as PrivateGoalGoalCreateImport } from './routes/_private/goal/goal.create'
-import { Route as PrivateGoalGoalIdImport } from './routes/_private/goal/goal.$id'
+import { Route as PrivateMacroCreateImport } from './routes/_private/macro/create'
+import { Route as PrivateMacroIdImport } from './routes/_private/macro/$id'
+import { Route as PrivateGoalCreateImport } from './routes/_private/goal/create'
+import { Route as PrivateGoalIdImport } from './routes/_private/goal/$id'
 
 // Create Virtual Routes
 
@@ -118,27 +118,27 @@ const PrivateGoalIndexLazyRoute = PrivateGoalIndexLazyImport.update({
   import('./routes/_private/goal/index.lazy').then((d) => d.Route),
 )
 
-const PrivateMacroMacroCreateRoute = PrivateMacroMacroCreateImport.update({
-  id: '/macro/macro/create',
-  path: '/macro/macro/create',
+const PrivateMacroCreateRoute = PrivateMacroCreateImport.update({
+  id: '/macro/create',
+  path: '/macro/create',
   getParentRoute: () => PrivateRoute,
 } as any)
 
-const PrivateMacroMacroIdRoute = PrivateMacroMacroIdImport.update({
-  id: '/macro/macro/$id',
-  path: '/macro/macro/$id',
+const PrivateMacroIdRoute = PrivateMacroIdImport.update({
+  id: '/macro/$id',
+  path: '/macro/$id',
   getParentRoute: () => PrivateRoute,
 } as any)
 
-const PrivateGoalGoalCreateRoute = PrivateGoalGoalCreateImport.update({
-  id: '/goal/goal/create',
-  path: '/goal/goal/create',
+const PrivateGoalCreateRoute = PrivateGoalCreateImport.update({
+  id: '/goal/create',
+  path: '/goal/create',
   getParentRoute: () => PrivateRoute,
 } as any)
 
-const PrivateGoalGoalIdRoute = PrivateGoalGoalIdImport.update({
-  id: '/goal/goal/$id',
-  path: '/goal/goal/$id',
+const PrivateGoalIdRoute = PrivateGoalIdImport.update({
+  id: '/goal/$id',
+  path: '/goal/$id',
   getParentRoute: () => PrivateRoute,
 } as any)
 
@@ -216,6 +216,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexLazyImport
       parentRoute: typeof MainImport
     }
+    '/_private/goal/$id': {
+      id: '/_private/goal/$id'
+      path: '/goal/$id'
+      fullPath: '/goal/$id'
+      preLoaderRoute: typeof PrivateGoalIdImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/goal/create': {
+      id: '/_private/goal/create'
+      path: '/goal/create'
+      fullPath: '/goal/create'
+      preLoaderRoute: typeof PrivateGoalCreateImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/macro/$id': {
+      id: '/_private/macro/$id'
+      path: '/macro/$id'
+      fullPath: '/macro/$id'
+      preLoaderRoute: typeof PrivateMacroIdImport
+      parentRoute: typeof PrivateImport
+    }
+    '/_private/macro/create': {
+      id: '/_private/macro/create'
+      path: '/macro/create'
+      fullPath: '/macro/create'
+      preLoaderRoute: typeof PrivateMacroCreateImport
+      parentRoute: typeof PrivateImport
+    }
     '/_private/goal/': {
       id: '/_private/goal/'
       path: '/goal'
@@ -228,34 +256,6 @@ declare module '@tanstack/react-router' {
       path: '/macro'
       fullPath: '/macro'
       preLoaderRoute: typeof PrivateMacroIndexLazyImport
-      parentRoute: typeof PrivateImport
-    }
-    '/_private/goal/goal/$id': {
-      id: '/_private/goal/goal/$id'
-      path: '/goal/goal/$id'
-      fullPath: '/goal/goal/$id'
-      preLoaderRoute: typeof PrivateGoalGoalIdImport
-      parentRoute: typeof PrivateImport
-    }
-    '/_private/goal/goal/create': {
-      id: '/_private/goal/goal/create'
-      path: '/goal/goal/create'
-      fullPath: '/goal/goal/create'
-      preLoaderRoute: typeof PrivateGoalGoalCreateImport
-      parentRoute: typeof PrivateImport
-    }
-    '/_private/macro/macro/$id': {
-      id: '/_private/macro/macro/$id'
-      path: '/macro/macro/$id'
-      fullPath: '/macro/macro/$id'
-      preLoaderRoute: typeof PrivateMacroMacroIdImport
-      parentRoute: typeof PrivateImport
-    }
-    '/_private/macro/macro/create': {
-      id: '/_private/macro/macro/create'
-      path: '/macro/macro/create'
-      fullPath: '/macro/macro/create'
-      preLoaderRoute: typeof PrivateMacroMacroCreateImport
       parentRoute: typeof PrivateImport
     }
   }
@@ -290,12 +290,12 @@ interface PrivateRouteChildren {
   PrivateReportLazyRoute: typeof PrivateReportLazyRoute
   PrivateSettingLazyRoute: typeof PrivateSettingLazyRoute
   PrivateTransactionLazyRoute: typeof PrivateTransactionLazyRoute
+  PrivateGoalIdRoute: typeof PrivateGoalIdRoute
+  PrivateGoalCreateRoute: typeof PrivateGoalCreateRoute
+  PrivateMacroIdRoute: typeof PrivateMacroIdRoute
+  PrivateMacroCreateRoute: typeof PrivateMacroCreateRoute
   PrivateGoalIndexLazyRoute: typeof PrivateGoalIndexLazyRoute
   PrivateMacroIndexLazyRoute: typeof PrivateMacroIndexLazyRoute
-  PrivateGoalGoalIdRoute: typeof PrivateGoalGoalIdRoute
-  PrivateGoalGoalCreateRoute: typeof PrivateGoalGoalCreateRoute
-  PrivateMacroMacroIdRoute: typeof PrivateMacroMacroIdRoute
-  PrivateMacroMacroCreateRoute: typeof PrivateMacroMacroCreateRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
@@ -303,12 +303,12 @@ const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateReportLazyRoute: PrivateReportLazyRoute,
   PrivateSettingLazyRoute: PrivateSettingLazyRoute,
   PrivateTransactionLazyRoute: PrivateTransactionLazyRoute,
+  PrivateGoalIdRoute: PrivateGoalIdRoute,
+  PrivateGoalCreateRoute: PrivateGoalCreateRoute,
+  PrivateMacroIdRoute: PrivateMacroIdRoute,
+  PrivateMacroCreateRoute: PrivateMacroCreateRoute,
   PrivateGoalIndexLazyRoute: PrivateGoalIndexLazyRoute,
   PrivateMacroIndexLazyRoute: PrivateMacroIndexLazyRoute,
-  PrivateGoalGoalIdRoute: PrivateGoalGoalIdRoute,
-  PrivateGoalGoalCreateRoute: PrivateGoalGoalCreateRoute,
-  PrivateMacroMacroIdRoute: PrivateMacroMacroIdRoute,
-  PrivateMacroMacroCreateRoute: PrivateMacroMacroCreateRoute,
 }
 
 const PrivateRouteWithChildren =
@@ -323,12 +323,12 @@ export interface FileRoutesByFullPath {
   '/setting': typeof PrivateSettingLazyRoute
   '/transaction': typeof PrivateTransactionLazyRoute
   '/': typeof MainIndexLazyRoute
+  '/goal/$id': typeof PrivateGoalIdRoute
+  '/goal/create': typeof PrivateGoalCreateRoute
+  '/macro/$id': typeof PrivateMacroIdRoute
+  '/macro/create': typeof PrivateMacroCreateRoute
   '/goal': typeof PrivateGoalIndexLazyRoute
   '/macro': typeof PrivateMacroIndexLazyRoute
-  '/goal/goal/$id': typeof PrivateGoalGoalIdRoute
-  '/goal/goal/create': typeof PrivateGoalGoalCreateRoute
-  '/macro/macro/$id': typeof PrivateMacroMacroIdRoute
-  '/macro/macro/create': typeof PrivateMacroMacroCreateRoute
 }
 
 export interface FileRoutesByTo {
@@ -340,12 +340,12 @@ export interface FileRoutesByTo {
   '/setting': typeof PrivateSettingLazyRoute
   '/transaction': typeof PrivateTransactionLazyRoute
   '/': typeof MainIndexLazyRoute
+  '/goal/$id': typeof PrivateGoalIdRoute
+  '/goal/create': typeof PrivateGoalCreateRoute
+  '/macro/$id': typeof PrivateMacroIdRoute
+  '/macro/create': typeof PrivateMacroCreateRoute
   '/goal': typeof PrivateGoalIndexLazyRoute
   '/macro': typeof PrivateMacroIndexLazyRoute
-  '/goal/goal/$id': typeof PrivateGoalGoalIdRoute
-  '/goal/goal/create': typeof PrivateGoalGoalCreateRoute
-  '/macro/macro/$id': typeof PrivateMacroMacroIdRoute
-  '/macro/macro/create': typeof PrivateMacroMacroCreateRoute
 }
 
 export interface FileRoutesById {
@@ -360,12 +360,12 @@ export interface FileRoutesById {
   '/_private/setting': typeof PrivateSettingLazyRoute
   '/_private/transaction': typeof PrivateTransactionLazyRoute
   '/_main/': typeof MainIndexLazyRoute
+  '/_private/goal/$id': typeof PrivateGoalIdRoute
+  '/_private/goal/create': typeof PrivateGoalCreateRoute
+  '/_private/macro/$id': typeof PrivateMacroIdRoute
+  '/_private/macro/create': typeof PrivateMacroCreateRoute
   '/_private/goal/': typeof PrivateGoalIndexLazyRoute
   '/_private/macro/': typeof PrivateMacroIndexLazyRoute
-  '/_private/goal/goal/$id': typeof PrivateGoalGoalIdRoute
-  '/_private/goal/goal/create': typeof PrivateGoalGoalCreateRoute
-  '/_private/macro/macro/$id': typeof PrivateMacroMacroIdRoute
-  '/_private/macro/macro/create': typeof PrivateMacroMacroCreateRoute
 }
 
 export interface FileRouteTypes {
@@ -379,12 +379,12 @@ export interface FileRouteTypes {
     | '/setting'
     | '/transaction'
     | '/'
+    | '/goal/$id'
+    | '/goal/create'
+    | '/macro/$id'
+    | '/macro/create'
     | '/goal'
     | '/macro'
-    | '/goal/goal/$id'
-    | '/goal/goal/create'
-    | '/macro/macro/$id'
-    | '/macro/macro/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -395,12 +395,12 @@ export interface FileRouteTypes {
     | '/setting'
     | '/transaction'
     | '/'
+    | '/goal/$id'
+    | '/goal/create'
+    | '/macro/$id'
+    | '/macro/create'
     | '/goal'
     | '/macro'
-    | '/goal/goal/$id'
-    | '/goal/goal/create'
-    | '/macro/macro/$id'
-    | '/macro/macro/create'
   id:
     | '__root__'
     | '/_auth'
@@ -413,12 +413,12 @@ export interface FileRouteTypes {
     | '/_private/setting'
     | '/_private/transaction'
     | '/_main/'
+    | '/_private/goal/$id'
+    | '/_private/goal/create'
+    | '/_private/macro/$id'
+    | '/_private/macro/create'
     | '/_private/goal/'
     | '/_private/macro/'
-    | '/_private/goal/goal/$id'
-    | '/_private/goal/goal/create'
-    | '/_private/macro/macro/$id'
-    | '/_private/macro/macro/create'
   fileRoutesById: FileRoutesById
 }
 
@@ -469,12 +469,12 @@ export const routeTree = rootRoute
         "/_private/report",
         "/_private/setting",
         "/_private/transaction",
+        "/_private/goal/$id",
+        "/_private/goal/create",
+        "/_private/macro/$id",
+        "/_private/macro/create",
         "/_private/goal/",
-        "/_private/macro/",
-        "/_private/goal/goal/$id",
-        "/_private/goal/goal/create",
-        "/_private/macro/macro/$id",
-        "/_private/macro/macro/create"
+        "/_private/macro/"
       ]
     },
     "/_auth/login": {
@@ -505,28 +505,28 @@ export const routeTree = rootRoute
       "filePath": "_main/index.lazy.tsx",
       "parent": "/_main"
     },
+    "/_private/goal/$id": {
+      "filePath": "_private/goal/$id.tsx",
+      "parent": "/_private"
+    },
+    "/_private/goal/create": {
+      "filePath": "_private/goal/create.tsx",
+      "parent": "/_private"
+    },
+    "/_private/macro/$id": {
+      "filePath": "_private/macro/$id.tsx",
+      "parent": "/_private"
+    },
+    "/_private/macro/create": {
+      "filePath": "_private/macro/create.tsx",
+      "parent": "/_private"
+    },
     "/_private/goal/": {
       "filePath": "_private/goal/index.lazy.tsx",
       "parent": "/_private"
     },
     "/_private/macro/": {
       "filePath": "_private/macro/index.lazy.tsx",
-      "parent": "/_private"
-    },
-    "/_private/goal/goal/$id": {
-      "filePath": "_private/goal/goal.$id.tsx",
-      "parent": "/_private"
-    },
-    "/_private/goal/goal/create": {
-      "filePath": "_private/goal/goal.create.tsx",
-      "parent": "/_private"
-    },
-    "/_private/macro/macro/$id": {
-      "filePath": "_private/macro/macro.$id.tsx",
-      "parent": "/_private"
-    },
-    "/_private/macro/macro/create": {
-      "filePath": "_private/macro/macro.create.tsx",
       "parent": "/_private"
     }
   }
