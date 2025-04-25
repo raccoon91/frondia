@@ -1,8 +1,9 @@
-import type { User } from "@supabase/supabase-js";
-import type { z } from "zod";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import type { User } from "@supabase/supabase-js";
+import type { z } from "zod";
 
+import { ROUTE } from "@/constants/route";
 import { supabase } from "@/lib/supabase/client";
 import type { loginFormSchema, registerFormSchema } from "@/schema/auth.schema";
 
@@ -81,7 +82,7 @@ export const useAuthStore = create<AuthStore>()(
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: `${import.meta.env.VITE_SNOWBALL_URL}/dashboard`,
+            redirectTo: `${import.meta.env.VITE_SNOWBALL_URL}${ROUTE.DASHBOARD}`,
           },
         });
 
