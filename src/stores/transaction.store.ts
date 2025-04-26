@@ -5,8 +5,9 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { STORE_NAME } from "@/constants/store";
 import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { supabase } from "@/lib/supabase/client";
+import { useLocalStore } from "./common/local.store";
+import { useSessionStore } from "./common/session.store";
 import { useCurrencyRateStore } from "./currency-rate.store";
-import { useLocalStore } from "./local.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface TransactionStore {
@@ -46,14 +47,14 @@ export const useTransactionStore = create<TransactionStore>()(
           try {
             set({ isLoading: true }, false, "getTransactions");
 
-            const localDate = useLocalStore.getState().localDate;
+            const sessionDate = useSessionStore.getState().sessionDate;
 
             const selectedTransactionTypeId = useTransactionOptionStore.getState().selectedTransactionTypeId;
             const selectedCategoryId = useTransactionOptionStore.getState().selectedCategoryId;
             const selectedCurrencyId = useTransactionOptionStore.getState().selectedCurrencyId;
 
-            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
-            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
             let builder = supabase.from("transactions").select(
               `
@@ -108,10 +109,10 @@ export const useTransactionStore = create<TransactionStore>()(
         },
 
         movePrevMonth: (date: string) => {
-          useLocalStore.getState().setDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
+          useSessionStore.getState().setSessionDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
         },
         moveNextMonth: (date: string) => {
-          useLocalStore.getState().setDate(dayjs(date).add(1, "month").format("YYYY-MM"));
+          useSessionStore.getState().setSessionDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
 
         addTransaction: () => {

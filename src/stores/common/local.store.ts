@@ -1,16 +1,11 @@
-import dayjs from "dayjs";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 import { STORE_NAME } from "@/constants/store";
 
 interface LocalStore {
-  localDate: string;
-
   localTransactionType: Nullable<TransactionType>;
   localCurrency: Nullable<Currency>;
-
-  setDate: (date: string) => void;
 
   setTransactionOption: (state: {
     localTransactionType: Nullable<TransactionType>;
@@ -22,14 +17,8 @@ export const useLocalStore = create<LocalStore>()(
   devtools(
     persist(
       (set) => ({
-        localDate: dayjs().format("YYYY-MM"),
-
         localTransactionType: null,
         localCurrency: null,
-
-        setDate: (date: string) => {
-          set({ localDate: date }, false, "setDate");
-        },
 
         setTransactionOption: ({
           localTransactionType,
@@ -44,7 +33,6 @@ export const useLocalStore = create<LocalStore>()(
       {
         name: STORE_NAME.LOCAL,
         partialize: (state) => ({
-          localDate: state.localDate,
           localTransactionType: state.localTransactionType,
           localCurrency: state.localCurrency,
         }),

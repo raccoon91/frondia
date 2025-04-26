@@ -1,5 +1,6 @@
 export const STORE_NAME = {
   LOCAL: "local-store",
+  SESSION: "session-store",
   DASHBOARD: "dashboard-store",
   TRANSACTION_OPTION: "transaction-option-store",
   TRANSACTION: "transaction-store",

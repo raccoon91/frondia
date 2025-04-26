@@ -1,8 +1,8 @@
 import { spawn } from "child_process";
 import { readdirSync, writeFileSync } from "fs";
+import { select } from "@inquirer/prompts";
 import chalk from "chalk";
 import { program } from "commander";
-import { select } from "@inquirer/prompts";
 
 program.version("1.0.0");
 

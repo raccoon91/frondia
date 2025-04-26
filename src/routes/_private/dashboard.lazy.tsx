@@ -11,12 +11,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardMenu, CardTitle } from "
 import { MultiProgress } from "@/components/ui/multi-progress";
 import { DASHBOARD_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
+import { useSessionStore } from "@/stores/common/session.store";
 import { useDashboardStore } from "@/stores/dashboard.store";
-import { useLocalStore } from "@/stores/local.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const DashboardPage = () => {
-  const localDate = useLocalStore((state) => state.localDate);
+  const sessionDate = useSessionStore((state) => state.sessionDate);
   const { transactionTypes, getTransactionTypes, getCategories, getCurrencies } = useTransactionOptionStore(
     useShallow((state) => ({
       transactionTypes: state.transactionTypes,
@@ -60,7 +60,7 @@ const DashboardPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(localDate);
+    movePrevMonth(sessionDate);
 
     getTransactions().then(() => {
       getStatistics();
@@ -70,7 +70,7 @@ const DashboardPage = () => {
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(localDate);
+    moveNextMonth(sessionDate);
 
     getTransactions().then(() => {
       getStatistics();
@@ -85,7 +85,7 @@ const DashboardPage = () => {
         <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
           <ChevronLeft />
         </Button>
-        <p className="font-bold">{localDate}</p>
+        <p className="font-bold">{sessionDate}</p>
         <Button variant="ghost" className="w-8 h-8" onClick={handleClickNextMonth}>
           <ChevronRight />
         </Button>
@@ -176,7 +176,7 @@ const DashboardPage = () => {
             </CardHeader>
             <CardContent>
               <Calendar
-                month={dayjs(localDate).toDate()}
+                month={dayjs(sessionDate).toDate()}
                 components={{
                   Caption: () => null,
                   DayContent: ({ date }) => {

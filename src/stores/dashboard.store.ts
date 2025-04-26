@@ -5,7 +5,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { GOAL_RULE_NAME, GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
-import { useLocalStore } from "./local.store";
+import { useSessionStore } from "./common/session.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface DashboardStore {
@@ -36,10 +36,10 @@ export const useDashboardStore = create<DashboardStore>()(
 
         getTransactions: async () => {
           try {
-            const localDate = useLocalStore.getState().localDate;
+            const sessionDate = useSessionStore.getState().sessionDate;
 
-            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
-            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
             const { data: transactions, error: transactionError } = await supabase
               .from("transactions")
@@ -196,10 +196,10 @@ export const useDashboardStore = create<DashboardStore>()(
         },
         getGoalsInProgress: async () => {
           try {
-            const localDate = useLocalStore.getState().localDate;
+            const sessionDate = useSessionStore.getState().sessionDate;
 
-            const startOfMonth = dayjs(localDate).startOf("month").format("YYYY-MM-DD HH:mm");
-            const endOfMonth = dayjs(localDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
+            const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
             const today = dayjs().format("YYYY-MM-DD 00:00");
 
             const transactions = get().transactions;
@@ -322,10 +322,10 @@ export const useDashboardStore = create<DashboardStore>()(
         },
 
         movePrevMonth: (date: string) => {
-          useLocalStore.getState().setDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
+          useSessionStore.getState().setSessionDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
         },
         moveNextMonth: (date: string) => {
-          useLocalStore.getState().setDate(dayjs(date).add(1, "month").format("YYYY-MM"));
+          useSessionStore.getState().setSessionDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
       }),
       {

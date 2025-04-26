@@ -8,16 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { GOAL_FILE_ROUTE, ROUTE } from "@/constants/route";
+import { useSessionStore } from "@/stores/common/session.store";
 import { useGoalRuleStore } from "@/stores/goal-rule.store";
 import { useGoalStore } from "@/stores/goal.store";
-import { useLocalStore } from "@/stores/local.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const GoalPage = () => {
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const [isOpenDeleteGoalDialog, setIsOpenDeleteGoalDialog] = useState(false);
 
-  const localDate = useLocalStore((state) => state.localDate);
+  const sessionDate = useSessionStore((state) => state.sessionDate);
   const { getCurrencies, getTransactionTypes, getCategories } = useTransactionOptionStore(
     useShallow((state) => ({
       getCurrencies: state.getCurrencies,
@@ -50,13 +50,13 @@ const GoalPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(localDate);
+    movePrevMonth(sessionDate);
 
     getGoals();
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(localDate);
+    moveNextMonth(sessionDate);
 
     getGoals();
   };
@@ -102,7 +102,7 @@ const GoalPage = () => {
           <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
             <ChevronLeft />
           </Button>
-          <p className="font-bold">{localDate}</p>
+          <p className="font-bold">{sessionDate}</p>
           <Button variant="ghost" className="w-8 h-8" onClick={handleClickNextMonth}>
             <ChevronRight />
           </Button>

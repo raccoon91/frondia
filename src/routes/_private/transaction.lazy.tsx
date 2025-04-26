@@ -10,13 +10,13 @@ import { LoadingDot } from "@/components/ui/loading-dot";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ROUTE, TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
-import { useLocalStore } from "@/stores/local.store";
+import { useSessionStore } from "@/stores/common/session.store";
 import { useMacroStore } from "@/stores/macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 
 const TransactionPage = () => {
-  const localDate = useLocalStore((state) => state.localDate);
+  const sessionDate = useSessionStore((state) => state.sessionDate);
   const {
     selectedTransactionTypeId,
     selectedCategoryId,
@@ -97,12 +97,12 @@ const TransactionPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(localDate);
+    movePrevMonth(sessionDate);
     getTransactions();
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(localDate);
+    moveNextMonth(sessionDate);
     getTransactions();
   };
 
@@ -165,7 +165,7 @@ const TransactionPage = () => {
         <Button variant="ghost" className="w-8 h-8" onClick={handleClickPrevMonth}>
           <ChevronLeft />
         </Button>
-        <p className="font-bold">{localDate}</p>
+        <p className="font-bold">{sessionDate}</p>
         <Button variant="ghost" className="w-8 h-8" onClick={handleClickNextMonth}>
           <ChevronRight />
         </Button>
