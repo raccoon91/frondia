@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Settings } from "lucide-react";
-import type { FC } from "react";
+import { memo, type FC } from "react";
 
 import { GoalProgress } from "@/components/dashboard/goal-progress";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ interface GoalSectionProps {
   goalsInProgress: GoalInProgress[];
 }
 
-export const GoalSection: FC<GoalSectionProps> = ({ goalsInProgress }) => {
+export const GoalSection: FC<GoalSectionProps> = memo(({ goalsInProgress }) => {
   return (
     <Card>
       <CardMenu>
@@ -37,4 +37,4 @@ export const GoalSection: FC<GoalSectionProps> = ({ goalsInProgress }) => {
       </CardContent>
     </Card>
   );
-};
+});

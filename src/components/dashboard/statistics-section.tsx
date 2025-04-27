@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { type FC, Fragment } from "react";
+import { type FC, Fragment, memo } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,7 @@ interface StatisticsSectionProps {
   statistics: Statistics;
 }
 
-export const StatisticsSection: FC<StatisticsSectionProps> = ({ statistics }) => {
+export const StatisticsSection: FC<StatisticsSectionProps> = memo(({ statistics }) => {
   return (
     <Card>
       <CardHeader>
@@ -111,4 +111,4 @@ export const StatisticsSection: FC<StatisticsSectionProps> = ({ statistics }) =>
       </CardContent>
     </Card>
   );
-};
+});
