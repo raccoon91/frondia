@@ -13,6 +13,8 @@ const multiProgressVariants = cva("overflow-hidden relative w-full rounded-full"
     size: {
       default: "h-3",
       sm: "h-2",
+      lg: "h-4",
+      xl: "h-5",
     },
   },
   defaultVariants: {
@@ -24,33 +26,35 @@ const multiProgressVariants = cva("overflow-hidden relative w-full rounded-full"
 interface MultiProgressProps
   extends React.ComponentProps<typeof ProgressPrimitive.Root>,
     VariantProps<typeof multiProgressVariants> {
-  values?: number[];
+  data?: { value: number; label: string }[];
 }
 
-function MultiProgress({ variant = "primary", size, className, values, ...props }: MultiProgressProps) {
+function MultiProgress({ variant = "primary", size, className, data, ...props }: MultiProgressProps) {
   const indicators = React.useMemo(() => {
-    const result: { left: number; width: number; isLast: boolean }[] = [];
+    const result: { left: number; width: number; isLast: boolean; label: string }[] = [];
 
-    if (!values?.length) return result;
+    if (!data?.length) return result;
 
-    for (let i = 0; i < values.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       if (i === 0) {
         result.push({
           left: 0,
-          width: values[i],
-          isLast: values.length === 1 || i === values.length - 1,
+          width: data[i].value,
+          label: data[i].label,
+          isLast: data.length === 1 || i === data.length - 1,
         });
       } else {
         result.push({
-          left: values[i - 1],
-          width: values[i],
-          isLast: values.length === 1 || i === values.length - 1,
+          left: data[i - 1].value,
+          width: data[i].value,
+          label: data[i].label,
+          isLast: data.length === 1 || i === data.length - 1,
         });
       }
     }
 
     return result;
-  }, [values]);
+  }, [data]);
 
   return (
     <ProgressPrimitive.Root
@@ -66,6 +70,7 @@ function MultiProgress({ variant = "primary", size, className, values, ...props 
             left: `${indicator.left}%`,
             width: `${indicator.width}%`,
           }}
+          title={indicator.label}
           className={cn("absolute h-full", indicator.isLast ? "" : "border-r border-background")}
         />
       ))}

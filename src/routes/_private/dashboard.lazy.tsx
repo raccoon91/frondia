@@ -106,6 +106,7 @@ const DashboardPage = () => {
                         <td className="text-left pt-4 align-top">
                           <p className="text-sm font-bold">{type.name}</p>
                         </td>
+
                         <td className="text-right pt-4 space-x-2">
                           {totalSummaries?.map(({ currency, totalAmount }) => (
                             <span
@@ -114,9 +115,15 @@ const DashboardPage = () => {
                             >{`${currency.code} : ${totalAmount.toLocaleString("en-US")}`}</span>
                           ))}
                         </td>
-                        <td className="pt-4 align-top">
+
+                        {/* <td className="pt-4 align-top">
                           <p className="text-sm font-bold text-right pl-4">Amount</p>
+                        </td> */}
+
+                        <td className="pt-4 align-top">
+                          <p className="text-sm font-bold text-right pl-4">Rate</p>
                         </td>
+
                         <td className="pt-4 align-top">
                           <p className="text-sm font-bold text-right pl-4">Count</p>
                         </td>
@@ -130,25 +137,39 @@ const DashboardPage = () => {
 
                           <td className="pt-1 align-top">
                             <MultiProgress
-                              values={currencies?.map(({ transaction }) => (transaction.usd / totalUsd) * 100)}
+                              data={currencies?.map(({ currency, transaction }) => ({
+                                value: (transaction.usd / totalUsd) * 100,
+                                label: `${currency.symbol} ${transaction.amount.toLocaleString("en-US")}`,
+                              }))}
                             />
                           </td>
 
-                          <td className="w-[1%] whitespace-nowrap pt-1 align-top">
+                          {/* <td className="w-[1%] whitespace-nowrap pt-1 align-top">
                             {currencies?.map(({ currency, transaction }) => (
                               <p
                                 key={currency.id}
                                 className="text-sm text-right pl-4"
                               >{`${currency.symbol} ${transaction.amount.toLocaleString("en-US")}`}</p>
                             ))}
+                          </td> */}
+
+                          <td className="w-[1%] whitespace-nowrap pt-1 align-top">
+                            <p className="text-sm text-right pl-4">
+                              {currencies
+                                ?.reduce((totalRate, currency) => {
+                                  return totalRate + (currency.transaction.usd / totalUsd) * 100;
+                                }, 0)
+                                .toFixed(1) ?? "--"}{" "}
+                              %
+                            </p>
                           </td>
 
                           <td className="w-[1%] whitespace-nowrap pt-1 align-top">
-                            {currencies?.map(({ currency, transaction }) => (
-                              <p key={currency.id} className="text-sm text-right pl-4">
-                                {transaction.count.toLocaleString("en-US")}
-                              </p>
-                            ))}
+                            <p className="text-sm text-right pl-4">
+                              {currencies?.reduce((totalCount, { transaction }) => {
+                                return totalCount + transaction.count;
+                              }, 0)}
+                            </p>
                           </td>
                         </tr>
                       ))}
