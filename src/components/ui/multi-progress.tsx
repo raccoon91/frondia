@@ -3,6 +3,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 const multiProgressVariants = cva("overflow-hidden relative w-full rounded-full", {
   variants: {
@@ -57,24 +58,31 @@ function MultiProgress({ variant = "primary", size, className, data, ...props }:
   }, [data]);
 
   return (
-    <ProgressPrimitive.Root
-      data-slot="progress"
-      className={cn(multiProgressVariants({ variant, size }), className)}
-      {...props}
-    >
-      {indicators.map((indicator, index) => (
-        <ProgressPrimitive.Indicator
-          key={index}
-          data-slot="progress-indicator"
-          style={{
-            left: `${indicator.left}%`,
-            width: `${indicator.width}%`,
-          }}
-          title={indicator.label}
-          className={cn("absolute h-full", indicator.isLast ? "" : "border-r border-background")}
-        />
-      ))}
-    </ProgressPrimitive.Root>
+    <TooltipProvider>
+      <ProgressPrimitive.Root
+        data-slot="progress"
+        className={cn(multiProgressVariants({ variant, size }), className)}
+        {...props}
+      >
+        {indicators.map((indicator, index) => (
+          <Tooltip key={index}>
+            <TooltipTrigger asChild>
+              <ProgressPrimitive.Indicator
+                data-slot="progress-indicator"
+                style={{
+                  left: `${indicator.left}%`,
+                  width: `${indicator.width}%`,
+                }}
+                className={cn("absolute h-full", indicator.isLast ? "" : "border-r border-background")}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top" variant="outline" sideOffset={4}>
+              {indicator.label}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </ProgressPrimitive.Root>
+    </TooltipProvider>
   );
 }
 
