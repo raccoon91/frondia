@@ -1,19 +1,16 @@
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
-import dayjs from "dayjs";
-import { ArrowRight, ChevronLeft, ChevronRight, Settings } from "lucide-react";
-import { Fragment, useEffect } from "react";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
-import { GoalProgress } from "@/components/dashboard/goal-progress";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardFooter, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
-import { MultiProgress } from "@/components/ui/multi-progress";
-import { DASHBOARD_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { cn } from "@/lib/utils";
+import { DASHBOARD_FILE_ROUTE } from "@/constants/route";
 import { useSessionStore } from "@/stores/common/session.store";
 import { useDashboardStore } from "@/stores/dashboard.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
+import { StatisticsSection } from "@/components/dashboard/statistics-section";
+import { CalendarSection } from "@/components/dashboard/calendar-section";
+import { GoalSection } from "@/components/dashboard/goal-section";
 
 const DashboardPage = () => {
   const sessionDate = useSessionStore((state) => state.sessionDate);
@@ -92,178 +89,17 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-[1fr_272px] items-start gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Statistics</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {statistics?.length ? (
-              <table className="-mt-4">
-                <tbody>
-                  {statistics.map(({ type, totalUsd, totalSummaries, categories }) => (
-                    <Fragment key={type.id}>
-                      <tr>
-                        <td className="text-left pt-4 align-top">
-                          <p className="text-sm font-bold">{type.name}</p>
-                        </td>
-
-                        <td className="text-right pt-4 space-x-2">
-                          {totalSummaries?.map(({ currency, totalAmount }) => (
-                            <span
-                              key={currency.id}
-                              className="text-sm font-bold"
-                            >{`${currency.code} : ${totalAmount.toLocaleString("en-US")}`}</span>
-                          ))}
-                        </td>
-
-                        {/* <td className="pt-4 align-top">
-                          <p className="text-sm font-bold text-right pl-4">Amount</p>
-                        </td> */}
-
-                        <td className="pt-4 align-top">
-                          <p className="text-sm font-bold text-right pl-4">Rate</p>
-                        </td>
-
-                        <td className="pt-4 align-top">
-                          <p className="text-sm font-bold text-right pl-4">Count</p>
-                        </td>
-                      </tr>
-
-                      {categories?.map(({ category, currencies }) => (
-                        <tr key={category.id}>
-                          <td className="w-[1%] whitespace-nowrap pt-1 align-top">
-                            <p className="text-sm pl-6 pr-4">{category.name}</p>
-                          </td>
-
-                          <td className="pt-1 align-top">
-                            <MultiProgress
-                              data={currencies?.map(({ currency, transaction }) => ({
-                                value: (transaction.usd / totalUsd) * 100,
-                                label: `${currency.symbol} ${transaction.amount.toLocaleString("en-US")}`,
-                              }))}
-                            />
-                          </td>
-
-                          {/* <td className="w-[1%] whitespace-nowrap pt-1 align-top">
-                            {currencies?.map(({ currency, transaction }) => (
-                              <p
-                                key={currency.id}
-                                className="text-sm text-right pl-4"
-                              >{`${currency.symbol} ${transaction.amount.toLocaleString("en-US")}`}</p>
-                            ))}
-                          </td> */}
-
-                          <td className="w-[1%] whitespace-nowrap pt-1 align-top">
-                            <p className="text-sm text-right pl-4">
-                              {currencies
-                                ?.reduce((totalRate, currency) => {
-                                  return totalRate + (currency.transaction.usd / totalUsd) * 100;
-                                }, 0)
-                                .toFixed(1) ?? "--"}{" "}
-                              %
-                            </p>
-                          </td>
-
-                          <td className="w-[1%] whitespace-nowrap pt-1 align-top">
-                            <p className="text-sm text-right pl-4">
-                              {currencies?.reduce((totalCount, { transaction }) => {
-                                return totalCount + transaction.count;
-                              }, 0)}
-                            </p>
-                          </td>
-                        </tr>
-                      ))}
-                    </Fragment>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="flex justify-center py-12">
-                <Button asChild size="sm" variant="ghost" className="font-semibold">
-                  <Link to={ROUTE.TRANSACTION}>
-                    Add your transaction
-                    <ArrowRight />
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <StatisticsSection statistics={statistics} />
 
         <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Calendar</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Calendar
-                month={dayjs(sessionDate).toDate()}
-                components={{
-                  Caption: () => null,
-                  DayContent: ({ date }) => {
-                    const fullDate = dayjs(date).format("YYYY-MM-DD");
-                    const displayDate = dayjs(date).get("date");
-                    const calendarMap = calendarStatisticsMap[fullDate];
+          <CalendarSection
+            sessionDate={sessionDate}
+            transactionTypes={transactionTypes}
+            calendarStatisticsByTypeMap={calendarStatisticsByTypeMap}
+            calendarStatisticsMap={calendarStatisticsMap}
+          />
 
-                    return (
-                      <div className="relative flex items-center justify-center w-full h-full">
-                        <p>{displayDate}</p>
-
-                        {Object.values(calendarMap ?? {}).map(({ type }) => (
-                          <div
-                            key={type.id}
-                            style={{
-                              top: type.config?.top,
-                              right: type.config?.right,
-                              bottom: type.config?.bottom,
-                              left: type.config?.left,
-                            }}
-                            className={cn(
-                              "absolute flex items-center justify-center min-w-1.5 min-h-1.5 rounded-sm z-1",
-                              type.config?.color ?? "",
-                            )}
-                          />
-                        ))}
-                      </div>
-                    );
-                  },
-                }}
-              />
-            </CardContent>
-            <CardFooter className="flex flex-wrap gap-2">
-              {transactionTypes.map((type) => (
-                <div key={type.id} className="flex items-center gap-1">
-                  <div key={type.id} className={cn("w-3 h-1.5 rounded-sm", type.config?.color ?? "")} />
-                  <p className="text-xs">{type.name}</p>
-                  <p className="text-xs">{calendarStatisticsByTypeMap?.[type.id]?.count ?? "--"}</p>
-                </div>
-              ))}
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardMenu>
-              <Button asChild size="icon" variant="ghost" className="w-8 h-8">
-                <Link to={ROUTE.GOAL}>
-                  <Settings />
-                </Link>
-              </Button>
-            </CardMenu>
-
-            <CardHeader>
-              <CardTitle>Goals</CardTitle>
-            </CardHeader>
-
-            <CardContent className="flex flex-col gap-2">
-              {goalsInProgress?.length ? (
-                goalsInProgress.map((goal) => <GoalProgress key={goal.id} goal={goal} />)
-              ) : (
-                <Button asChild size="sm" variant="outline">
-                  <Link to={ROUTE.GOAL_CREATE}>Create Goal</Link>
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+          <GoalSection goalsInProgress={goalsInProgress} />
         </div>
       </div>
     </div>
