@@ -4,37 +4,32 @@ import { devtools, persist } from "zustand/middleware";
 import { STORE_NAME } from "@/constants/store";
 
 interface LocalStore {
-  localTransactionType: Nullable<TransactionType>;
   localCurrency: Nullable<Currency>;
+  localTransactionType: Nullable<TransactionType>;
 
-  setTransactionOption: (state: {
-    localTransactionType: Nullable<TransactionType>;
-    localCurrency: Nullable<Currency>;
-  }) => void;
+  setCurrencyOption: (localCurrency: Nullable<Currency>) => void;
+  setTransactionOption: (localTransactionType: Nullable<TransactionType>) => void;
 }
 
 export const useLocalStore = create<LocalStore>()(
   devtools(
     persist(
       (set) => ({
-        localTransactionType: null,
         localCurrency: null,
+        localTransactionType: null,
 
-        setTransactionOption: ({
-          localTransactionType,
-          localCurrency,
-        }: {
-          localTransactionType: Nullable<TransactionType>;
-          localCurrency: Nullable<Currency>;
-        }) => {
-          set({ localTransactionType, localCurrency }, false, "setTransactionOption");
+        setCurrencyOption: (localCurrency: Nullable<Currency>) => {
+          set({ localCurrency }, false, "setCurrencyOption");
+        },
+        setTransactionOption: (localTransactionType: Nullable<TransactionType>) => {
+          set({ localTransactionType }, false, "setTransactionOption");
         },
       }),
       {
         name: STORE_NAME.LOCAL,
         partialize: (state) => ({
-          localTransactionType: state.localTransactionType,
           localCurrency: state.localCurrency,
+          localTransactionType: state.localTransactionType,
         }),
       },
     ),

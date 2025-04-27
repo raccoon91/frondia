@@ -289,6 +289,7 @@ export const useTransactionStore = create<TransactionStore>()(
           const currency = currencies.find((currency) => currency.id === macro.currency_id);
 
           const transactionDatasets = get().transactionDatasets;
+          const editableTransaction = get().editableTransaction;
 
           if (transactionType) {
             categories = categories.filter((category) => category.type_id === transactionType.id);
@@ -300,25 +301,27 @@ export const useTransactionStore = create<TransactionStore>()(
           if (macro.hour !== null) date = date.set("hour", macro.hour);
           if (macro.minute !== null) date = date.set("minute", macro.minute);
 
-          const datasets = [
-            {
-              id: dayjs().valueOf(),
-              status: TRANSACTION_STATUS.NEW,
-              checked: false,
-              date: date.format("YYYY-MM-DD HH:mm:00"),
-              amount: macro.amount ?? 0,
-              memo: macro.memo,
-              usd_rate: 0,
+          const newTransaction: TransactionData = {
+            id: dayjs().valueOf(),
+            status: TRANSACTION_STATUS.NEW,
+            checked: false,
+            date: date.format("YYYY-MM-DD HH:mm:00"),
+            amount: macro.amount ?? 0,
+            memo: macro.memo,
+            usd_rate: 0,
 
-              transactionType,
-              category,
-              currency,
+            transactionType,
+            category,
+            currency,
 
-              transactionTypes,
-              categories,
-              currencies,
-            } as TransactionData,
-          ].concat(transactionDatasets);
+            transactionTypes,
+            categories,
+            currencies,
+          };
+
+          editableTransaction[newTransaction.id] = newTransaction;
+
+          const datasets = [newTransaction].concat(transactionDatasets);
 
           set({ transactionDatasets: datasets }, false, "macroTransaction");
         },
@@ -421,20 +424,24 @@ export const useTransactionStore = create<TransactionStore>()(
             if (dataset.id !== rowId) return dataset;
 
             if (columnName === "transactionType") {
-              const transactionType = transactionTypes?.find((type) => type.id.toString() === value.toString());
+              const transactionType = transactionTypes?.find((type) => type.id.toString() === value.toString()) ?? null;
               const filteredCategories = categories.filter((category) => category.type_id === transactionType?.id);
 
               dataset.transactionType = transactionType;
               dataset.category = undefined;
               dataset.categories = filteredCategories;
+
+              useLocalStore.getState().setTransactionOption(transactionType);
             } else if (columnName === "category") {
-              const category = categories.find((category) => category.id.toString() === value.toString());
+              const category = categories?.find((category) => category.id.toString() === value.toString()) ?? null;
 
               dataset.category = category;
             } else if (columnName === "currency") {
-              const currency = currencies.find((currency) => currency.id.toString() === value.toString());
+              const currency = currencies?.find((currency) => currency.id.toString() === value.toString()) ?? null;
 
               dataset.currency = currency;
+
+              useLocalStore.getState().setCurrencyOption(currency);
             } else {
               dataset = { ...dataset, [columnName]: value };
             }
@@ -482,11 +489,6 @@ export const useTransactionStore = create<TransactionStore>()(
             if (!newTransaction) return;
 
             delete editableTransaction[rowId];
-
-            useLocalStore.getState().setTransactionOption({
-              localTransactionType: newTransaction.transactionType,
-              localCurrency: newTransaction.currency,
-            });
 
             const datasets = transactionDatasets.map((dataset) => {
               if (dataset.id !== rowId) return dataset;

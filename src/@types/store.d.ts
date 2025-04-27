@@ -68,7 +68,7 @@ interface TransactionData {
   usd_rate: number;
 
   transactionType?: Nullable<TransactionType>;
-  category?: Category;
+  category?: Nullable<Category>;
   currency?: Nullable<Currency>;
 
   transactionTypes?: TransactionType[];
