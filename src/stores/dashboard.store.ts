@@ -12,7 +12,7 @@ interface DashboardStore {
   transactions: Transaction[];
   statistics: Statistics;
   calendarStatisticsMap: CalendarStatisticsMap;
-  calendarStatisticsByTypeMap: CalendarStatisticsByTypeMap;
+  calendarCountByTypeMap: CalendarCountByTypeMap;
   goalsInProgress: GoalInProgress[];
 
   getTransactions: () => Promise<void>;
@@ -31,7 +31,7 @@ export const useDashboardStore = create<DashboardStore>()(
         transactions: [],
         statistics: [],
         calendarStatisticsMap: {},
-        calendarStatisticsByTypeMap: {},
+        calendarCountByTypeMap: {},
         goalsInProgress: [],
 
         getTransactions: async () => {
@@ -158,7 +158,7 @@ export const useDashboardStore = create<DashboardStore>()(
             const transactions = get().transactions;
 
             const calendarStatisticsMap: CalendarStatisticsMap = {};
-            const calendarStatisticsByTypeMap: CalendarStatisticsByTypeMap = {};
+            const calendarCountByTypeMap: CalendarCountByTypeMap = {};
 
             const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
               typeMap[type.id] = type;
@@ -174,22 +174,19 @@ export const useDashboardStore = create<DashboardStore>()(
 
               if (!calendarStatisticsMap?.[date]) calendarStatisticsMap[date] = {};
               if (!calendarStatisticsMap?.[date]?.[type.id]) {
-                calendarStatisticsMap[date][type.id] = {
-                  type,
-                  count: 0,
-                };
+                calendarStatisticsMap[date][type.id] = { type, count: 0, amount: 0 };
               }
 
-              if (!calendarStatisticsByTypeMap?.[type.id]) {
-                calendarStatisticsByTypeMap[type.id] = { type, count: 0, amount: 0 };
+              if (!calendarCountByTypeMap?.[type.id]) {
+                calendarCountByTypeMap[type.id] = { type, count: 0 };
               }
 
               calendarStatisticsMap[date][type.id].count += 1;
-              calendarStatisticsByTypeMap[type.id].count += 1;
-              calendarStatisticsByTypeMap[type.id].amount += transaction.amount;
+              calendarStatisticsMap[date][type.id].amount += transaction.amount * transaction.usd_rate;
+              calendarCountByTypeMap[type.id].count += 1;
             });
 
-            set({ calendarStatisticsMap, calendarStatisticsByTypeMap }, false, "getCalendarStatistics");
+            set({ calendarStatisticsMap, calendarCountByTypeMap }, false, "getCalendarStatistics");
           } catch (error) {
             console.error(error);
           }

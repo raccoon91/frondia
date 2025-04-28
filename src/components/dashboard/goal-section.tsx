@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Settings } from "lucide-react";
-import { memo, type FC } from "react";
+import { type FC, memo } from "react";
 
 import { GoalProgress } from "@/components/dashboard/goal-progress";
 import { Button } from "@/components/ui/button";

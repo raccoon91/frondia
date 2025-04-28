@@ -1,65 +1,98 @@
 import dayjs from "dayjs";
+import { type FC, type MouseEvent, memo } from "react";
 
+import { buttonVariants } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { memo, type FC } from "react";
 
 interface CalendarSectionProps {
+  selectedType: number | null;
   sessionDate: string;
   transactionTypes: TransactionType[];
-  calendarStatisticsByTypeMap: CalendarStatisticsByTypeMap;
+  calendarCountByTypeMap: CalendarCountByTypeMap;
   calendarStatisticsMap: CalendarStatisticsMap;
+  onClickCalendarType: (calendarType: number) => void;
 }
 
 export const CalendarSection: FC<CalendarSectionProps> = memo(
-  ({ sessionDate, transactionTypes, calendarStatisticsByTypeMap, calendarStatisticsMap }) => {
+  ({
+    selectedType,
+    sessionDate,
+    transactionTypes,
+    calendarCountByTypeMap,
+    calendarStatisticsMap,
+    onClickCalendarType,
+  }) => {
+    const handleClickCalendarType = (e: MouseEvent<HTMLDivElement>) => {
+      if (!e.currentTarget.dataset.type) return;
+
+      onClickCalendarType(Number(e.currentTarget.dataset.type));
+    };
+
     return (
       <Card>
         <CardHeader>
           <CardTitle>Calendar</CardTitle>
         </CardHeader>
         <CardContent>
-          <Calendar
-            month={dayjs(sessionDate).toDate()}
-            components={{
-              Caption: () => null,
-              DayContent: ({ date }) => {
-                const fullDate = dayjs(date).format("YYYY-MM-DD");
-                const displayDate = dayjs(date).get("date");
-                const calendarMap = calendarStatisticsMap[fullDate];
+          <TooltipProvider>
+            <Calendar
+              month={dayjs(sessionDate).toDate()}
+              classNames={{
+                day: cn(buttonVariants({ variant: "ghost" }), "size-10 p-0 font-normal aria-selected:opacity-100"),
+              }}
+              components={{
+                Caption: () => null,
+                DayContent: ({ date }) => {
+                  const fullDate = dayjs(date).format("YYYY-MM-DD");
+                  const displayDate = dayjs(date).get("date");
+                  const calendarMap = calendarStatisticsMap[fullDate];
+                  const selected = selectedType ? calendarMap?.[selectedType] : null;
 
-                return (
-                  <div className="relative flex items-center justify-center w-full h-full">
-                    <p>{displayDate}</p>
+                  if (!selected) {
+                    return (
+                      <div className="flex items-center justify-center w-full h-full">
+                        <p>{displayDate}</p>
+                      </div>
+                    );
+                  }
 
-                    {Object.values(calendarMap ?? {}).map(({ type }) => (
-                      <div
-                        key={type.id}
-                        style={{
-                          top: type.config?.top,
-                          right: type.config?.right,
-                          bottom: type.config?.bottom,
-                          left: type.config?.left,
-                        }}
-                        className={cn(
-                          "absolute flex items-center justify-center min-w-1.5 min-h-1.5 rounded-sm z-1",
-                          type.config?.color ?? "",
-                        )}
-                      />
-                    ))}
-                  </div>
-                );
-              },
-            }}
-          />
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="relative flex items-center justify-center w-full h-full">
+                          <p>{displayDate}</p>
+
+                          <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 z-1">
+                            <p className={cn("text-[10px]", selected?.type?.config?.color ?? "")}>
+                              {selected.amount.toFixed(1)}
+                            </p>
+                          </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" variant="outline">
+                        USD ${selected.amount.toFixed(1)}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                },
+              }}
+            />
+          </TooltipProvider>
         </CardContent>
-        <CardFooter className="flex flex-wrap gap-2">
+        <CardFooter className="flex flex-wrap gap-y-1 gap-x-3">
           {transactionTypes.map((type) => (
-            <div key={type.id} className="flex items-center gap-1">
-              <div key={type.id} className={cn("w-3 h-1.5 rounded-sm", type.config?.color ?? "")} />
+            <div
+              key={type.id}
+              data-type={type.id}
+              className="flex items-center gap-2"
+              onClick={handleClickCalendarType}
+            >
+              <div className={cn("w-2.5 h-2.5 rounded-xs", type.config?.bg ?? "")} />
               <p className="text-xs">{type.name}</p>
-              <p className="text-xs">{calendarStatisticsByTypeMap?.[type.id]?.count ?? "--"}</p>
+              <p className="text-xs">{calendarCountByTypeMap?.[type.id]?.count ?? "--"}</p>
             </div>
           ))}
         </CardFooter>

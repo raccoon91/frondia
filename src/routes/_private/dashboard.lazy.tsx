@@ -3,17 +3,24 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
+import { CalendarSection } from "@/components/dashboard/calendar-section";
+import { GoalSection } from "@/components/dashboard/goal-section";
+import { StatisticsSection } from "@/components/dashboard/statistics-section";
 import { Button } from "@/components/ui/button";
 import { DASHBOARD_FILE_ROUTE } from "@/constants/route";
+import { useLocalStore } from "@/stores/common/local.store";
 import { useSessionStore } from "@/stores/common/session.store";
 import { useDashboardStore } from "@/stores/dashboard.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
-import { StatisticsSection } from "@/components/dashboard/statistics-section";
-import { CalendarSection } from "@/components/dashboard/calendar-section";
-import { GoalSection } from "@/components/dashboard/goal-section";
 
 const DashboardPage = () => {
   const sessionDate = useSessionStore((state) => state.sessionDate);
+  const { localCalendarType, setCalendarType } = useLocalStore(
+    useShallow((state) => ({
+      localCalendarType: state.localCalendarType,
+      setCalendarType: state.setCalendarType,
+    })),
+  );
   const { transactionTypes, getTransactionTypes, getCategories, getCurrencies } = useTransactionOptionStore(
     useShallow((state) => ({
       transactionTypes: state.transactionTypes,
@@ -25,7 +32,7 @@ const DashboardPage = () => {
   const {
     statistics,
     calendarStatisticsMap,
-    calendarStatisticsByTypeMap,
+    calendarCountByTypeMap,
     goalsInProgress,
     getTransactions,
     getStatistics,
@@ -37,7 +44,7 @@ const DashboardPage = () => {
     useShallow((state) => ({
       statistics: state.statistics,
       calendarStatisticsMap: state.calendarStatisticsMap,
-      calendarStatisticsByTypeMap: state.calendarStatisticsByTypeMap,
+      calendarCountByTypeMap: state.calendarCountByTypeMap,
       goalsInProgress: state.goalsInProgress,
       getTransactions: state.getTransactions,
       getStatistics: state.getStatistics,
@@ -76,6 +83,10 @@ const DashboardPage = () => {
     });
   };
 
+  const handleClickCalendarType = (calendarType: number) => {
+    setCalendarType(calendarType);
+  };
+
   return (
     <div className="grid grid-rows-[60px_auto] gap-6">
       <div className="flex items-center gap-2 px-6 border rounded-md bg-card text-card-foreground shadow-sm">
@@ -88,15 +99,17 @@ const DashboardPage = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-[1fr_272px] items-start gap-6">
+      <div className="grid grid-cols-[1fr_328px] items-start gap-6">
         <StatisticsSection statistics={statistics} />
 
         <div className="flex flex-col gap-6">
           <CalendarSection
+            selectedType={localCalendarType}
             sessionDate={sessionDate}
             transactionTypes={transactionTypes}
-            calendarStatisticsByTypeMap={calendarStatisticsByTypeMap}
+            calendarCountByTypeMap={calendarCountByTypeMap}
             calendarStatisticsMap={calendarStatisticsMap}
+            onClickCalendarType={handleClickCalendarType}
           />
 
           <GoalSection goalsInProgress={goalsInProgress} />

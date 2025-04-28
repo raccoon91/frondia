@@ -43,11 +43,11 @@ type Statistics = {
   }[];
 }[];
 
-type CalendarMap = Record<number, { type: TransactionType; count: number }>;
+type CalendarMap = Record<number, { type: TransactionType; count: number; amount: number }>;
 
 type CalendarStatisticsMap = Record<string, CalendarMap>;
 
-type CalendarStatisticsByTypeMap = Record<number, { type: TransactionType; count: number; amount: number }>;
+type CalendarCountByTypeMap = Record<number, { type: TransactionType; count: number }>;
 
 interface GoalInProgress {
   id: number;
