@@ -11,8 +11,8 @@ import { useTransactionOptionStore } from "./transaction-option.store";
 interface DashboardStore {
   transactions: Transaction[];
   statistics: Statistics;
-  calendarStatisticsMap: CalendarStatisticsMap;
-  calendarCountByTypeMap: CalendarCountByTypeMap;
+  calendarStatisticsMap: CalendarStatisticsMap | null;
+  calendarCountByTypeMap: CalendarCountByTypeMap | null;
   goalsInProgress: GoalInProgress[];
 
   getTransactions: () => Promise<void>;
@@ -30,8 +30,8 @@ export const useDashboardStore = create<DashboardStore>()(
       (set, get) => ({
         transactions: [],
         statistics: [],
-        calendarStatisticsMap: {},
-        calendarCountByTypeMap: {},
+        calendarStatisticsMap: null,
+        calendarCountByTypeMap: null,
         goalsInProgress: [],
 
         getTransactions: async () => {

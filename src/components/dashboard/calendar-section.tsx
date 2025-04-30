@@ -11,8 +11,8 @@ interface CalendarSectionProps {
   selectedType: number | null;
   sessionDate: string;
   transactionTypes: TransactionType[];
-  calendarCountByTypeMap: CalendarCountByTypeMap;
-  calendarStatisticsMap: CalendarStatisticsMap;
+  calendarCountByTypeMap: CalendarCountByTypeMap | null;
+  calendarStatisticsMap: CalendarStatisticsMap | null;
   onClickCalendarType: (calendarType: number) => void;
 }
 
@@ -40,21 +40,19 @@ export const CalendarSection: FC<CalendarSectionProps> = memo(
           <TooltipProvider>
             <Calendar
               month={dayjs(sessionDate).toDate()}
-              classNames={{
-                day: cn(buttonVariants({ variant: "ghost" }), "size-10 p-0 font-normal aria-selected:opacity-100"),
-              }}
+              classNames={{ day: "size-10 p-0 font-normal aria-selected:opacity-100 rounded-md" }}
               components={{
                 Caption: () => null,
                 DayContent: ({ date }) => {
                   const fullDate = dayjs(date).format("YYYY-MM-DD");
                   const displayDate = dayjs(date).get("date");
-                  const calendarMap = calendarStatisticsMap[fullDate];
+                  const calendarMap = calendarStatisticsMap?.[fullDate];
                   const selected = selectedType ? calendarMap?.[selectedType] : null;
 
                   if (!selected) {
                     return (
                       <div className="flex items-center justify-center w-full h-full">
-                        <p>{displayDate}</p>
+                        <p className="text-muted-foreground">{displayDate}</p>
                       </div>
                     );
                   }
@@ -62,14 +60,20 @@ export const CalendarSection: FC<CalendarSectionProps> = memo(
                   return (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="relative flex items-center justify-center w-full h-full">
+                        <div
+                          className={cn(
+                            buttonVariants({ variant: "ghost" }),
+                            "relative flex items-center justify-center w-full h-full",
+                          )}
+                        >
                           <p>{displayDate}</p>
 
-                          <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 z-1">
-                            <p className={cn("text-[10px]", selected?.type?.config?.color ?? "")}>
-                              {selected.amount.toFixed(1)}
-                            </p>
-                          </div>
+                          <p
+                            style={{ color: selected?.type?.config?.color ?? "" }}
+                            className={cn("absolute -bottom-1 left-1/2 transform -translate-x-1/2 z-1 text-[10px]")}
+                          >
+                            {selected.amount.toFixed(1)}
+                          </p>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent side="top" variant="outline">
@@ -87,7 +91,10 @@ export const CalendarSection: FC<CalendarSectionProps> = memo(
             <div
               key={type.id}
               data-type={type.id}
-              className="flex items-center gap-2"
+              className={cn(
+                "flex items-center gap-2 px-1 border border-background rounded-sm hover:cursor-pointer hover:border-border",
+                selectedType === type.id ? "bg-accent" : "",
+              )}
               onClick={handleClickCalendarType}
             >
               <div className={cn("w-2.5 h-2.5 rounded-xs", type.config?.bg ?? "")} />
