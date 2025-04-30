@@ -29,8 +29,8 @@ export const HeroSection = () => {
       </h1>
 
       <p className="mt-10 text-lg">
-        <span className="text-primary font-semibold">Snowball</span> helps you review your spending habits and set
-        better financial goals.
+        <span className="text-primary font-semibold">Frondia</span> helps you review your spending habits and set better
+        financial goals.
       </p>
 
       <div className="mt-8">

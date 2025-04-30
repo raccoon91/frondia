@@ -22,7 +22,7 @@ export const BottomSection = () => {
   return (
     <section className="flex flex-col items-center mx-auto pt-30 pb-60">
       <h2 className="text-4xl">
-        Start Today with <span className="text-primary font-semibold">Snowball</span>
+        Start Today with <span className="text-primary font-semibold">Frondia</span>
       </h2>
       <h2 className="mt-2 text-4xl">and Build Better Spending Habits!</h2>
 

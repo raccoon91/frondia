@@ -3,21 +3,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Public Routes -->
   <url>
-    <loc>https://snowball-sigma.vercel.app/</loc>
+    <loc>https://frondia.vercel.app/</loc>
     <lastmod>2024-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
-    <loc>https://snowball-sigma.vercel.app/login</loc>
+    <loc>https://frondia.vercel.app/login</loc>
     <lastmod>2024-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://snowball-sigma.vercel.app/register</loc>
+    <loc>https://frondia.vercel.app/register</loc>
     <lastmod>2024-04-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

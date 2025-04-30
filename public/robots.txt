@@ -9,4 +9,4 @@ Disallow: /goal
 Disallow: /report
 Disallow: /setting
 
-Sitemap: https://snowball-sigma.vercel.app/sitemap.xml
+Sitemap: https://frondia.vercel.app/sitemap.xml

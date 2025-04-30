@@ -42,7 +42,7 @@ const RegisterPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden lg:flex lg:items-center lg:justify-center bg-muted ">
-        <img src="/images/snowball.png" alt="snowball" className="max-w-2xs opacity-50" />
+        <img src="/images/frondia.png" alt="frondia" className="max-w-2xs opacity-50" />
       </div>
 
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -52,7 +52,7 @@ const RegisterPage = () => {
               <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(handleSubmitRegister)}>
                 <div className="flex flex-col items-center gap-1 text-center">
                   <h1 className="text-2xl font-bold">
-                    Start <span className="text-primary font-bold">Snowball</span>
+                    Start <span className="text-primary font-bold">Frondia</span>
                   </h1>
                   <p className="text-sm">And save your money</p>
                 </div>

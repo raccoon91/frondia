@@ -48,7 +48,7 @@ const LoginPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden lg:flex lg:items-center lg:justify-center bg-muted ">
-        <img src="/images/snowball.png" alt="snowball" className="max-w-2xs opacity-50" />
+        <img src="/images/frondia.png" alt="frondia" className="max-w-2xs opacity-50" />
       </div>
 
       <div className="flex flex-col gap-4 p-6 md:p-10">

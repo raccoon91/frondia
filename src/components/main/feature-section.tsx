@@ -49,7 +49,7 @@ export const FeatureSection = () => {
       <h2 className="text-4xl">Manage Your Finances Smartly</h2>
 
       <p className="mt-4 text-lg">
-        <span className="text-primary font-semibold">Snowball</span> is more than just a budget tracker.
+        <span className="text-primary font-semibold">Frondia</span> is more than just a budget tracker.
       </p>
       <p className="text-lg">
         Easily record your expenses, set goals, and analyze data to make better financial decisions.
