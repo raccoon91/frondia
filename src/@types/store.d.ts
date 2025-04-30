@@ -43,7 +43,20 @@ type Statistics = {
   }[];
 }[];
 
-type CalendarMap = Record<number, { type: TransactionType; count: number; amount: number }>;
+type CalendarMap = Record<
+  number,
+  {
+    type: TransactionType;
+    count: number;
+    usd: number;
+    currencyMap: {
+      [currencyId: number]: {
+        currency: Currency;
+        amount: number;
+      };
+    };
+  }
+>;
 
 type CalendarStatisticsMap = Record<string, CalendarMap>;
 

@@ -154,6 +154,7 @@ export const useDashboardStore = create<DashboardStore>()(
         getCalendarStatistics: async () => {
           try {
             const types = useTransactionOptionStore.getState().transactionTypes;
+            const currencies = useTransactionOptionStore.getState().currencies;
 
             const transactions = get().transactions;
 
@@ -166,15 +167,26 @@ export const useDashboardStore = create<DashboardStore>()(
               return typeMap;
             }, {});
 
+            const currencyMapById = currencies?.reduce<Record<number, Currency>>((mapById, currency) => {
+              mapById[currency.id] = currency;
+              return mapById;
+            }, {});
+
             transactions?.forEach((transaction) => {
               const type = typeMap[transaction.type_id];
+              const currency = currencyMapById[transaction.currency_id];
               const date = dayjs(transaction.date).format("YYYY-MM-DD");
 
               if (!type) return;
 
-              if (!calendarStatisticsMap?.[date]) calendarStatisticsMap[date] = {};
+              if (!calendarStatisticsMap?.[date]) {
+                calendarStatisticsMap[date] = {};
+              }
               if (!calendarStatisticsMap?.[date]?.[type.id]) {
-                calendarStatisticsMap[date][type.id] = { type, count: 0, amount: 0 };
+                calendarStatisticsMap[date][type.id] = { type, count: 0, usd: 0, currencyMap: {} };
+              }
+              if (!calendarStatisticsMap?.[date]?.[type.id]?.currencyMap?.[currency.id]) {
+                calendarStatisticsMap[date][type.id].currencyMap[currency.id] = { currency, amount: 0 };
               }
 
               if (!calendarCountByTypeMap?.[type.id]) {
@@ -182,7 +194,8 @@ export const useDashboardStore = create<DashboardStore>()(
               }
 
               calendarStatisticsMap[date][type.id].count += 1;
-              calendarStatisticsMap[date][type.id].amount += transaction.amount * transaction.usd_rate;
+              calendarStatisticsMap[date][type.id].usd += transaction.amount * transaction.usd_rate;
+              calendarStatisticsMap[date][type.id].currencyMap[currency.id].amount += transaction.amount;
               calendarCountByTypeMap[type.id].count += 1;
             });
 

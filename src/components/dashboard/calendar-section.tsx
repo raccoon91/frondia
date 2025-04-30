@@ -72,12 +72,28 @@ export const CalendarSection: FC<CalendarSectionProps> = memo(
                             style={{ color: selected?.type?.config?.color ?? "" }}
                             className={cn("absolute -bottom-1 left-1/2 transform -translate-x-1/2 z-1 text-[10px]")}
                           >
-                            {selected.amount.toFixed(1)}
+                            {selected.usd.toFixed(1)}
                           </p>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent side="top" variant="outline">
-                        USD ${selected.amount.toFixed(1)}
+                        {Object.values(selected.currencyMap ?? {})?.length ? (
+                          <div className="mb-1">
+                            {Object.values(selected.currencyMap ?? {}).map(({ currency, amount }, index) => (
+                              <div key={index} className="flex items-center justify-between gap-2">
+                                <p>{currency.code}</p>
+                                <p>
+                                  {currency.symbol} {amount.toLocaleString("en-US")}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        <div className="flex items-center justify-between gap-2">
+                          <p>USD</p>
+                          <p>$ {selected.usd.toFixed(1)}</p>
+                        </div>
                       </TooltipContent>
                     </Tooltip>
                   );
