@@ -20,7 +20,7 @@ export const BottomSection = () => {
   };
 
   return (
-    <section className="flex flex-col items-center mx-auto pt-30 pb-60">
+    <section className="flex flex-col items-center mx-auto pt-40 pb-50">
       <h2 className="text-4xl">
         Start Today with <span className="text-primary font-semibold">Frondia</span>
       </h2>

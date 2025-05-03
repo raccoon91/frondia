@@ -20,23 +20,25 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="flex flex-col items-center container mx-auto pt-50 pb-40">
-      <h1 className="text-7xl">
-        Record your <span className="text-primary">spending</span>
-      </h1>
-      <h1 className="text-7xl mt-2">
-        and achieve your <span className="text-primary">goals</span>
-      </h1>
+    <section className="bg-secondary">
+      <div className="flex flex-col items-center container mx-auto pt-50 pb-40">
+        <h1 className="text-7xl">
+          Record your <span className="text-primary">spending</span>
+        </h1>
+        <h1 className="text-7xl mt-2">
+          and achieve your <span className="text-primary">goals</span>
+        </h1>
 
-      <p className="mt-10 text-lg">
-        <span className="text-primary font-semibold">Frondia</span> helps you review your spending habits and set better
-        financial goals.
-      </p>
+        <p className="mt-10 text-lg">
+          <span className="text-primary font-semibold">Frondia</span> helps you track your expenses, build smart habits,
+          and reach your financial goals
+        </p>
 
-      <div className="mt-8">
-        <Button variant="outline" onClick={handleClickStart}>
-          Get Started <ArrowRight />
-        </Button>
+        <div className="mt-8">
+          <Button variant="outline" onClick={handleClickStart}>
+            Get Started <ArrowRight />
+          </Button>
+        </div>
       </div>
     </section>
   );
