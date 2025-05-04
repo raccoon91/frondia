@@ -29,11 +29,15 @@ export function DatePicker({
   className,
   onValueChange,
   ...props
-}: DatePickerProps) {
+}: Omit<DatePickerProps, "value"> & { value: string | null | undefined }) {
   const [date, setDate] = React.useState<Date | undefined>(defaultValue ? dayjs(defaultValue).toDate() : undefined);
 
   React.useEffect(() => {
-    if (!value) return;
+    if (!value) {
+      setDate(undefined);
+
+      return;
+    }
 
     setDate(dayjs(value).toDate());
   }, [value]);

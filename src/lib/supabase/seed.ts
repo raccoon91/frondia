@@ -1,11 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 
-import {
-  DEFAULT_CATEGORY_MAP,
-  DEFAULT_CURRENCIES,
-  DEFAULT_GOAL_RULES,
-  DEFAULT_TRANSACTION_TYPES,
-} from "@/constants/seed";
+import { DEFAULT_CATEGORY_MAP, DEFAULT_CURRENCIES, DEFAULT_TRANSACTION_TYPES } from "@/constants/seed";
 import { supabase } from "./client";
 
 export const generateCurrencies = async () => {
@@ -66,18 +61,6 @@ export const generateCategories = async (user?: User) => {
     const { data: categories } = await supabase.from("categories").insert(categorySeeds).select("*");
 
     return categories;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const generateGoalRules = async () => {
-  try {
-    const { data: rules, error } = await supabase.from("goal_rules").insert(DEFAULT_GOAL_RULES).select("*");
-
-    if (error) throw error;
-
-    return rules;
   } catch (error) {
     console.error(error);
   }

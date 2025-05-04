@@ -107,40 +107,19 @@ export type Database = {
           },
         ]
       }
-      goal_rules: {
-        Row: {
-          color: string | null
-          created_at: string
-          id: number
-          name: string
-        }
-        Insert: {
-          color?: string | null
-          created_at?: string
-          id?: number
-          name: string
-        }
-        Update: {
-          color?: string | null
-          created_at?: string
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
       goals: {
         Row: {
           amount: number
           created_at: string
           currency_id: number
-          date_unit: string
-          end: string
+          end: string | null
           id: number
           name: string
-          period: number
-          rule_id: number
-          start: string
-          status: string
+          period: string
+          repeat: string
+          rule: string
+          start: string | null
+          status: string | null
           type_id: number
           user_id: string
         }
@@ -148,14 +127,14 @@ export type Database = {
           amount: number
           created_at?: string
           currency_id: number
-          date_unit: string
-          end: string
+          end?: string | null
           id?: number
           name: string
-          period: number
-          rule_id: number
-          start: string
-          status: string
+          period: string
+          repeat: string
+          rule: string
+          start?: string | null
+          status?: string | null
           type_id: number
           user_id?: string
         }
@@ -163,14 +142,14 @@ export type Database = {
           amount?: number
           created_at?: string
           currency_id?: number
-          date_unit?: string
-          end?: string
+          end?: string | null
           id?: number
           name?: string
-          period?: number
-          rule_id?: number
-          start?: string
-          status?: string
+          period?: string
+          repeat?: string
+          rule?: string
+          start?: string | null
+          status?: string | null
           type_id?: number
           user_id?: string
         }
@@ -180,13 +159,6 @@ export type Database = {
             columns: ["currency_id"]
             isOneToOne: false
             referencedRelation: "currencies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "goals_rule_id_fkey"
-            columns: ["rule_id"]
-            isOneToOne: false
-            referencedRelation: "goal_rules"
             referencedColumns: ["id"]
           },
           {

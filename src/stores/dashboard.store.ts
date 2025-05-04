@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
-import { GOAL_RULE_NAME, GOAL_STATUS } from "@/constants/goal";
+import { GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
 import { useSessionStore } from "./common/session.store";
@@ -210,6 +210,8 @@ export const useDashboardStore = create<DashboardStore>()(
 
             const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
+            const startOfWeek = dayjs(sessionDate).startOf("week").format("YYYY-MM-DD HH:mm");
+            const endOfWeek = dayjs(sessionDate).endOf("week").format("YYYY-MM-DD HH:mm");
             const today = dayjs().format("YYYY-MM-DD 00:00");
 
             const transactions = get().transactions;
@@ -230,14 +232,14 @@ export const useDashboardStore = create<DashboardStore>()(
               .select(
                 `
                   *,
-                  rule: rule_id (*),
                   type: type_id (*),
                   currency: currency_id (*),
                   map: goal_category_map (id, category: categories (*))
                 `,
               )
-              .lte("start", endOfMonth)
-              .gte("end", startOfMonth);
+              .or(
+                `repeat.eq.every,and(repeat.eq.once,period.eq.month,start.lte.${endOfMonth},end.gte.${startOfMonth}),and(repeat.eq.once,period.eq.week,start.lte.${endOfWeek},end.gte.${startOfWeek})`,
+              );
 
             if (goalErorr) throw goalErorr;
 
@@ -247,6 +249,7 @@ export const useDashboardStore = create<DashboardStore>()(
             }>(
               (acc, goal) => {
                 if (
+                  goal.repeat === "once" &&
                   goal.status === GOAL_STATUS.READY &&
                   (dayjs(goal.start).isSame(today) || dayjs(goal.start).isBefore(today))
                 ) {
@@ -254,7 +257,11 @@ export const useDashboardStore = create<DashboardStore>()(
                   goal.status = GOAL_STATUS.PROGRESS;
 
                   acc.updated.push(goal);
-                } else if (goal.status === GOAL_STATUS.PROGRESS && dayjs(goal.end).isBefore(today)) {
+                } else if (
+                  goal.repeat === "once" &&
+                  goal.status === GOAL_STATUS.PROGRESS &&
+                  dayjs(goal.end).isBefore(today)
+                ) {
                   // change goal status to done
                   goal.status = GOAL_STATUS.DONE;
 
@@ -276,18 +283,12 @@ export const useDashboardStore = create<DashboardStore>()(
                     });
                   });
 
-                  if (goal.rule.name === GOAL_RULE_NAME.FIXED_AMOUNT) {
+                  if (goal.rule === "greater") {
                     result = totalAmount >= goal.amount ? "success" : "failure";
                     value = (totalAmount / goal.amount) * 100;
-                  } else if (goal.rule.name === GOAL_RULE_NAME.SPENDING_LIMIT) {
+                  } else if (goal.rule === "less") {
                     result = totalAmount <= goal.amount ? "success" : "failure";
                     value = (totalAmount / goal.amount) * 100;
-                  } else if (goal.rule.name === GOAL_RULE_NAME.COUNT_AMOUNT) {
-                    result = totalCount >= goal.amount ? "success" : "failure";
-                    value = (totalCount / goal.amount) * 100;
-                  } else if (goal.rule.name === GOAL_RULE_NAME.COUNT_LIMIT) {
-                    result = totalCount < goal.amount ? "success" : "failure";
-                    value = (totalCount / goal.amount) * 100;
                   }
 
                   acc.goalsInProgress.push({
@@ -296,7 +297,10 @@ export const useDashboardStore = create<DashboardStore>()(
                     result,
                     name: goal.name,
                     value,
-                    remain: dayjs(goal.end).diff(dayjs(), "day"),
+                    remain:
+                      goal.repeat === "once"
+                        ? dayjs(goal.end).diff(dayjs(), "day")
+                        : dayjs(dayjs().endOf(goal.period as "month" | "week")).diff(dayjs(), "day"),
                   });
                 }
 
@@ -311,16 +315,16 @@ export const useDashboardStore = create<DashboardStore>()(
                   id: goal.id,
                   user_id: goal.user_id,
                   name: goal.name,
-                  rule_id: goal.rule_id,
                   type_id: goal.type_id,
-                  currency_id: goal.currency_id,
+                  rule: goal.rule,
                   amount: goal.amount,
+                  currency_id: goal.currency_id,
+                  repeat: goal.repeat,
                   period: goal.period,
                   start: goal.start,
                   end: goal.end,
                   status: goal.status,
                   created_at: goal.created_at,
-                  date_unit: goal.date_unit,
                 })),
               );
             }

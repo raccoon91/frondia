@@ -65,7 +65,7 @@ type CalendarCountByTypeMap = Record<number, { type: TransactionType; count: num
 interface GoalInProgress {
   id: number;
   name: string;
-  rule?: GoalRule;
+  rule: string;
   result: "success" | "failure";
   value: number;
   remain: number;

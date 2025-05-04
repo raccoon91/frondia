@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { GOAL_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { useSessionStore } from "@/stores/common/session.store";
-import { useGoalRuleStore } from "@/stores/goal-rule.store";
 import { useGoalStore } from "@/stores/goal.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
@@ -23,11 +22,6 @@ const GoalPage = () => {
       getCurrencies: state.getCurrencies,
       getTransactionTypes: state.getTransactionTypes,
       getCategories: state.getCategories,
-    })),
-  );
-  const { getGoalRules } = useGoalRuleStore(
-    useShallow((state) => ({
-      getGoalRules: state.getGoalRules,
     })),
   );
   const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, removeGoal, movePrevMonth, moveNextMonth } =
@@ -45,7 +39,7 @@ const GoalPage = () => {
     );
 
   useEffect(() => {
-    Promise.all([getCurrencies(), getTransactionTypes(), getCategories(), getGoalRules()]);
+    Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
     getGoals();
   }, []);
 

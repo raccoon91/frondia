@@ -57,29 +57,21 @@ interface Transaction {
   category?: Category;
 }
 
-interface GoalRule {
-  id: number;
-  name: string;
-  color: string | null;
-  created_at: string;
-}
-
 interface Goal {
   id: number;
   user_id: string;
   name: string;
-  rule_id: number;
   type_id: number;
-  currency_id: number;
+  rule: string;
   amount: number;
-  period: number;
-  start: string;
-  end: string;
-  status: string;
-  date_unit: string;
+  currency_id: number;
+  repeat: string;
+  period: string;
+  start: string | null;
+  end: string | null;
+  status: string | null;
   created_at: string;
 
-  rule?: GoalRule;
   currency?: Currency;
   type?: TransactionType;
   map?: { id: number; category: Category }[];

@@ -71,10 +71,3 @@ export const DEFAULT_CATEGORY_MAP: Record<string, { name: string; order: number 
     { name: "Other Investment", order: 32 },
   ],
 };
-
-export const DEFAULT_GOAL_RULES = [
-  { name: "Fixed Amount", color: "bg-emerald-300" },
-  { name: "Spending Limit", color: "bg-rose-300" },
-  { name: "Count Above", color: "bg-indigo-300" },
-  { name: "Count Limit", color: "bg-amber-300" },
-];

@@ -12,7 +12,7 @@ export const GoalProgress: FC<GoalProgressProps> = ({ goal }) => {
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={cn("w-2 h-2 rounded-full", goal?.rule?.color ?? "")} />
+          <div className={cn("w-2 h-2 rounded-full", goal?.rule === "less" ? "bg-amber-300" : "bg-green-300")} />
           <p className="text-xs">{goal.name}</p>
         </div>
 
