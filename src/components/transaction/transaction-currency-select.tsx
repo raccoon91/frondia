@@ -11,6 +11,7 @@ export const TransactionCurrencySelect: FC<CellContext<TransactionData, unknown>
     const status = row.original.status;
     const currencies = row.original.currencies;
     const currency = row.original.currency;
+    const amount = row.original.amount;
     const rate = row.original.usd_rate;
 
     const handleChange = (value: string) => {
@@ -39,8 +40,8 @@ export const TransactionCurrencySelect: FC<CellContext<TransactionData, unknown>
       <div className="flex items-center gap-2 h-8 p-2 leading-4">
         <p>{currency?.code}</p>
 
-        {rate !== null ? (
-          <div title={rate.toString()}>
+        {amount !== null && rate !== null ? (
+          <div title={`USD ${(amount * rate).toFixed(1)}`}>
             <Info size={16} className="text-muted-foreground" />
           </div>
         ) : null}
