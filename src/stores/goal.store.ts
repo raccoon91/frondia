@@ -139,7 +139,6 @@ export const useGoalStore = create<GoalStore>()(
               .select(
                 `
                   *,
-                  rule: rule_id (*),
                   type: type_id (*),
                   currency: currency_id (*),
                   map: goal_category_map (id, category: categories (*))
