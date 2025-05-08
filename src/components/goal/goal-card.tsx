@@ -28,8 +28,13 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
 
   return (
     <Card className="overflow-hidden gap-4 pt-6 pb-4 bg-background">
-      <div className={cn("absolute top-0 left-0 py-0.5 px-2 rounded-br-sm", goal.rule?.color ?? "bg-background")}>
-        <p className="text-xs">{goal?.rule?.name ?? ""}</p>
+      <div
+        className={cn(
+          "absolute top-0 left-0 py-0.5 px-2 rounded-br-sm",
+          goal.rule === "less" ? "bg-amber-300" : "bg-green-300",
+        )}
+      >
+        <p className="text-xs">{goal?.rule ?? ""}</p>
       </div>
 
       <CardMenu className="top-1 right-1">
@@ -77,17 +82,19 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
           ) : null}
         </div>
 
-        <div className="flex items-center justify-between">
-          <p className="text-sm">
-            {goal.period} {goal.date_unit}
-          </p>
-
-          <div className="flex gap-1 text-xs text-muted-foreground italic">
-            <p>{dayjs(goal.start).format("YYYY-MM-DD")}</p>
-            <p>~</p>
-            {goal.end ? <p>{dayjs(goal.end).format("YYYY-MM-DD")}</p> : null}
+        {goal.repeat === "every" ? (
+          <div className="flex items-center justify-end">
+            <p className="text-xs">Every {goal.period}</p>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center justify-end">
+            <div className="flex gap-1 text-xs text-muted-foreground italic">
+              <p>{dayjs(goal.start).format("YYYY-MM-DD")}</p>
+              <p>~</p>
+              {goal.end ? <p>{dayjs(goal.end).format("YYYY-MM-DD")}</p> : null}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
