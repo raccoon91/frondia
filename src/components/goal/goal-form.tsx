@@ -118,7 +118,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               control={goalForm.control}
               name="rule"
               render={({ field }) => (
-                <FormItem className="w-[100px]">
+                <FormItem className="flex-1">
                   <FormLabel className="gap-1">
                     <p>Rule</p>
                     <span className="text-destructive">*</span>
@@ -143,7 +143,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               control={goalForm.control}
               name="amount"
               render={({ field }) => (
-                <FormItem className="flex-3">
+                <FormItem className="flex-1">
                   <FormLabel className="gap-1">
                     <p>Amount</p>
                     <span className="text-destructive">*</span>
@@ -159,7 +159,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               control={goalForm.control}
               name="currency_id"
               render={({ field }) => (
-                <FormItem className="flex-2">
+                <FormItem className="flex-1">
                   <FormLabel className="gap-1">
                     <p>Currency</p>
                     <span className="text-destructive">*</span>
@@ -233,6 +233,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                 <FormItem className="flex-1">
                   <FormLabel className="gap-1">
                     <p>Start</p>
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
                     <DatePicker
@@ -273,6 +274,7 @@ export const GoalForm: FC<GoalFormProps> = ({
                 <FormItem className="flex-1">
                   <FormLabel className="gap-1">
                     <p>End</p>
+                    <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
                     <DatePicker
