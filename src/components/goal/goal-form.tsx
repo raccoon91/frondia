@@ -52,10 +52,7 @@ export const GoalForm: FC<GoalFormProps> = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gap-1">
-                  <p>Name</p>
-                  <span className="text-destructive">*</span>
-                </FormLabel>
+                <FormLabel aria-required>Name</FormLabel>
                 <FormControl>
                   <Input autoFocus {...field} />
                 </FormControl>
@@ -68,10 +65,7 @@ export const GoalForm: FC<GoalFormProps> = ({
             name="type_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gap-1">
-                  <p>Transaction Type</p>
-                  <span className="text-destructive">*</span>
-                </FormLabel>
+                <FormLabel aria-required>Transaction Type</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
@@ -96,10 +90,7 @@ export const GoalForm: FC<GoalFormProps> = ({
             name="categories"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gap-1">
-                  <p>Category</p>
-                  <span className="text-destructive">*</span>
-                </FormLabel>
+                <FormLabel aria-required>Category</FormLabel>
                 <FormControl>
                   <MultiSelect
                     placeholder="Select Category"
@@ -119,10 +110,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               name="rule"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel className="gap-1">
-                    <p>Rule</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel aria-required>Rule</FormLabel>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
@@ -144,10 +132,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               name="amount"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel className="gap-1">
-                    <p>Amount</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel aria-required>Amount</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -160,10 +145,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               name="currency_id"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel className="gap-1">
-                    <p>Currency</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel aria-required>Currency</FormLabel>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
@@ -190,10 +172,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               name="period"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel className="gap-1">
-                    <p>Period</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel aria-required>Period</FormLabel>
                   <Select
                     value={field.value}
                     onValueChange={(value: string) => {
@@ -231,10 +210,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               name="start"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel className="gap-1">
-                    <p>Start</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel aria-required>Start</FormLabel>
                   <FormControl>
                     <DatePicker
                       size="default"
@@ -272,10 +248,7 @@ export const GoalForm: FC<GoalFormProps> = ({
               name="end"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel className="gap-1">
-                    <p>End</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+                  <FormLabel aria-required>End</FormLabel>
                   <FormControl>
                     <DatePicker
                       size="default"
@@ -314,10 +287,7 @@ export const GoalForm: FC<GoalFormProps> = ({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gap-1">
-                  <p>Status</p>
-                  <span className="text-destructive">*</span>
-                </FormLabel>
+                <FormLabel aria-required>Status</FormLabel>
                 <FormControl>
                   <Input disabled {...field} />
                 </FormControl>

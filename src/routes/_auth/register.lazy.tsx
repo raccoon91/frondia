@@ -64,10 +64,7 @@ const RegisterPage = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="gap-1">
-                            <p>Email</p>
-                            <span className="text-destructive">*</span>
-                          </FormLabel>
+                          <FormLabel aria-required>Email</FormLabel>
                           <FormControl>
                             <Input type="email" autoFocus {...field} />
                           </FormControl>
@@ -80,7 +77,7 @@ const RegisterPage = () => {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="gap-1">User Name</FormLabel>
+                          <FormLabel>User Name</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -93,10 +90,7 @@ const RegisterPage = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="gap-1">
-                            <p>Password</p>
-                            <span className="text-destructive">*</span>
-                          </FormLabel>
+                          <FormLabel aria-required>Password</FormLabel>
                           <FormControl>
                             <Input type="password" {...field} />
                           </FormControl>
@@ -109,10 +103,7 @@ const RegisterPage = () => {
                       name="passwordConfirm"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="gap-1">
-                            <p>Password Confirm</p>
-                            <span className="text-destructive">*</span>
-                          </FormLabel>
+                          <FormLabel aria-required>Password Confirm</FormLabel>
                           <FormControl>
                             <Input type="password" {...field} />
                           </FormControl>

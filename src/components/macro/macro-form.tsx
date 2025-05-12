@@ -45,10 +45,7 @@ export const MacroForm: FC<MacroFormProps> = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gap-1">
-                  <p>Name</p>
-                  <span className="text-destructive">*</span>
-                </FormLabel>
+                <FormLabel aria-required>Name</FormLabel>
                 <FormControl>
                   <Input autoFocus {...field} />
                 </FormControl>
@@ -190,10 +187,7 @@ export const MacroForm: FC<MacroFormProps> = ({
             name="memo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gap-1">
-                  <p>Memo</p>
-                  <span className="text-destructive">*</span>
-                </FormLabel>
+                <FormLabel aria-required>Memo</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

@@ -70,7 +70,7 @@ const LoginPage = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel aria-required>Email</FormLabel>
                           <FormControl>
                             <Input type="email" autoFocus {...field} />
                           </FormControl>
@@ -83,7 +83,7 @@ const LoginPage = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel aria-required>Password</FormLabel>
                           <FormControl>
                             <Input type="password" {...field} />
                           </FormControl>

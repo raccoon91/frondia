@@ -77,17 +77,26 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function FormLabel({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+function FormLabel({
+  className,
+  children,
+  "aria-required": required,
+  ...props
+}: React.ComponentProps<typeof LabelPrimitive.Root>) {
   const { error, formItemId } = useFormField();
 
   return (
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn("data-[error=true]:text-destructive", className)}
+      className={cn("data-[error=true]:text-destructive gap-1", className)}
       htmlFor={formItemId}
+      aria-required={required}
       {...props}
-    />
+    >
+      {children}
+      {required ? <span className="text-destructive">*</span> : null}
+    </Label>
   );
 }
 
