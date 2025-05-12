@@ -264,16 +264,16 @@ export const useDashboardStore = create<DashboardStore>()(
 
                 if (goal.status === GOAL_STATUS.PROGRESS) {
                   let totalAmount = 0;
-                  let totalCount = 0;
                   let result: GoalInProgress["result"] = "success";
                   let value = 0;
 
                   goal.map.forEach(({ category }) => {
-                    const transactions = transactionMapByCategoryId?.[category.id] ?? [];
+                    const transactionsByCategory = transactionMapByCategoryId?.[category.id] ?? [];
 
-                    transactions.forEach((transaction) => {
-                      totalAmount += transaction.amount;
-                      totalCount += 1;
+                    transactionsByCategory.forEach((transaction) => {
+                      if (goal.currency_id === transaction.currency_id) {
+                        totalAmount += transaction.amount;
+                      }
                     });
                   });
 
