@@ -28,7 +28,7 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
   };
 
   return (
-    <Card className="overflow-hidden gap-4 pt-6 pb-4 bg-background">
+    <Card className="overflow-hidden gap-4 pt-8 pb-4 bg-background">
       <div
         className={cn(
           "absolute top-0 left-0 py-0.5 px-2 rounded-br-sm",
@@ -38,27 +38,25 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
         <p className="text-xs">{goal?.rule ?? ""}</p>
       </div>
 
-      <CardMenu className="top-1 right-1">
+      <CardMenu className="top-0 right-0">
         <Button disabled={isLoading} size="icon" variant="ghost" className="w-8 h-8" onClick={handleDeleteGoal}>
           <Trash />
         </Button>
       </CardMenu>
 
-      <CardHeader className="px-4">
+      <CardHeader className="flex items-end justify-between px-4">
         <CardTitle>
           <Link to={ROUTE.GOAL_UPDATE} params={{ id: goal.id }} className="underline">
             {goal.name}
           </Link>
         </CardTitle>
+
+        <p className="text-sm">
+          {goal.amount.toLocaleString("en-US")} {goal.currency?.symbol}
+        </p>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-2 px-4">
-        <div className="flex justify-end">
-          <p className="text-sm">
-            {goal.amount.toLocaleString("en-US")} {goal.currency?.symbol}
-          </p>
-        </div>
-
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             <Badge variant="secondary">{goal.type?.name}</Badge>
