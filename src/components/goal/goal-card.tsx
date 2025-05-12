@@ -6,6 +6,7 @@ import { type FC, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
+import { GOAL_RULE } from "@/constants/goal";
 import { ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +32,7 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
       <div
         className={cn(
           "absolute top-0 left-0 py-0.5 px-2 rounded-br-sm",
-          goal.rule === "less" ? "bg-amber-300" : "bg-green-300",
+          goal.rule === GOAL_RULE.LESS ? "bg-amber-300" : "bg-green-300",
         )}
       >
         <p className="text-xs">{goal?.rule ?? ""}</p>
@@ -82,19 +83,13 @@ export const GoalCard: FC<GoalCardProps> = ({ isLoading, goal, onDelete }) => {
           ) : null}
         </div>
 
-        {goal.repeat === "every" ? (
-          <div className="flex items-center justify-end">
-            <p className="text-xs">Every {goal.period}</p>
+        <div className="flex items-center justify-end">
+          <div className="flex gap-1 text-xs text-muted-foreground italic">
+            <p>{dayjs(goal.start).format("YYYY-MM-DD")}</p>
+            <p>~</p>
+            {goal.end ? <p>{dayjs(goal.end).format("YYYY-MM-DD")}</p> : null}
           </div>
-        ) : (
-          <div className="flex items-center justify-end">
-            <div className="flex gap-1 text-xs text-muted-foreground italic">
-              <p>{dayjs(goal.start).format("YYYY-MM-DD")}</p>
-              <p>~</p>
-              {goal.end ? <p>{dayjs(goal.end).format("YYYY-MM-DD")}</p> : null}
-            </div>
-          </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );

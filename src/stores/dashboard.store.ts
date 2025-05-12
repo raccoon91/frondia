@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
-import { GOAL_STATUS } from "@/constants/goal";
+import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
 import { useSessionStore } from "./common/session.store";
@@ -277,10 +277,10 @@ export const useDashboardStore = create<DashboardStore>()(
                     });
                   });
 
-                  if (goal.rule === "greater") {
+                  if (goal.rule === GOAL_RULE.GREATER) {
                     result = totalAmount >= goal.amount ? "success" : "failure";
                     value = (totalAmount / goal.amount) * 100;
-                  } else if (goal.rule === "less") {
+                  } else if (goal.rule === GOAL_RULE.LESS) {
                     result = totalAmount <= goal.amount ? "success" : "failure";
                     value = (totalAmount / goal.amount) * 100;
                   }

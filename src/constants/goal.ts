@@ -5,3 +5,8 @@ export const GOAL_STATUS = {
   ACHIEVED: "achieved",
   FAILED: "failed",
 };
+
+export const GOAL_RULE = {
+  LESS: "less",
+  GREATER: "greater",
+};

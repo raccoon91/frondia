@@ -1,6 +1,7 @@
 import type { FC } from "react";
 
 import { Progress } from "@/components/ui/progress";
+import { GOAL_RULE } from "@/constants/goal";
 import { cn } from "@/lib/utils";
 
 interface GoalProgressProps {
@@ -12,7 +13,9 @@ export const GoalProgress: FC<GoalProgressProps> = ({ goal }) => {
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={cn("w-2 h-2 rounded-full", goal?.rule === "less" ? "bg-amber-300" : "bg-green-300")} />
+          <div
+            className={cn("w-2 h-2 rounded-full", goal?.rule === GOAL_RULE.LESS ? "bg-amber-300" : "bg-green-300")}
+          />
           <p className="text-xs">{goal.name}</p>
         </div>
 
