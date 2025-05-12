@@ -7,10 +7,9 @@ export const goalFormSchema = z.object({
   rule: z.string().nonempty(),
   amount: z.number().or(z.string().nonempty()),
   currency_id: z.string().nonempty(),
-  repeat: z.string().nonempty(),
   period: z.string().nonempty(),
-  start: z.string().nullable(),
-  end: z.string().nullable(),
+  start: z.string().nonempty(),
+  end: z.string().nonempty(),
   status: z.string().nonempty(),
 });
 
@@ -21,9 +20,8 @@ export const goalFormDefaultValues = {
   rule: "less",
   amount: "",
   currency_id: "",
-  repeat: "every",
   period: "month",
-  start: null,
-  end: null,
+  start: "",
+  end: "",
   status: "progress",
 };

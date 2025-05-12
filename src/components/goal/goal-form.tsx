@@ -63,57 +63,55 @@ export const GoalForm: FC<GoalFormProps> = ({
             )}
           />
 
-          <div className="flex gap-2 w-full">
-            <FormField
-              control={goalForm.control}
-              name="type_id"
-              render={({ field }) => (
-                <FormItem className="flex-2">
-                  <FormLabel className="gap-1">
-                    <p>Transaction Type</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
-                        <SelectValue placeholder="Select Type" />
-                      </SelectTrigger>
-                    </FormControl>
-
-                    <SelectContent className="max-h-[240px]">
-                      {transactionTypes?.map((transactionType) => (
-                        <SelectItem key={transactionType.id} value={`${transactionType.id}`}>
-                          {transactionType.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={goalForm.control}
-              name="categories"
-              render={({ field }) => (
-                <FormItem className="flex-3">
-                  <FormLabel className="gap-1">
-                    <p>Category</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
+          <FormField
+            control={goalForm.control}
+            name="type_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="gap-1">
+                  <p>Transaction Type</p>
+                  <span className="text-destructive">*</span>
+                </FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
-                    <MultiSelect
-                      placeholder="Select Category"
-                      disabled={!goalForm.watch("type_id")}
-                      options={categoryOptions}
-                      values={field.value}
-                      onSelectValue={field.onChange}
-                    />
+                    <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
+                      <SelectValue placeholder="Select Type" />
+                    </SelectTrigger>
                   </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+
+                  <SelectContent className="max-h-[240px]">
+                    {transactionTypes?.map((transactionType) => (
+                      <SelectItem key={transactionType.id} value={`${transactionType.id}`}>
+                        {transactionType.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={goalForm.control}
+            name="categories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="gap-1">
+                  <p>Category</p>
+                  <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl>
+                  <MultiSelect
+                    placeholder="Select Category"
+                    disabled={!goalForm.watch("type_id")}
+                    options={categoryOptions}
+                    values={field.value}
+                    onSelectValue={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
           <div className="flex gap-2 w-full">
             <FormField
@@ -189,67 +187,9 @@ export const GoalForm: FC<GoalFormProps> = ({
           <div className="flex gap-2 w-full">
             <FormField
               control={goalForm.control}
-              name="repeat"
-              render={({ field }) => (
-                <FormItem className="flex-2">
-                  <FormLabel className="gap-1">
-                    <p>Repeat</p>
-                    <span className="text-destructive">*</span>
-                  </FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={(value: string) => {
-                      if (value === "once") {
-                        const period = goalForm.getValues("period");
-
-                        if (period === "month") {
-                          goalForm.setValue("start", dayjs().startOf("month").format("YYYY-MM-DD"));
-                          goalForm.setValue("end", dayjs().endOf("month").format("YYYY-MM-DD"));
-                          goalForm.setValue("status", GOAL_STATUS.PROGRESS);
-                        } else if (period === "week") {
-                          goalForm.setValue("start", dayjs().startOf("week").format("YYYY-MM-DD"));
-                          goalForm.setValue("end", dayjs().endOf("week").format("YYYY-MM-DD"));
-                          goalForm.setValue("status", GOAL_STATUS.PROGRESS);
-                        } else {
-                          goalForm.setValue("start", null);
-                          goalForm.setValue("end", null);
-                          goalForm.setValue("status", GOAL_STATUS.READY);
-                        }
-                      } else {
-                        const period = goalForm.getValues("period");
-
-                        if (period === "custom") {
-                          goalForm.setValue("period", "month");
-                        }
-
-                        goalForm.setValue("start", null);
-                        goalForm.setValue("end", null);
-                        goalForm.setValue("status", GOAL_STATUS.PROGRESS);
-                      }
-
-                      field.onChange(value);
-                    }}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
-                        <SelectValue placeholder="Repeat" />
-                      </SelectTrigger>
-                    </FormControl>
-
-                    <SelectContent className="max-h-[240px]">
-                      <SelectItem value="every">Every</SelectItem>
-                      <SelectItem value="once">Once</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={goalForm.control}
               name="period"
               render={({ field }) => (
-                <FormItem className="flex-2">
+                <FormItem className="flex-1">
                   <FormLabel className="gap-1">
                     <p>Period</p>
                     <span className="text-destructive">*</span>
@@ -257,25 +197,13 @@ export const GoalForm: FC<GoalFormProps> = ({
                   <Select
                     value={field.value}
                     onValueChange={(value: string) => {
-                      const repeat = goalForm.getValues("repeat");
-
-                      if (repeat === "once") {
-                        if (value === "month") {
-                          goalForm.setValue("start", dayjs().startOf("month").format("YYYY-MM-DD"));
-                          goalForm.setValue("end", dayjs().endOf("month").format("YYYY-MM-DD"));
-                          goalForm.setValue("status", GOAL_STATUS.PROGRESS);
-                        } else if (value === "week") {
-                          goalForm.setValue("start", dayjs().startOf("week").format("YYYY-MM-DD"));
-                          goalForm.setValue("end", dayjs().endOf("week").format("YYYY-MM-DD"));
-                          goalForm.setValue("status", GOAL_STATUS.PROGRESS);
-                        } else {
-                          goalForm.setValue("start", null);
-                          goalForm.setValue("end", null);
-                          goalForm.setValue("status", GOAL_STATUS.READY);
-                        }
-                      } else {
-                        goalForm.setValue("start", null);
-                        goalForm.setValue("end", null);
+                      if (value === "month") {
+                        goalForm.setValue("start", dayjs().startOf("month").format("YYYY-MM-DD"));
+                        goalForm.setValue("end", dayjs().endOf("month").format("YYYY-MM-DD"));
+                        goalForm.setValue("status", GOAL_STATUS.PROGRESS);
+                      } else if (value === "week") {
+                        goalForm.setValue("start", dayjs().startOf("week").format("YYYY-MM-DD"));
+                        goalForm.setValue("end", dayjs().endOf("week").format("YYYY-MM-DD"));
                         goalForm.setValue("status", GOAL_STATUS.PROGRESS);
                       }
 
@@ -291,17 +219,13 @@ export const GoalForm: FC<GoalFormProps> = ({
                     <SelectContent className="max-h-[240px]">
                       <SelectItem value="month">Month</SelectItem>
                       <SelectItem value="week">Week</SelectItem>
-                      <SelectItem value="custom" disabled={goalForm.watch("repeat") === "every"}>
-                        Custom
-                      </SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="flex gap-2 w-full">
             <FormField
               control={goalForm.control}
               name="start"

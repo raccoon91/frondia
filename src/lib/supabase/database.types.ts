@@ -112,14 +112,13 @@ export type Database = {
           amount: number
           created_at: string
           currency_id: number
-          end: string | null
+          end: string
           id: number
           name: string
           period: string
-          repeat: string
           rule: string
-          start: string | null
-          status: string | null
+          start: string
+          status: string
           type_id: number
           user_id: string
         }
@@ -127,14 +126,13 @@ export type Database = {
           amount: number
           created_at?: string
           currency_id: number
-          end?: string | null
+          end: string
           id?: number
           name: string
           period: string
-          repeat: string
           rule: string
-          start?: string | null
-          status?: string | null
+          start: string
+          status: string
           type_id: number
           user_id?: string
         }
@@ -142,14 +140,13 @@ export type Database = {
           amount?: number
           created_at?: string
           currency_id?: number
-          end?: string | null
+          end?: string
           id?: number
           name?: string
           period?: string
-          repeat?: string
           rule?: string
-          start?: string | null
-          status?: string | null
+          start?: string
+          status?: string
           type_id?: number
           user_id?: string
         }

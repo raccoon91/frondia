@@ -65,11 +65,10 @@ interface Goal {
   rule: string;
   amount: number;
   currency_id: number;
-  repeat: string;
   period: string;
-  start: string | null;
-  end: string | null;
-  status: string | null;
+  start: string;
+  end: string;
+  status: string;
   created_at: string;
 
   currency?: Currency;

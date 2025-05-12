@@ -42,8 +42,6 @@ export const useGoalStore = create<GoalStore>()(
 
             const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
-            const startOfWeek = dayjs(sessionDate).startOf("week").format("YYYY-MM-DD HH:mm");
-            const endOfWeek = dayjs(sessionDate).endOf("week").format("YYYY-MM-DD HH:mm");
             const today = dayjs().format("YYYY-MM-DD 00:00");
 
             const { data: goals, error: goalErorr } = await supabase
@@ -56,9 +54,15 @@ export const useGoalStore = create<GoalStore>()(
                   map: goal_category_map (id, category: categories (*))
                 `,
               )
-              .or(
-                `repeat.eq.every,and(repeat.eq.once,period.eq.month,start.lte.${endOfMonth},end.gte.${startOfMonth}),and(repeat.eq.once,period.eq.week,start.lte.${endOfWeek},end.gte.${startOfWeek})`,
-              )
+              // .or(
+              //   `
+              //   repeat.eq.every,
+              //   and(repeat.eq.once,period.eq.month,start.lte.${endOfMonth},end.gte.${startOfMonth}),
+              //   and(repeat.eq.once,period.eq.week,start.lte.${endOfWeek},end.gte.${startOfWeek})
+              //   `,
+              // )
+              .lte("start", endOfMonth)
+              .gte("end", startOfMonth)
               .order("start", { ascending: true })
               .order("created_at", { ascending: true });
 
@@ -72,7 +76,6 @@ export const useGoalStore = create<GoalStore>()(
             }>(
               (acc, goal) => {
                 if (
-                  goal.repeat === "once" &&
                   goal.status === GOAL_STATUS.READY &&
                   (dayjs(goal.start).isSame(today) || dayjs(goal.start).isBefore(today))
                 ) {
@@ -80,11 +83,7 @@ export const useGoalStore = create<GoalStore>()(
                   goal.status = GOAL_STATUS.PROGRESS;
 
                   acc.updated.push(goal);
-                } else if (
-                  goal.repeat === "once" &&
-                  goal.status === GOAL_STATUS.PROGRESS &&
-                  dayjs(goal.end).isBefore(today)
-                ) {
+                } else if (goal.status === GOAL_STATUS.PROGRESS && dayjs(goal.end).isBefore(today)) {
                   // change goal status to done
                   goal.status = GOAL_STATUS.DONE;
 
@@ -115,7 +114,6 @@ export const useGoalStore = create<GoalStore>()(
                   rule: goal.rule,
                   amount: goal.amount,
                   currency_id: goal.currency_id,
-                  repeat: goal.repeat,
                   period: goal.period,
                   start: goal.start,
                   end: goal.end,
@@ -170,7 +168,6 @@ export const useGoalStore = create<GoalStore>()(
                 rule: formdata.rule,
                 amount: Number(formdata.amount),
                 currency_id: Number(formdata.currency_id),
-                repeat: formdata.repeat,
                 period: formdata.period,
                 start: formdata.start,
                 end: formdata.end,
@@ -214,7 +211,6 @@ export const useGoalStore = create<GoalStore>()(
                 rule: formdata.rule,
                 amount: Number(formdata.amount),
                 currency_id: Number(formdata.currency_id),
-                repeat: formdata.repeat,
                 period: formdata.period,
                 start: formdata.start,
                 end: formdata.end,
