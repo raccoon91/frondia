@@ -6,6 +6,7 @@ import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
 import type { macroFormSchema } from "@/schema/macro.schema";
+import { log } from "@/utils/log";
 
 interface MacroStore {
   isLoading: boolean;
@@ -47,7 +48,7 @@ export const useMacroStore = create<MacroStore>()(
 
             set({ macros: data ?? [] }, false, "getMacros");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getAllMacros: async () => {
@@ -68,7 +69,7 @@ export const useMacroStore = create<MacroStore>()(
 
             set({ allMacros: data ?? [] }, false, "getAllMacros");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getMacro: async (macroId: number) => {
@@ -83,9 +84,9 @@ export const useMacroStore = create<MacroStore>()(
 
             return data;
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "getMacro");
+
+            log.error(error);
           }
         },
         createMacro: async (formdata: z.infer<typeof macroFormSchema>) => {
@@ -116,9 +117,9 @@ export const useMacroStore = create<MacroStore>()(
 
             set({ isLoading: false }, false, "createMacro");
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "createMacro");
+
+            log.error(error);
           }
         },
         updateMacro: async (macro: Macro, formdata: z.infer<typeof macroFormSchema>) => {
@@ -146,9 +147,9 @@ export const useMacroStore = create<MacroStore>()(
 
             set({ isLoading: false }, false, "updateMacro");
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "updateMacro");
+
+            log.error(error);
           }
         },
         toggleMacroActive: async (macroId: number, active: boolean) => {
@@ -161,9 +162,9 @@ export const useMacroStore = create<MacroStore>()(
 
             set({ isLoading: false }, false, "toggleMacroActive");
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "toggleMacroActive");
+
+            log.error(error);
           }
         },
         removeMacro: async (macroId: number) => {
@@ -176,9 +177,9 @@ export const useMacroStore = create<MacroStore>()(
 
             set({ isLoading: false }, false, "removeMacro");
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "removeMacro");
+
+            log.error(error);
           }
         },
       }),

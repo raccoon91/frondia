@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 
 import { DEFAULT_CATEGORY_MAP, DEFAULT_CURRENCIES, DEFAULT_TRANSACTION_TYPES } from "@/constants/seed";
+import { log } from "@/utils/log";
 import { supabase } from "./client";
 
 export const generateCurrencies = async () => {
@@ -14,7 +15,7 @@ export const generateCurrencies = async () => {
 
     return currencies;
   } catch (error) {
-    console.error(error);
+    log.error(error);
   }
 };
 
@@ -29,7 +30,7 @@ export const generateTypes = async () => {
 
     return types;
   } catch (error) {
-    console.error(error);
+    log.error(error);
   }
 };
 
@@ -62,6 +63,6 @@ export const generateCategories = async (user?: User) => {
 
     return categories;
   } catch (error) {
-    console.error(error);
+    log.error(error);
   }
 };

@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 import { dexie } from "@/lib/dexie";
+import { log } from "@/utils/log";
 
 interface CurrencyRateStore {
   getCurrencyRate: (date: string, currency: Currency) => Promise<CurrencyRate>;
@@ -35,7 +36,7 @@ export const useCurrencyRateStore = create<CurrencyRateStore>()(
 
         return currencyRate;
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
     },
   })),

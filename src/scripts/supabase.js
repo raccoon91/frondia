@@ -4,10 +4,12 @@ import { select } from "@inquirer/prompts";
 import chalk from "chalk";
 import { program } from "commander";
 
+import { log } from "../utils/log";
+
 program.version("1.0.0");
 
 program.command("start").action(() => {
-  console.log(chalk.blue("Supabase Container Start"));
+  log.info(chalk.blue("Supabase Container Start"));
 
   const run = spawn("pnpm", ["dlx", "supabase", "start", "--workdir", "src/lib", "--ignore-health-check"]);
 
@@ -20,13 +22,13 @@ program.command("start").action(() => {
   });
 
   run.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
-    console.log(chalk.green("Done"));
+    log.info(`child process exited with code ${code}`);
+    log.info(chalk.green("Done"));
   });
 });
 
 program.command("stop").action(() => {
-  console.log(chalk.blue("Supabase Container Stop"));
+  log.info(chalk.blue("Supabase Container Stop"));
 
   const run = spawn("pnpm", ["dlx", "supabase", "stop", "--workdir", "src/lib"]);
 
@@ -39,13 +41,13 @@ program.command("stop").action(() => {
   });
 
   run.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
-    console.log(chalk.green("Done"));
+    log.info(`child process exited with code ${code}`);
+    log.info(chalk.green("Done"));
   });
 });
 
 program.command("serve").action(() => {
-  console.log(chalk.blue("Supabase Serve Edge Functions"));
+  log.info(chalk.blue("Supabase Serve Edge Functions"));
 
   const run = spawn("pnpm", ["dlx", "supabase", "functions", "serve", "--workdir", "src/lib"]);
 
@@ -58,18 +60,18 @@ program.command("serve").action(() => {
   });
 
   run.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
+    log.info(`child process exited with code ${code}`);
   });
 
   process.on("SIGINT", () => {
-    console.log(chalk.green("Exit"));
+    log.info(chalk.green("Exit"));
 
     process.exit();
   });
 });
 
 program.command("deploy").action(async () => {
-  console.log(chalk.blue("Supabase Deploy Edge Functions"));
+  log.info(chalk.blue("Supabase Deploy Edge Functions"));
 
   const dir = readdirSync("src/lib/supabase/functions", { withFileTypes: true });
 
@@ -107,18 +109,18 @@ program.command("deploy").action(async () => {
   });
 
   run.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
+    log.info(`child process exited with code ${code}`);
   });
 
   process.on("SIGINT", () => {
-    console.log(chalk.green("Exit"));
+    log.info(chalk.green("Exit"));
 
     process.exit();
   });
 });
 
 program.command("link").action(() => {
-  console.log(chalk.blue("Supabase Database Link"));
+  log.info(chalk.blue("Supabase Database Link"));
 
   const run = spawn("pnpm", [
     "dlx",
@@ -141,13 +143,13 @@ program.command("link").action(() => {
   });
 
   run.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
-    console.log(chalk.green("Done"));
+    log.info(`child process exited with code ${code}`);
+    log.info(chalk.green("Done"));
   });
 });
 
 program.command("pull").action(() => {
-  console.log(chalk.blue("Supabase Database Pull"));
+  log.info(chalk.blue("Supabase Database Pull"));
 
   const run = spawn("pnpm", ["dlx", "supabase", "db", "pull", "--workdir", "src/lib"]);
 
@@ -160,13 +162,13 @@ program.command("pull").action(() => {
   });
 
   run.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
-    console.log(chalk.green("Done"));
+    log.info(`child process exited with code ${code}`);
+    log.info(chalk.green("Done"));
   });
 });
 
 program.command("types").action(() => {
-  console.log(chalk.blue("Supabase Generate Types"));
+  log.info(chalk.blue("Supabase Generate Types"));
 
   const run = spawn("pnpm", [
     "dlx",
@@ -181,7 +183,7 @@ program.command("types").action(() => {
   run.stdout.on("data", (data) => {
     writeFileSync("src/lib/supabase/database.types.ts", `${data}`, { encoding: "utf8" });
 
-    console.log(chalk.green("Done"));
+    log.info(chalk.green("Done"));
   });
 
   run.stderr.on("data", (data) => {

@@ -26,12 +26,12 @@ export const useSessionStore = create<SessionStore>()(
         movePrevMonth: () => {
           const date = get().sessionDate;
 
-          set({ sessionDate: dayjs(date).subtract(1, "month").format("YYYY-MM") });
+          set({ sessionDate: dayjs(date).subtract(1, "month").format("YYYY-MM") }, false, "movePrevMonth");
         },
         moveNextMonth: () => {
           const date = get().sessionDate;
 
-          set({ sessionDate: dayjs(date).add(1, "month").format("YYYY-MM") });
+          set({ sessionDate: dayjs(date).add(1, "month").format("YYYY-MM") }, false, "moveNextMonth");
         },
       }),
       {

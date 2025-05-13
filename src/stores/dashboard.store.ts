@@ -5,6 +5,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
+import { log } from "@/utils/log";
 import { mapBy } from "@/utils/map-by";
 import { useSessionStore } from "./common/session.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
@@ -49,7 +50,7 @@ export const useDashboardStore = create<DashboardStore>()(
 
             set({ transactions }, false, "getTransactions");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getStatistics: async () => {
@@ -143,7 +144,7 @@ export const useDashboardStore = create<DashboardStore>()(
 
             set({ statistics }, false, "getStatistics");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getCalendarStatistics: async () => {
@@ -188,7 +189,7 @@ export const useDashboardStore = create<DashboardStore>()(
 
             set({ calendarStatisticsMap, calendarCountByTypeMap }, false, "getCalendarStatistics");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getGoalsInProgress: async () => {
@@ -311,7 +312,7 @@ export const useDashboardStore = create<DashboardStore>()(
 
             set({ goalsInProgress }, false, "getGoalsInProgress");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
       }),

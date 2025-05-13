@@ -6,6 +6,7 @@ import { devtools } from "zustand/middleware";
 import { ROUTE } from "@/constants/route";
 import { supabase } from "@/lib/supabase/client";
 import type { loginFormSchema, registerFormSchema } from "@/schema/auth.schema";
+import { log } from "@/utils/log";
 
 interface AuthStore {
   isLoading: boolean;
@@ -49,9 +50,9 @@ export const useAuthStore = create<AuthStore>()(
 
         return true;
       } catch (error) {
-        console.error(error);
-
         set({ isLoading: false }, false, "getUser");
+
+        log.error(error);
       }
     },
 
@@ -70,9 +71,9 @@ export const useAuthStore = create<AuthStore>()(
 
         return true;
       } catch (error) {
-        console.error(error);
-
         set({ isLoading: false }, false, "login");
+
+        log.error(error);
       }
     },
     loginWithGoogle: async () => {
@@ -94,9 +95,9 @@ export const useAuthStore = create<AuthStore>()(
 
         return true;
       } catch (error) {
-        console.error(error);
-
         set({ isLoading: false }, false, "loginWithGoogle");
+
+        log.error(error);
       }
     },
 
@@ -110,7 +111,7 @@ export const useAuthStore = create<AuthStore>()(
 
         return true;
       } catch (error) {
-        console.error(error);
+        log.error(error);
       }
     },
 
@@ -136,9 +137,9 @@ export const useAuthStore = create<AuthStore>()(
 
         return true;
       } catch (error) {
-        console.error(error);
-
         set({ isLoading: false }, false, "register");
+
+        log.error(error);
       }
     },
   })),

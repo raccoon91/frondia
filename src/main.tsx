@@ -7,7 +7,7 @@ import { routeTree } from "./routeTree.gen";
 const router = createRouter({ routeTree });
 
 // router.subscribe("onResolved", (event) => {
-//   console.log(event.toLocation.pathname);
+//   log.info(event.toLocation.pathname);
 // });
 
 createRoot(document.getElementById("root")!).render(

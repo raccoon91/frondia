@@ -3,6 +3,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
+import { log } from "@/utils/log";
 
 interface TransactionOptionStore {
   selectedCurrencyId: string;
@@ -52,7 +53,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
 
             set({ currencies: data ?? [] }, false, "getCurrencies");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getTransactionTypes: async () => {
@@ -66,7 +67,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
 
             set({ transactionTypes: data ?? [] }, false, "getTransactionTypes");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         getCategories: async () => {
@@ -77,7 +78,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
 
             set({ categories: data ?? [] }, false, "getCategories");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
       }),

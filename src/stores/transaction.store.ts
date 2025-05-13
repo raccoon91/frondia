@@ -5,6 +5,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { STORE_NAME } from "@/constants/store";
 import { TRANSACTION_STATUS } from "@/constants/transaction";
 import { supabase } from "@/lib/supabase/client";
+import { log } from "@/utils/log";
 import { useLocalStore } from "./common/local.store";
 import { useSessionStore } from "./common/session.store";
 import { useCurrencyRateStore } from "./currency-rate.store";
@@ -99,50 +100,54 @@ export const useTransactionStore = create<TransactionStore>()(
 
             set({ isLoading: false, transactionDatasets: datasets }, false, "getTransactions");
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "getTransactions");
+
+            log.error(error);
           }
         },
 
         addTransaction: () => {
-          const currencies = useTransactionOptionStore.getState().currencies;
-          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
-          let categories = useTransactionOptionStore.getState().categories;
+          try {
+            const currencies = useTransactionOptionStore.getState().currencies;
+            const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+            let categories = useTransactionOptionStore.getState().categories;
 
-          const localTransactionType = useLocalStore.getState().localTransactionType;
-          const localCurrency = useLocalStore.getState().localCurrency;
+            const localTransactionType = useLocalStore.getState().localTransactionType;
+            const localCurrency = useLocalStore.getState().localCurrency;
 
-          const transactionDatasets = get().transactionDatasets;
-          const editableTransaction = get().editableTransaction;
+            const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
 
-          if (localTransactionType) {
-            categories = categories.filter((category) => category.type_id === localTransactionType.id);
+            if (localTransactionType) {
+              categories = categories.filter((category) => category.type_id === localTransactionType.id);
+            }
+
+            const newTransaction: TransactionData = {
+              id: dayjs().valueOf(),
+              status: TRANSACTION_STATUS.NEW,
+              checked: false,
+              date: dayjs().format("YYYY-MM-DD HH:mm:00"),
+              amount: 0,
+              memo: null,
+              usd_rate: 0,
+
+              transactionType: localTransactionType,
+              category: undefined,
+              currency: localCurrency,
+
+              transactionTypes,
+              categories,
+              currencies,
+            };
+
+            editableTransaction[newTransaction.id] = newTransaction;
+
+            const datasets = [newTransaction].concat(transactionDatasets);
+
+            set({ transactionDatasets: datasets, editableTransaction }, false, "addTransaction");
+          } catch (error) {
+            log.error(error);
           }
-
-          const newTransaction: TransactionData = {
-            id: dayjs().valueOf(),
-            status: TRANSACTION_STATUS.NEW,
-            checked: false,
-            date: dayjs().format("YYYY-MM-DD HH:mm:00"),
-            amount: 0,
-            memo: null,
-            usd_rate: 0,
-
-            transactionType: localTransactionType,
-            category: undefined,
-            currency: localCurrency,
-
-            transactionTypes,
-            categories,
-            currencies,
-          };
-
-          editableTransaction[newTransaction.id] = newTransaction;
-
-          const datasets = [newTransaction].concat(transactionDatasets);
-
-          set({ transactionDatasets: datasets, editableTransaction }, false, "addTransaction");
         },
         saveAllTransaction: async () => {
           try {
@@ -200,46 +205,50 @@ export const useTransactionStore = create<TransactionStore>()(
 
             get().getTransactions();
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "saveAllTransaction");
+
+            log.error(error);
           }
         },
         cancelAllTransaction: () => {
-          const transactionDatasets = get().transactionDatasets;
-          const editableTransaction = get().editableTransaction;
+          try {
+            const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
 
-          const datasets = transactionDatasets.reduce<TransactionData[]>((datasets, dataset) => {
-            if (dataset.status === TRANSACTION_STATUS.NEW) return datasets;
+            const datasets = transactionDatasets.reduce<TransactionData[]>((datasets, dataset) => {
+              if (dataset.status === TRANSACTION_STATUS.NEW) return datasets;
 
-            if (dataset.status === TRANSACTION_STATUS.EDIT) {
-              const originDataset = editableTransaction[dataset.id];
+              if (dataset.status === TRANSACTION_STATUS.EDIT) {
+                const originDataset = editableTransaction[dataset.id];
 
-              if (!originDataset) return datasets;
+                if (!originDataset) return datasets;
 
-              datasets.push({
-                id: originDataset.id,
-                status: TRANSACTION_STATUS.DONE,
-                checked: originDataset.checked,
-                date: originDataset.date,
-                amount: originDataset.amount,
-                memo: originDataset.memo,
-                usd_rate: originDataset.usd_rate,
+                datasets.push({
+                  id: originDataset.id,
+                  status: TRANSACTION_STATUS.DONE,
+                  checked: originDataset.checked,
+                  date: originDataset.date,
+                  amount: originDataset.amount,
+                  memo: originDataset.memo,
+                  usd_rate: originDataset.usd_rate,
 
-                transactionType: originDataset.transactionType,
-                category: originDataset.category,
-                currency: originDataset.currency,
-              });
+                  transactionType: originDataset.transactionType,
+                  category: originDataset.category,
+                  currency: originDataset.currency,
+                });
 
-              delete editableTransaction[dataset.id];
-            } else {
-              datasets.push(dataset);
-            }
+                delete editableTransaction[dataset.id];
+              } else {
+                datasets.push(dataset);
+              }
 
-            return datasets;
-          }, []);
+              return datasets;
+            }, []);
 
-          set({ transactionDatasets: datasets, editableTransaction }, false, "cancelAllTransaction");
+            set({ transactionDatasets: datasets, editableTransaction }, false, "cancelAllTransaction");
+          } catch (error) {
+            log.error(error);
+          }
         },
         deleteTransaction: async () => {
           try {
@@ -266,134 +275,146 @@ export const useTransactionStore = create<TransactionStore>()(
 
             set({ transactionDatasets: filtered }, false, "deleteTransaction");
           } catch (error) {
-            console.error(error);
+            log.error(error);
           }
         },
         macroTransaction: (macro: Macro) => {
-          const currencies = useTransactionOptionStore.getState().currencies;
-          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
-          let categories = useTransactionOptionStore.getState().categories;
+          try {
+            const currencies = useTransactionOptionStore.getState().currencies;
+            const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+            let categories = useTransactionOptionStore.getState().categories;
 
-          const transactionType = transactionTypes.find((type) => type.id === macro.type_id);
-          const category = categories.find((category) => category.id === macro.category_id);
-          const currency = currencies.find((currency) => currency.id === macro.currency_id);
+            const transactionType = transactionTypes.find((type) => type.id === macro.type_id);
+            const category = categories.find((category) => category.id === macro.category_id);
+            const currency = currencies.find((currency) => currency.id === macro.currency_id);
 
-          const transactionDatasets = get().transactionDatasets;
-          const editableTransaction = get().editableTransaction;
+            const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
 
-          if (transactionType) {
-            categories = categories.filter((category) => category.type_id === transactionType.id);
-          }
-
-          let date = dayjs();
-
-          if (macro.day !== null) date = date.set("date", macro.day);
-          if (macro.hour !== null) date = date.set("hour", macro.hour);
-          if (macro.minute !== null) date = date.set("minute", macro.minute);
-
-          const newTransaction: TransactionData = {
-            id: dayjs().valueOf(),
-            status: TRANSACTION_STATUS.NEW,
-            checked: false,
-            date: date.format("YYYY-MM-DD HH:mm:00"),
-            amount: macro.amount ?? 0,
-            memo: macro.memo,
-            usd_rate: 0,
-
-            transactionType,
-            category,
-            currency,
-
-            transactionTypes,
-            categories,
-            currencies,
-          };
-
-          editableTransaction[newTransaction.id] = newTransaction;
-
-          const datasets = [newTransaction].concat(transactionDatasets);
-
-          set({ transactionDatasets: datasets }, false, "macroTransaction");
-        },
-
-        editTransaction: (rowId: number) => {
-          const currencies = useTransactionOptionStore.getState().currencies;
-          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
-          let categories = useTransactionOptionStore.getState().categories;
-
-          const transactionDatasets = get().transactionDatasets;
-          const editableTransaction = get().editableTransaction;
-
-          const datasets = transactionDatasets.map((dataset) => {
-            if (dataset.id !== rowId) return dataset;
-
-            editableTransaction[dataset.id] = dataset;
-
-            if (dataset.transactionType?.id) {
-              categories = categories.filter((category) => category.type_id === dataset.transactionType?.id);
+            if (transactionType) {
+              categories = categories.filter((category) => category.type_id === transactionType.id);
             }
 
-            return {
-              id: dataset.id,
-              status: TRANSACTION_STATUS.EDIT,
-              checked: dataset.checked,
-              date: dataset.date,
-              amount: dataset.amount,
-              memo: dataset.memo,
-              usd_rate: dataset.usd_rate,
+            let date = dayjs();
 
-              transactionType: dataset.transactionType,
-              category: dataset.category,
-              currency: dataset.currency,
+            if (macro.day !== null) date = date.set("date", macro.day);
+            if (macro.hour !== null) date = date.set("hour", macro.hour);
+            if (macro.minute !== null) date = date.set("minute", macro.minute);
+
+            const newTransaction: TransactionData = {
+              id: dayjs().valueOf(),
+              status: TRANSACTION_STATUS.NEW,
+              checked: false,
+              date: date.format("YYYY-MM-DD HH:mm:00"),
+              amount: macro.amount ?? 0,
+              memo: macro.memo,
+              usd_rate: 0,
+
+              transactionType,
+              category,
+              currency,
 
               transactionTypes,
               categories,
               currencies,
             };
-          });
 
-          set({ transactionDatasets: datasets, editableTransaction }, false, "editTransaction");
+            editableTransaction[newTransaction.id] = newTransaction;
+
+            const datasets = [newTransaction].concat(transactionDatasets);
+
+            set({ transactionDatasets: datasets }, false, "macroTransaction");
+          } catch (error) {
+            log.error(error);
+          }
         },
-        cancelEditTransaction: (rowId: number) => {
-          const transactionDatasets = get().transactionDatasets;
-          const editableTransaction = get().editableTransaction;
 
-          const targetDataset = transactionDatasets.find((dataset) => dataset.id === rowId);
+        editTransaction: (rowId: number) => {
+          try {
+            const currencies = useTransactionOptionStore.getState().currencies;
+            const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+            let categories = useTransactionOptionStore.getState().categories;
 
-          if (!targetDataset) return;
-
-          if (targetDataset.status === TRANSACTION_STATUS.NEW) {
-            const filtered = transactionDatasets.filter((dataset) => dataset.id !== rowId);
-
-            delete editableTransaction[rowId];
-
-            set({ transactionDatasets: filtered, editableTransaction }, false, "cancelEditTransaction");
-          } else if (targetDataset.status === TRANSACTION_STATUS.EDIT) {
-            const originDataset = editableTransaction[rowId];
-
-            if (!originDataset) return;
+            const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
 
             const datasets = transactionDatasets.map((dataset) => {
               if (dataset.id !== rowId) return dataset;
 
-              delete editableTransaction[rowId];
+              editableTransaction[dataset.id] = dataset;
+
+              if (dataset.transactionType?.id) {
+                categories = categories.filter((category) => category.type_id === dataset.transactionType?.id);
+              }
 
               return {
-                id: originDataset.id,
-                status: TRANSACTION_STATUS.DONE,
-                checked: originDataset.checked,
-                date: originDataset.date,
-                amount: originDataset.amount,
-                memo: originDataset.memo,
-                usd_rate: originDataset.usd_rate,
+                id: dataset.id,
+                status: TRANSACTION_STATUS.EDIT,
+                checked: dataset.checked,
+                date: dataset.date,
+                amount: dataset.amount,
+                memo: dataset.memo,
+                usd_rate: dataset.usd_rate,
 
-                transactionType: originDataset.transactionType,
-                category: originDataset.category,
-                currency: originDataset.currency,
+                transactionType: dataset.transactionType,
+                category: dataset.category,
+                currency: dataset.currency,
+
+                transactionTypes,
+                categories,
+                currencies,
               };
             });
 
-            set({ transactionDatasets: datasets, editableTransaction }, false, "cancelEditTransaction");
+            set({ transactionDatasets: datasets, editableTransaction }, false, "editTransaction");
+          } catch (error) {
+            log.error(error);
+          }
+        },
+        cancelEditTransaction: (rowId: number) => {
+          try {
+            const transactionDatasets = get().transactionDatasets;
+            const editableTransaction = get().editableTransaction;
+
+            const targetDataset = transactionDatasets.find((dataset) => dataset.id === rowId);
+
+            if (!targetDataset) return;
+
+            if (targetDataset.status === TRANSACTION_STATUS.NEW) {
+              const filtered = transactionDatasets.filter((dataset) => dataset.id !== rowId);
+
+              delete editableTransaction[rowId];
+
+              set({ transactionDatasets: filtered, editableTransaction }, false, "cancelEditTransaction");
+            } else if (targetDataset.status === TRANSACTION_STATUS.EDIT) {
+              const originDataset = editableTransaction[rowId];
+
+              if (!originDataset) return;
+
+              const datasets = transactionDatasets.map((dataset) => {
+                if (dataset.id !== rowId) return dataset;
+
+                delete editableTransaction[rowId];
+
+                return {
+                  id: originDataset.id,
+                  status: TRANSACTION_STATUS.DONE,
+                  checked: originDataset.checked,
+                  date: originDataset.date,
+                  amount: originDataset.amount,
+                  memo: originDataset.memo,
+                  usd_rate: originDataset.usd_rate,
+
+                  transactionType: originDataset.transactionType,
+                  category: originDataset.category,
+                  currency: originDataset.currency,
+                };
+              });
+
+              set({ transactionDatasets: datasets, editableTransaction }, false, "cancelEditTransaction");
+            }
+          } catch (error) {
+            log.error(error);
           }
         },
         checkTransaction: (rowId: number, value: boolean) => {
@@ -406,40 +427,45 @@ export const useTransactionStore = create<TransactionStore>()(
           set({ transactionDatasets: datasets }, false, "checkTransaction");
         },
         changeTransaction: (rowId: number, columnName: string, value: number | string) => {
-          const currencies = useTransactionOptionStore.getState().currencies;
-          const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
-          const categories = useTransactionOptionStore.getState().categories;
+          try {
+            const currencies = useTransactionOptionStore.getState().currencies;
+            const transactionTypes = useTransactionOptionStore.getState().transactionTypes;
+            const categories = useTransactionOptionStore.getState().categories;
 
-          const datasets = get().transactionDatasets.map((dataset) => {
-            if (dataset.id !== rowId) return dataset;
+            const datasets = get().transactionDatasets.map((dataset) => {
+              if (dataset.id !== rowId) return dataset;
 
-            if (columnName === "transactionType") {
-              const transactionType = transactionTypes?.find((type) => type.id.toString() === value.toString()) ?? null;
-              const filteredCategories = categories.filter((category) => category.type_id === transactionType?.id);
+              if (columnName === "transactionType") {
+                const transactionType =
+                  transactionTypes?.find((type) => type.id.toString() === value.toString()) ?? null;
+                const filteredCategories = categories.filter((category) => category.type_id === transactionType?.id);
 
-              dataset.transactionType = transactionType;
-              dataset.category = undefined;
-              dataset.categories = filteredCategories;
+                dataset.transactionType = transactionType;
+                dataset.category = undefined;
+                dataset.categories = filteredCategories;
 
-              useLocalStore.getState().setTransactionOption(transactionType);
-            } else if (columnName === "category") {
-              const category = categories?.find((category) => category.id.toString() === value.toString()) ?? null;
+                useLocalStore.getState().setTransactionOption(transactionType);
+              } else if (columnName === "category") {
+                const category = categories?.find((category) => category.id.toString() === value.toString()) ?? null;
 
-              dataset.category = category;
-            } else if (columnName === "currency") {
-              const currency = currencies?.find((currency) => currency.id.toString() === value.toString()) ?? null;
+                dataset.category = category;
+              } else if (columnName === "currency") {
+                const currency = currencies?.find((currency) => currency.id.toString() === value.toString()) ?? null;
 
-              dataset.currency = currency;
+                dataset.currency = currency;
 
-              useLocalStore.getState().setCurrencyOption(currency);
-            } else {
-              dataset = { ...dataset, [columnName]: value };
-            }
+                useLocalStore.getState().setCurrencyOption(currency);
+              } else {
+                dataset = { ...dataset, [columnName]: value };
+              }
 
-            return dataset;
-          });
+              return dataset;
+            });
 
-          set({ transactionDatasets: datasets }, false, "changeTransaction");
+            set({ transactionDatasets: datasets }, false, "changeTransaction");
+          } catch (error) {
+            log.error(error);
+          }
         },
         saveTransaction: async (rowId: number) => {
           try {
@@ -500,9 +526,9 @@ export const useTransactionStore = create<TransactionStore>()(
 
             set({ isLoading: false, transactionDatasets: datasets, editableTransaction }, false, "saveTransaction");
           } catch (error) {
-            console.error(error);
-
             set({ isLoading: false }, false, "saveTransaction");
+
+            log.error(error);
           }
         },
       }),
