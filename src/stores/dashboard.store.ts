@@ -5,6 +5,7 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import { supabase } from "@/lib/supabase/client";
+import { mapBy } from "@/utils/map-by";
 import { useSessionStore } from "./common/session.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
@@ -79,10 +80,7 @@ export const useDashboardStore = create<DashboardStore>()(
               };
             });
 
-            const currencyMapById = currencies?.reduce<Record<number, Currency>>((mapById, currency) => {
-              mapById[currency.id] = currency;
-              return mapById;
-            }, {});
+            const currencyMapById = mapBy(currencies, "id");
 
             transactions?.forEach((transaction) => {
               const typeId = transaction.type_id;
@@ -158,19 +156,11 @@ export const useDashboardStore = create<DashboardStore>()(
             const calendarStatisticsMap: CalendarStatisticsMap = {};
             const calendarCountByTypeMap: CalendarCountByTypeMap = {};
 
-            const typeMap = types.reduce<Record<number, TransactionType>>((typeMap, type) => {
-              typeMap[type.id] = type;
-
-              return typeMap;
-            }, {});
-
-            const currencyMapById = currencies?.reduce<Record<number, Currency>>((mapById, currency) => {
-              mapById[currency.id] = currency;
-              return mapById;
-            }, {});
+            const typeMapById = mapBy(types, "id");
+            const currencyMapById = mapBy(currencies, "id");
 
             transactions?.forEach((transaction) => {
-              const type = typeMap[transaction.type_id];
+              const type = typeMapById[transaction.type_id];
               const currency = currencyMapById[transaction.currency_id];
               const date = dayjs(transaction.date).format("YYYY-MM-DD");
 

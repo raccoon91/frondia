@@ -12,6 +12,7 @@ import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { MACRO_FILE_ROUTE, ROUTE } from "@/constants/route";
 import { useMacroStore } from "@/stores/macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
+import { mapBy } from "@/utils/map-by";
 
 const MacroPage = () => {
   const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);
@@ -41,30 +42,9 @@ const MacroPage = () => {
       })),
     );
 
-  const currencyMap = useMemo(
-    () =>
-      currencies?.reduce<Record<string, Currency>>((currencyMap, currency) => {
-        currencyMap[currency.id] = currency;
-        return currencyMap;
-      }, {}) ?? {},
-    [currencies],
-  );
-  const typeMap = useMemo(
-    () =>
-      transactionTypes?.reduce<Record<string, TransactionType>>((typeMap, type) => {
-        typeMap[type.id] = type;
-        return typeMap;
-      }, {}) ?? {},
-    [transactionTypes],
-  );
-  const categoryMap = useMemo(
-    () =>
-      categories?.reduce<Record<string, Category>>((categoryMap, category) => {
-        categoryMap[category.id] = category;
-        return categoryMap;
-      }, {}) ?? {},
-    [categories],
-  );
+  const currencyMap = useMemo(() => mapBy(currencies, "id"), [currencies]);
+  const typeMap = useMemo(() => mapBy(transactionTypes, "id"), [transactionTypes]);
+  const categoryMap = useMemo(() => mapBy(categories, "id"), [categories]);
 
   useEffect(() => {
     Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
