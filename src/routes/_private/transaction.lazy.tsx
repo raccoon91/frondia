@@ -16,7 +16,13 @@ import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 
 const TransactionPage = () => {
-  const sessionDate = useSessionStore((state) => state.sessionDate);
+  const { sessionDate, movePrevMonth, moveNextMonth } = useSessionStore(
+    useShallow((state) => ({
+      sessionDate: state.sessionDate,
+      movePrevMonth: state.movePrevMonth,
+      moveNextMonth: state.moveNextMonth,
+    })),
+  );
   const {
     selectedTransactionTypeId,
     selectedCategoryId,
@@ -55,8 +61,6 @@ const TransactionPage = () => {
     isLoading,
     transactionDatasets,
     getTransactions,
-    movePrevMonth,
-    moveNextMonth,
     addTransaction,
     saveAllTransaction,
     cancelAllTransaction,
@@ -67,8 +71,6 @@ const TransactionPage = () => {
       isLoading: state.isLoading,
       transactionDatasets: state.transactionDatasets,
       getTransactions: state.getTransactions,
-      movePrevMonth: state.movePrevMonth,
-      moveNextMonth: state.moveNextMonth,
       addTransaction: state.addTransaction,
       saveAllTransaction: state.saveAllTransaction,
       cancelAllTransaction: state.cancelAllTransaction,
@@ -97,12 +99,12 @@ const TransactionPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(sessionDate);
+    movePrevMonth();
     getTransactions();
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(sessionDate);
+    moveNextMonth();
     getTransactions();
   };
 

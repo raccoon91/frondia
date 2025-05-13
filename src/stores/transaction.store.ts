@@ -18,9 +18,6 @@ interface TransactionStore {
 
   getTransactions: () => Promise<void>;
 
-  movePrevMonth: (date: string) => void;
-  moveNextMonth: (date: string) => void;
-
   addTransaction: () => void;
   saveAllTransaction: () => Promise<void>;
   cancelAllTransaction: () => void;
@@ -106,13 +103,6 @@ export const useTransactionStore = create<TransactionStore>()(
 
             set({ isLoading: false }, false, "getTransactions");
           }
-        },
-
-        movePrevMonth: (date: string) => {
-          useSessionStore.getState().setSessionDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
-        },
-        moveNextMonth: (date: string) => {
-          useSessionStore.getState().setSessionDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
 
         addTransaction: () => {

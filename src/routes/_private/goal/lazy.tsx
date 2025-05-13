@@ -16,7 +16,13 @@ const GoalPage = () => {
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const [isOpenDeleteGoalDialog, setIsOpenDeleteGoalDialog] = useState(false);
 
-  const sessionDate = useSessionStore((state) => state.sessionDate);
+  const { sessionDate, movePrevMonth, moveNextMonth } = useSessionStore(
+    useShallow((state) => ({
+      sessionDate: state.sessionDate,
+      movePrevMonth: state.movePrevMonth,
+      moveNextMonth: state.moveNextMonth,
+    })),
+  );
   const { getCurrencies, getTransactionTypes, getCategories } = useTransactionOptionStore(
     useShallow((state) => ({
       getCurrencies: state.getCurrencies,
@@ -24,19 +30,16 @@ const GoalPage = () => {
       getCategories: state.getCategories,
     })),
   );
-  const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, removeGoal, movePrevMonth, moveNextMonth } =
-    useGoalStore(
-      useShallow((state) => ({
-        isLoading: state.isLoading,
-        goalsInReady: state.goalsInReady,
-        goalsInProgress: state.goalsInProgress,
-        goalsInDone: state.goalsInDone,
-        getGoals: state.getGoals,
-        removeGoal: state.removeGoal,
-        movePrevMonth: state.movePrevMonth,
-        moveNextMonth: state.moveNextMonth,
-      })),
-    );
+  const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, removeGoal } = useGoalStore(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      goalsInReady: state.goalsInReady,
+      goalsInProgress: state.goalsInProgress,
+      goalsInDone: state.goalsInDone,
+      getGoals: state.getGoals,
+      removeGoal: state.removeGoal,
+    })),
+  );
 
   useEffect(() => {
     Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
@@ -44,13 +47,13 @@ const GoalPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(sessionDate);
+    movePrevMonth();
 
     getGoals();
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(sessionDate);
+    moveNextMonth();
 
     getGoals();
   };

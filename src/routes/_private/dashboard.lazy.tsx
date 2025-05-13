@@ -14,11 +14,17 @@ import { useDashboardStore } from "@/stores/dashboard.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const DashboardPage = () => {
-  const sessionDate = useSessionStore((state) => state.sessionDate);
   const { localCalendarType, setCalendarType } = useLocalStore(
     useShallow((state) => ({
       localCalendarType: state.localCalendarType,
       setCalendarType: state.setCalendarType,
+    })),
+  );
+  const { sessionDate, movePrevMonth, moveNextMonth } = useSessionStore(
+    useShallow((state) => ({
+      sessionDate: state.sessionDate,
+      movePrevMonth: state.movePrevMonth,
+      moveNextMonth: state.moveNextMonth,
     })),
   );
   const { transactionTypes, getTransactionTypes, getCategories, getCurrencies } = useTransactionOptionStore(
@@ -38,8 +44,6 @@ const DashboardPage = () => {
     getStatistics,
     getCalendarStatistics,
     getGoalsInProgress,
-    movePrevMonth,
-    moveNextMonth,
   } = useDashboardStore(
     useShallow((state) => ({
       statistics: state.statistics,
@@ -50,8 +54,6 @@ const DashboardPage = () => {
       getStatistics: state.getStatistics,
       getCalendarStatistics: state.getCalendarStatistics,
       getGoalsInProgress: state.getGoalsInProgress,
-      movePrevMonth: state.movePrevMonth,
-      moveNextMonth: state.moveNextMonth,
     })),
   );
 
@@ -64,7 +66,7 @@ const DashboardPage = () => {
   }, []);
 
   const handleClickPrevMonth = () => {
-    movePrevMonth(sessionDate);
+    movePrevMonth();
 
     getTransactions().then(() => {
       getStatistics();
@@ -74,7 +76,7 @@ const DashboardPage = () => {
   };
 
   const handleClickNextMonth = () => {
-    moveNextMonth(sessionDate);
+    moveNextMonth();
 
     getTransactions().then(() => {
       getStatistics();

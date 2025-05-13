@@ -19,9 +19,6 @@ interface DashboardStore {
   getStatistics: () => Promise<void>;
   getCalendarStatistics: () => Promise<void>;
   getGoalsInProgress: () => Promise<void>;
-
-  movePrevMonth: (date: string) => void;
-  moveNextMonth: (date: string) => void;
 }
 
 export const useDashboardStore = create<DashboardStore>()(
@@ -326,13 +323,6 @@ export const useDashboardStore = create<DashboardStore>()(
           } catch (error) {
             console.error(error);
           }
-        },
-
-        movePrevMonth: (date: string) => {
-          useSessionStore.getState().setSessionDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
-        },
-        moveNextMonth: (date: string) => {
-          useSessionStore.getState().setSessionDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
       }),
       {

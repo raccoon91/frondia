@@ -21,9 +21,6 @@ interface GoalStore {
   createGoal: (formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
   updateGoal: (goal: Goal, formdata: z.infer<typeof goalFormSchema>) => Promise<void>;
   removeGoal: (goalId: number) => Promise<void>;
-
-  movePrevMonth: (date: string) => void;
-  moveNextMonth: (date: string) => void;
 }
 
 export const useGoalStore = create<GoalStore>()(
@@ -275,13 +272,6 @@ export const useGoalStore = create<GoalStore>()(
 
             set({ isLoading: false }, false, "removeGoal");
           }
-        },
-
-        movePrevMonth: (date: string) => {
-          useSessionStore.getState().setSessionDate(dayjs(date).subtract(1, "month").format("YYYY-MM"));
-        },
-        moveNextMonth: (date: string) => {
-          useSessionStore.getState().setSessionDate(dayjs(date).add(1, "month").format("YYYY-MM"));
         },
       }),
       {
