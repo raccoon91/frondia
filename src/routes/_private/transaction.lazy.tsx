@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ROUTE, TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/stores/common/session.store";
-import { useMacroStore } from "@/stores/macro.store";
+import { useTransactionMacroStore } from "@/stores/transaction-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 
@@ -51,10 +51,10 @@ const TransactionPage = () => {
         getCategories: state.getCategories,
       })),
     );
-  const { macros, getMacros } = useMacroStore(
+  const { transactionMacros, getTransactionMacros } = useTransactionMacroStore(
     useShallow((state) => ({
-      macros: state.macros,
-      getMacros: state.getMacros,
+      transactionMacros: state.transactionMacros,
+      getTransactionMacros: state.getTransactionMacros,
     })),
   );
   const {
@@ -90,7 +90,7 @@ const TransactionPage = () => {
     );
 
   const getTransactionData = useCallback(async () => {
-    await Promise.all([getCurrencies(), getTransactionTypes(), getCategories(), getMacros()]);
+    await Promise.all([getCurrencies(), getTransactionTypes(), getCategories(), getTransactionMacros()]);
     await getTransactions();
   }, []);
 
@@ -148,7 +148,7 @@ const TransactionPage = () => {
 
     if (!macroId) return;
 
-    const macro = macros.find((macro) => macro.id.toString() === macroId);
+    const macro = transactionMacros.find((macro) => macro.id.toString() === macroId);
 
     if (!macro) return;
 
@@ -313,8 +313,8 @@ const TransactionPage = () => {
           </CardMenu>
 
           <CardContent className="flex flex-col gap-2">
-            {macros?.length ? (
-              macros.map((macro) => (
+            {transactionMacros?.length ? (
+              transactionMacros.map((macro) => (
                 <div
                   key={macro.id}
                   data-macro-id={macro.id}
@@ -326,7 +326,7 @@ const TransactionPage = () => {
               ))
             ) : (
               <Button asChild size="sm" variant="outline">
-                <Link to={ROUTE.MACRO_CREATE}>Create Macro</Link>
+                <Link to={ROUTE.TRANSACTION_MACRO_CREATE}>Create Macro</Link>
               </Button>
             )}
           </CardContent>

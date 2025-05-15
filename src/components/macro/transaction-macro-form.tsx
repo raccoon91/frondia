@@ -9,39 +9,40 @@ import { LoadingDot } from "@/components/ui/loading-dot";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { macroFormSchema } from "@/schema/macro.schema";
 
-interface MacroFormProps {
+interface TransactionMacroFormProps {
   isLoading: boolean;
   currencies: Currency[];
   transactionTypes: TransactionType[];
   categories: Category[];
   submitText: string;
-  macroForm: UseFormReturn<z.infer<typeof macroFormSchema>, unknown, undefined>;
+  transactionMacroForm: UseFormReturn<z.infer<typeof macroFormSchema>, unknown, undefined>;
   onSubmitMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
 }
 
-export const MacroForm: FC<MacroFormProps> = ({
+export const TransactionMacroForm: FC<TransactionMacroFormProps> = ({
   isLoading,
   currencies,
   transactionTypes,
   categories,
   submitText,
-  macroForm,
+  transactionMacroForm,
   onSubmitMacro,
 }) => {
   const filteredCategories = useMemo(
-    () => categories?.filter((category) => category.type_id.toString() === macroForm.getValues("type_id")) ?? [],
-    [categories, macroForm.watch("type_id")],
+    () =>
+      categories?.filter((category) => category.type_id.toString() === transactionMacroForm.getValues("type_id")) ?? [],
+    [categories, transactionMacroForm.watch("type_id")],
   );
 
   return (
-    <Form {...macroForm}>
+    <Form {...transactionMacroForm}>
       <form
         className="overflow-hidden flex flex-col flex-1 gap-6 pb-6"
-        onSubmit={macroForm.handleSubmit(onSubmitMacro)}
+        onSubmit={transactionMacroForm.handleSubmit(onSubmitMacro)}
       >
         <div className="overflow-auto flex flex-col gap-4 flex-1 px-4 pb-1">
           <FormField
-            control={macroForm.control}
+            control={transactionMacroForm.control}
             name="name"
             render={({ field }) => (
               <FormItem>
@@ -55,7 +56,7 @@ export const MacroForm: FC<MacroFormProps> = ({
 
           <div className="flex gap-2">
             <FormField
-              control={macroForm.control}
+              control={transactionMacroForm.control}
               name="day"
               render={({ field }) => (
                 <FormItem className="flex-1">
@@ -68,7 +69,7 @@ export const MacroForm: FC<MacroFormProps> = ({
             />
 
             <FormField
-              control={macroForm.control}
+              control={transactionMacroForm.control}
               name="hour"
               render={({ field }) => (
                 <FormItem className="flex-1">
@@ -81,7 +82,7 @@ export const MacroForm: FC<MacroFormProps> = ({
             />
 
             <FormField
-              control={macroForm.control}
+              control={transactionMacroForm.control}
               name="minute"
               render={({ field }) => (
                 <FormItem className="flex-1">
@@ -95,7 +96,7 @@ export const MacroForm: FC<MacroFormProps> = ({
           </div>
 
           <FormField
-            control={macroForm.control}
+            control={transactionMacroForm.control}
             name="type_id"
             render={({ field }) => (
               <FormItem>
@@ -120,12 +121,16 @@ export const MacroForm: FC<MacroFormProps> = ({
           />
 
           <FormField
-            control={macroForm.control}
+            control={transactionMacroForm.control}
             name="category_id"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select value={field.value} disabled={!macroForm.watch("type_id")} onValueChange={field.onChange}>
+                <Select
+                  value={field.value}
+                  disabled={!transactionMacroForm.watch("type_id")}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger className="w-full py-1 px-3 border-input-foreground">
                       <SelectValue placeholder="Select Category" />
@@ -145,7 +150,7 @@ export const MacroForm: FC<MacroFormProps> = ({
           />
 
           <FormField
-            control={macroForm.control}
+            control={transactionMacroForm.control}
             name="currency_id"
             render={({ field }) => (
               <FormItem>
@@ -170,7 +175,7 @@ export const MacroForm: FC<MacroFormProps> = ({
           />
 
           <FormField
-            control={macroForm.control}
+            control={transactionMacroForm.control}
             name="amount"
             render={({ field }) => (
               <FormItem>
@@ -183,7 +188,7 @@ export const MacroForm: FC<MacroFormProps> = ({
           />
 
           <FormField
-            control={macroForm.control}
+            control={transactionMacroForm.control}
             name="memo"
             render={({ field }) => (
               <FormItem>
@@ -197,7 +202,7 @@ export const MacroForm: FC<MacroFormProps> = ({
         </div>
 
         <div className="relative mt-auto px-4">
-          <Button type="submit" className="w-full" disabled={isLoading || !macroForm.formState.isValid}>
+          <Button type="submit" className="w-full" disabled={isLoading || !transactionMacroForm.formState.isValid}>
             {submitText}
           </Button>
 

@@ -167,7 +167,28 @@ export type Database = {
           },
         ]
       }
-      macros: {
+      profiles: {
+        Row: {
+          created_at: string
+          id: number
+          name: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transaction_macros: {
         Row: {
           active: boolean
           amount: number | null
@@ -211,27 +232,6 @@ export type Database = {
           minute?: number | null
           name?: string
           type_id?: number | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          id: number
-          name: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          name?: string | null
-          user_id?: string
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          name?: string | null
           user_id?: string
         }
         Relationships: []

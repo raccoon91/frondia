@@ -76,7 +76,7 @@ interface Goal {
   map?: { id: number; category: Category }[];
 }
 
-interface Macro {
+interface TransactionMacro {
   id: number;
   user_id: string;
   name: string;

@@ -1,16 +1,16 @@
 import type { z } from "zod";
 
-import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
+import { TRANSACTION_MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { supabase } from "@/lib/supabase/client";
 import type { macroFormSchema } from "@/schema/macro.schema";
 
-export const macroAPI = {
+export const transactionMacroAPI = {
   gets: async ({ active }: { active?: string }) => {
-    const builder = supabase.from("macros").select("*");
+    const builder = supabase.from("transaction_macros").select("*");
 
-    if (active === MACRO_ACTIVE_STATUS.ACTIVE) {
+    if (active === TRANSACTION_MACRO_ACTIVE_STATUS.ACTIVE) {
       builder.eq("active", true);
-    } else if (active === MACRO_ACTIVE_STATUS.INACTIVE) {
+    } else if (active === TRANSACTION_MACRO_ACTIVE_STATUS.INACTIVE) {
       builder.eq("active", false);
     }
 
@@ -22,7 +22,7 @@ export const macroAPI = {
   },
 
   get: async ({ id }: { id: number }) => {
-    const { data, error } = await supabase.from("macros").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabase.from("transaction_macros").select("*").eq("id", id).maybeSingle();
 
     if (error) throw error;
 
@@ -36,7 +36,7 @@ export const macroAPI = {
 
     if (!authData?.user) throw new Error("User not exist");
 
-    const { data, error } = await supabase.from("macros").insert({
+    const { data, error } = await supabase.from("transaction_macros").insert({
       user_id: authData.user.id,
       name: formdata.name,
       type_id: formdata.type_id ? Number(formdata.type_id) : null,
@@ -55,9 +55,9 @@ export const macroAPI = {
     return data;
   },
 
-  update: async (macro: Macro, formdata: z.infer<typeof macroFormSchema>) => {
+  update: async (macro: TransactionMacro, formdata: z.infer<typeof macroFormSchema>) => {
     const { data, error } = await supabase
-      .from("macros")
+      .from("transaction_macros")
       .update({
         user_id: macro.user_id,
         name: formdata.name,
@@ -79,7 +79,7 @@ export const macroAPI = {
   },
 
   toggle: async ({ id, active }: { id: number; active: boolean }) => {
-    const { data, error } = await supabase.from("macros").update({ active }).eq("id", id);
+    const { data, error } = await supabase.from("transaction_macros").update({ active }).eq("id", id);
 
     if (error) throw error;
 
@@ -87,7 +87,7 @@ export const macroAPI = {
   },
 
   delete: async ({ id }: { id: number }) => {
-    const { data, error } = await supabase.from("macros").delete().eq("id", id);
+    const { data, error } = await supabase.from("transaction_macros").delete().eq("id", id);
 
     if (error) throw error;
 

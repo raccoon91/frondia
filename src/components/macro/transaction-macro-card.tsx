@@ -8,19 +8,19 @@ import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components
 import { Switch } from "@/components/ui/switch";
 import { ROUTE } from "@/constants/route";
 
-interface MacroCardProps {
+interface TransactionMacroCardProps {
   isLoading: boolean;
-  macro: Macro;
+  transactionMacro: TransactionMacro;
   currency: Nullable<Currency>;
   type: Nullable<TransactionType>;
   category: Nullable<Category>;
-  onToggleActive: (macroId: number, active: boolean) => Promise<void>;
-  onDelete: (macro: Macro) => void;
+  onToggleActive: (transactionMacroId: number, active: boolean) => Promise<void>;
+  onDelete: (transactionMacro: TransactionMacro) => void;
 }
 
-export const MacroCard: FC<MacroCardProps> = ({
+export const TransactionMacroCard: FC<TransactionMacroCardProps> = ({
   isLoading,
-  macro,
+  transactionMacro,
   currency,
   type,
   category,
@@ -28,11 +28,11 @@ export const MacroCard: FC<MacroCardProps> = ({
   onDelete,
 }) => {
   const handleMacroChecked = (checked: boolean) => {
-    onToggleActive(macro.id, checked);
+    onToggleActive(transactionMacro.id, checked);
   };
 
   const handleDeleteMarco = () => {
-    onDelete(macro);
+    onDelete(transactionMacro);
   };
 
   return (
@@ -46,11 +46,16 @@ export const MacroCard: FC<MacroCardProps> = ({
       <CardHeader>
         <div className="flex items-center justify-start gap-2">
           <CardTitle>
-            <Link to={ROUTE.MACRO_UPDATE} params={{ id: macro.id }} className="underline">
-              {macro.name}
+            <Link to={ROUTE.TRANSACTION_MACRO_UPDATE} params={{ id: transactionMacro.id }} className="underline">
+              {transactionMacro.name}
             </Link>
           </CardTitle>
-          <Switch disabled={isLoading} size="sm" checked={macro.active} onCheckedChange={handleMacroChecked} />
+          <Switch
+            disabled={isLoading}
+            size="sm"
+            checked={transactionMacro.active}
+            onCheckedChange={handleMacroChecked}
+          />
         </div>
       </CardHeader>
 
@@ -65,23 +70,23 @@ export const MacroCard: FC<MacroCardProps> = ({
           {category ? <Badge variant="secondary">{category.name}</Badge> : <Badge variant="outline">None</Badge>}
         </div>
 
-        <p className="my-2 font-bold text-sm">{macro.memo}</p>
+        <p className="my-2 font-bold text-sm">{transactionMacro.memo}</p>
 
         <div className="flex justify-between">
           <div className="flex gap-1 text-sm">
-            <p>{macro.amount?.toLocaleString("en-US")}</p>
+            <p>{transactionMacro.amount?.toLocaleString("en-US")}</p>
             {currency ? <p>{currency.symbol}</p> : null}
           </div>
 
           <div className="flex items-center justify-end gap-2 text-muted-foreground text-xs">
-            {macro.day || macro.hour || macro.minute ? (
+            {transactionMacro.day || transactionMacro.hour || transactionMacro.minute ? (
               <>
-                <p>{macro.day ? macro.day.toString().padStart(2, "0") : "--"}</p>
+                <p>{transactionMacro.day ? transactionMacro.day.toString().padStart(2, "0") : "--"}</p>
 
                 <div className="flex gap-0.5">
-                  <p>{macro.hour ? macro.hour.toString().padStart(2, "0") : "--"}</p>
+                  <p>{transactionMacro.hour ? transactionMacro.hour.toString().padStart(2, "0") : "--"}</p>
                   <p>:</p>
-                  <p>{macro.minute ? macro.minute.toString().padStart(2, "0") : "--"}</p>
+                  <p>{transactionMacro.minute ? transactionMacro.minute.toString().padStart(2, "0") : "--"}</p>
                 </div>
               </>
             ) : (

@@ -22,7 +22,7 @@ interface TransactionStore {
   saveAllTransaction: () => Promise<void>;
   cancelAllTransaction: () => void;
   deleteTransaction: () => Promise<void>;
-  macroTransaction: (macro: Macro) => void;
+  macroTransaction: (macro: TransactionMacro) => void;
 
   editTransaction: (rowId: number) => void;
   cancelEditTransaction: (rowId: number) => void;
@@ -227,7 +227,7 @@ export const useTransactionStore = create<TransactionStore>()(
             log.error(error);
           }
         },
-        macroTransaction: (macro: Macro) => {
+        macroTransaction: (macro: TransactionMacro) => {
           try {
             const currencies = useTransactionOptionStore.getState().currencies;
             const transactionTypes = useTransactionOptionStore.getState().transactionTypes;

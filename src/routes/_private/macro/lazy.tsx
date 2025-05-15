@@ -3,19 +3,19 @@ import { ToggleLeft, ToggleRight, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
-import { MacroCard } from "@/components/macro/macro-card";
+import { TransactionMacroCard } from "@/components/macro/transaction-macro-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
+import { TRANSACTION_MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { MACRO_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { useMacroStore } from "@/stores/macro.store";
+import { useTransactionMacroStore } from "@/stores/transaction-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { mapBy } from "@/utils/map-by";
 
 const MacroPage = () => {
-  const [selectedMacro, setSelectedMacro] = useState<Macro | null>(null);
+  const [selectedMacro, setSelectedMacro] = useState<TransactionMacro | null>(null);
   const [isOpenDeleteMacroDialog, setIsOpenDeleteMacroDialog] = useState(false);
 
   const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
@@ -29,18 +29,25 @@ const MacroPage = () => {
         getCategories: state.getCategories,
       })),
     );
-  const { isLoading, activeStatus, allMacros, changeActiveStatus, getAllMacros, toggleMacroActive, removeMacro } =
-    useMacroStore(
-      useShallow((state) => ({
-        isLoading: state.isLoading,
-        activeStatus: state.activeStatus,
-        allMacros: state.allMacros,
-        changeActiveStatus: state.changeActiveStatus,
-        getAllMacros: state.getAllMacros,
-        toggleMacroActive: state.toggleMacroActive,
-        removeMacro: state.removeMacro,
-      })),
-    );
+  const {
+    isLoading,
+    status,
+    allTransactionMacros,
+    changeMacroStatus,
+    getAllTransactionMacros,
+    toggleTransactionMacroActive,
+    removeTransactionMacro,
+  } = useTransactionMacroStore(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      status: state.status,
+      allTransactionMacros: state.allTransactionMacros,
+      changeMacroStatus: state.changeMacroStatus,
+      getAllTransactionMacros: state.getAllTransactionMacros,
+      toggleTransactionMacroActive: state.toggleTransactionMacroActive,
+      removeTransactionMacro: state.removeTransactionMacro,
+    })),
+  );
 
   const currencyMap = useMemo(() => mapBy(currencies, "id"), [currencies]);
   const typeMap = useMemo(() => mapBy(transactionTypes, "id"), [transactionTypes]);
@@ -48,21 +55,21 @@ const MacroPage = () => {
 
   useEffect(() => {
     Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
-    getAllMacros();
+    getAllTransactionMacros();
   }, []);
 
   const handleChangeActiveStatus = (value: string) => {
-    changeActiveStatus(value);
-    getAllMacros();
+    changeMacroStatus(value);
+    getAllTransactionMacros();
   };
 
   const handleToggleMacroActive = async (macroId: number, active: boolean) => {
-    await toggleMacroActive(macroId, active);
+    await toggleTransactionMacroActive(macroId, active);
 
-    getAllMacros();
+    getAllTransactionMacros();
   };
 
-  const handleOpenDeleteMacroDialog = (macro: Macro) => {
+  const handleOpenDeleteMacroDialog = (macro: TransactionMacro) => {
     if (!macro) return;
 
     setIsOpenDeleteMacroDialog(true);
@@ -78,8 +85,8 @@ const MacroPage = () => {
 
   const handleDeleteMacro = async () => {
     if (selectedMacro) {
-      await removeMacro(selectedMacro.id);
-      await getAllMacros();
+      await removeTransactionMacro(selectedMacro.id);
+      await getAllTransactionMacros();
     }
 
     handleCloseDeleteMacroDialog();
@@ -89,12 +96,12 @@ const MacroPage = () => {
     <>
       <DeleteDialog
         isOpen={isOpenDeleteMacroDialog}
-        title="Delete Macro"
+        title="Delete Transaction Macro"
         onClose={handleCloseDeleteMacroDialog}
         onConfirm={handleDeleteMacro}
       >
         <p className="text-sm">
-          Do you want to delete macro <span className="font-bold">{selectedMacro?.name}</span> ?
+          Do you want to delete transaction macro <span className="font-bold">{selectedMacro?.name}</span> ?
         </p>
       </DeleteDialog>
 
@@ -105,50 +112,58 @@ const MacroPage = () => {
 
         <div className="grid grid-rows-[32px_auto] gap-4">
           <div className="flex justify-between gap-2">
-            <Tabs defaultValue={activeStatus} onValueChange={handleChangeActiveStatus}>
+            <Tabs defaultValue={status} onValueChange={handleChangeActiveStatus}>
               <TabsList>
-                <TabsTrigger value={MACRO_ACTIVE_STATUS.ALL}>
+                <TabsTrigger value={TRANSACTION_MACRO_ACTIVE_STATUS.ALL}>
                   <p className="font-bold">All</p>
                 </TabsTrigger>
-                <TabsTrigger value={MACRO_ACTIVE_STATUS.ACTIVE}>
+                <TabsTrigger value={TRANSACTION_MACRO_ACTIVE_STATUS.ACTIVE}>
                   <ToggleRight />
                 </TabsTrigger>
-                <TabsTrigger value={MACRO_ACTIVE_STATUS.INACTIVE}>
+                <TabsTrigger value={TRANSACTION_MACRO_ACTIVE_STATUS.INACTIVE}>
                   <ToggleLeft />
                 </TabsTrigger>
               </TabsList>
             </Tabs>
 
             <Button disabled={isLoading} variant="outline" size="sm" asChild>
-              <Link to={ROUTE.MACRO_CREATE}>
+              <Link to={ROUTE.TRANSACTION_MACRO_CREATE}>
                 <Wrench />
-                <p>Macro</p>
+                <p>Transaction</p>
               </Link>
             </Button>
           </div>
 
-          <Card>
-            {allMacros?.length ? (
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {allMacros.map((macro) => (
-                  <MacroCard
-                    key={macro.id}
-                    isLoading={isLoading}
-                    macro={macro}
-                    currency={macro.currency_id ? currencyMap[macro.currency_id] : null}
-                    type={macro.type_id ? typeMap[macro.type_id] : null}
-                    category={macro.category_id ? categoryMap[macro.category_id] : null}
-                    onToggleActive={handleToggleMacroActive}
-                    onDelete={handleOpenDeleteMacroDialog}
-                  />
-                ))}
-              </CardContent>
-            ) : (
+          <div className="grid grid-cols-2 gap-4">
+            <Card>
+              {allTransactionMacros?.length ? (
+                <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {allTransactionMacros.map((transactionMacro) => (
+                    <TransactionMacroCard
+                      key={transactionMacro.id}
+                      isLoading={isLoading}
+                      transactionMacro={transactionMacro}
+                      currency={transactionMacro.currency_id ? currencyMap[transactionMacro.currency_id] : null}
+                      type={transactionMacro.type_id ? typeMap[transactionMacro.type_id] : null}
+                      category={transactionMacro.category_id ? categoryMap[transactionMacro.category_id] : null}
+                      onToggleActive={handleToggleMacroActive}
+                      onDelete={handleOpenDeleteMacroDialog}
+                    />
+                  ))}
+                </CardContent>
+              ) : (
+                <CardContent className="flex justify-center py-12">
+                  <p className="text-sm font-semibold">No Transaction Macro</p>
+                </CardContent>
+              )}
+            </Card>
+
+            <Card>
               <CardContent className="flex justify-center py-12">
-                <p className="text-sm font-semibold">No Macro</p>
+                <p className="text-sm font-semibold">No Goal Macro</p>
               </CardContent>
-            )}
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
 
