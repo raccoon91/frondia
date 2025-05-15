@@ -2,13 +2,12 @@ import dayjs from "dayjs";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
+import { transactionAPI } from "@/apis/transaction.api";
 import { STORE_NAME } from "@/constants/store";
 import { TRANSACTION_STATUS } from "@/constants/transaction";
-import { supabase } from "@/lib/supabase/client";
 import { log } from "@/utils/log";
 import { useLocalStore } from "./common/local.store";
 import { useSessionStore } from "./common/session.store";
-import { useCurrencyRateStore } from "./currency-rate.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
 interface TransactionStore {
@@ -54,37 +53,16 @@ export const useTransactionStore = create<TransactionStore>()(
             const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
-            let builder = supabase.from("transactions").select(
-              `
-                *,
-                currency: currency_id (*),
-                transactionType: type_id (*),
-                category: category_id (*)
-              `,
-            );
-
-            if (selectedTransactionTypeId) {
-              builder = builder.eq("type_id", Number(selectedTransactionTypeId));
-            }
-
-            if (selectedCategoryId) {
-              builder = builder.eq("category_id", Number(selectedCategoryId));
-            }
-
-            if (selectedCurrencyId) {
-              builder = builder.eq("currency_id", Number(selectedCurrencyId));
-            }
-
-            const { data, error } = await builder
-              .gte("date", startOfMonth)
-              .lte("date", endOfMonth)
-              .order("date", { ascending: false })
-              .order("created_at", { ascending: true });
-
-            if (error) throw error;
+            const transactions = await transactionAPI.getsWithJoin({
+              typeId: selectedTransactionTypeId,
+              categoryId: selectedCategoryId,
+              currencyId: selectedCurrencyId,
+              start: startOfMonth,
+              end: endOfMonth,
+            });
 
             const datasets =
-              data?.map((transaction) => ({
+              transactions?.map((transaction) => ({
                 id: transaction.id,
                 status: TRANSACTION_STATUS.DONE,
                 checked: false,
@@ -156,50 +134,23 @@ export const useTransactionStore = create<TransactionStore>()(
             const transactionDatasets = get().transactionDatasets;
             const editableTransaction = get().editableTransaction;
 
-            const inserts: Omit<Transaction, "id" | "user_id" | "created_at" | "updated_at">[] = [];
-            const upserts: Omit<Transaction, "user_id" | "created_at" | "updated_at">[] = [];
+            const inserts: TransactionData[] = [];
+            const upserts: TransactionData[] = [];
 
             for (const dataset of transactionDatasets) {
               if (!editableTransaction[dataset.id]) continue;
-              if (!dataset.date || !dataset.transactionType || !dataset.category || !dataset.currency) continue;
-
-              const currencyRate = await useCurrencyRateStore
-                .getState()
-                .getCurrencyRate(dataset.date, dataset.currency);
 
               if (dataset.status === TRANSACTION_STATUS.NEW) {
-                inserts.push({
-                  date: dataset.date,
-                  type_id: dataset.transactionType.id,
-                  category_id: dataset.category.id,
-                  currency_id: dataset.currency.id,
-                  memo: dataset.memo,
-                  amount: dataset.amount,
-                  usd_rate: currencyRate?.rate?.usd,
-                });
+                inserts.push(dataset);
               } else if (dataset.status === TRANSACTION_STATUS.EDIT) {
-                upserts.push({
-                  id: dataset.id,
-                  date: dataset.date,
-                  type_id: dataset.transactionType.id,
-                  category_id: dataset.category.id,
-                  currency_id: dataset.currency.id,
-                  memo: dataset.memo,
-                  amount: dataset.amount,
-                  usd_rate: currencyRate?.rate?.usd,
-                });
+                upserts.push(dataset);
               }
 
               delete editableTransaction[dataset.id];
             }
 
-            const { error: insertError } = await supabase.from("transactions").insert(inserts);
-
-            const { error: upsertError } = await supabase.from("transactions").upsert(upserts);
-
-            if (insertError) throw insertError;
-
-            if (upsertError) throw upsertError;
+            await transactionAPI.bulkCreate(inserts);
+            await transactionAPI.bulkUpdate(upserts);
 
             set({ editableTransaction }, false, "saveAllTransaction");
 
@@ -254,24 +205,22 @@ export const useTransactionStore = create<TransactionStore>()(
           try {
             const datasets = get().transactionDatasets;
 
-            const { filtered, deleteIds } = datasets.reduce<{ filtered: TransactionData[]; deleteIds: number[] }>(
+            const { filtered, deletes } = datasets.reduce<{ filtered: TransactionData[]; deletes: TransactionData[] }>(
               (acc, dataset) => {
                 if (dataset.status === TRANSACTION_STATUS.NEW && dataset.checked) return acc;
 
                 if (dataset.checked) {
-                  acc.deleteIds.push(dataset.id);
+                  acc.deletes.push(dataset);
                 } else {
                   acc.filtered.push(dataset);
                 }
 
                 return acc;
               },
-              { filtered: [], deleteIds: [] },
+              { filtered: [], deletes: [] },
             );
 
-            if (deleteIds.length) {
-              await supabase.from("transactions").delete().in("id", deleteIds);
-            }
+            await transactionAPI.bulkDelete(deletes);
 
             set({ transactionDatasets: filtered }, false, "deleteTransaction");
           } catch (error) {
@@ -476,31 +425,7 @@ export const useTransactionStore = create<TransactionStore>()(
 
             const dataset = transactionDatasets.find((dataset) => dataset.id === rowId);
 
-            if (!dataset || !dataset.date || !dataset.transactionType || !dataset.category || !dataset.currency) return;
-
-            const currencyRate = await useCurrencyRateStore.getState().getCurrencyRate(dataset.date, dataset.currency);
-
-            const { data: newTransaction } = await supabase
-              .from("transactions")
-              .upsert({
-                id: dataset.status === TRANSACTION_STATUS.NEW ? undefined : dataset.id,
-                date: dataset.date,
-                type_id: dataset.transactionType.id,
-                category_id: dataset.category.id,
-                currency_id: dataset.currency.id,
-                memo: dataset.memo,
-                amount: dataset.amount,
-                usd_rate: currencyRate?.rate?.usd,
-              })
-              .select(
-                `
-                  *,
-                  currency: currency_id (*),
-                  transactionType: type_id (*),
-                  category: category_id (*)
-                `,
-              )
-              .maybeSingle();
+            const newTransaction = await transactionAPI.upsert(dataset);
 
             if (!newTransaction) return;
 

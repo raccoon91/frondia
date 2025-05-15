@@ -2,9 +2,10 @@ import dayjs from "dayjs";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
+import { goalAPI } from "@/apis/goal.api";
+import { transactionAPI } from "@/apis/transaction.api";
 import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
-import { supabase } from "@/lib/supabase/client";
 import { log } from "@/utils/log";
 import { mapBy } from "@/utils/map-by";
 import { useSessionStore } from "./common/session.store";
@@ -40,15 +41,9 @@ export const useDashboardStore = create<DashboardStore>()(
             const startOfMonth = dayjs(sessionDate).startOf("month").format("YYYY-MM-DD HH:mm");
             const endOfMonth = dayjs(sessionDate).endOf("month").format("YYYY-MM-DD HH:mm");
 
-            const { data: transactions, error: transactionError } = await supabase
-              .from("transactions")
-              .select("*")
-              .gte("date", startOfMonth)
-              .lte("date", endOfMonth);
+            const data = await transactionAPI.gets({ start: startOfMonth, end: endOfMonth });
 
-            if (transactionError) throw transactionError;
-
-            set({ transactions }, false, "getTransactions");
+            set({ transactions: data }, false, "getTransactions");
           } catch (error) {
             log.error(error);
           }
@@ -213,22 +208,7 @@ export const useDashboardStore = create<DashboardStore>()(
               {},
             );
 
-            const { data: goals, error: goalErorr } = await supabase
-              .from("goals")
-              .select(
-                `
-                  *,
-                  type: type_id (*),
-                  currency: currency_id (*),
-                  map: goal_category_map (id, category: categories (*))
-                `,
-              )
-              .lte("start", endOfMonth)
-              .gte("end", startOfMonth)
-              .order("start", { ascending: true })
-              .order("created_at", { ascending: true });
-
-            if (goalErorr) throw goalErorr;
+            const goals = await goalAPI.gets({ start: startOfMonth, end: endOfMonth });
 
             const { goalsInProgress, updated } = goals.reduce<{
               goalsInProgress: GoalInProgress[];
@@ -291,24 +271,7 @@ export const useDashboardStore = create<DashboardStore>()(
               { goalsInProgress: [], updated: [] },
             );
 
-            if (updated.length) {
-              await supabase.from("goals").upsert(
-                updated.map((goal) => ({
-                  id: goal.id,
-                  user_id: goal.user_id,
-                  name: goal.name,
-                  type_id: goal.type_id,
-                  rule: goal.rule,
-                  amount: goal.amount,
-                  currency_id: goal.currency_id,
-                  period: goal.period,
-                  start: goal.start,
-                  end: goal.end,
-                  status: goal.status,
-                  created_at: goal.created_at,
-                })),
-              );
-            }
+            await goalAPI.bulkUpdate(updated);
 
             set({ goalsInProgress }, false, "getGoalsInProgress");
           } catch (error) {

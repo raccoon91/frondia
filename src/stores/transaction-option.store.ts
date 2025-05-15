@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
+import { categoryAPI } from "@/apis/category.api";
+import { currencyAPI } from "@/apis/currency.api";
+import { transactionTypeAPI } from "@/apis/transaction-type.api";
 import { STORE_NAME } from "@/constants/store";
-import { supabase } from "@/lib/supabase/client";
 import { log } from "@/utils/log";
 
 interface TransactionOptionStore {
@@ -47,9 +49,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
 
         getCurrencies: async () => {
           try {
-            const { data, error } = await supabase.from("currencies").select("*");
-
-            if (error) throw error;
+            const data = await currencyAPI.gets();
 
             set({ currencies: data ?? [] }, false, "getCurrencies");
           } catch (error) {
@@ -58,12 +58,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
         },
         getTransactionTypes: async () => {
           try {
-            const { data, error } = await supabase
-              .from("transaction_types")
-              .select("*")
-              .order("order", { ascending: true });
-
-            if (error) throw error;
+            const data = await transactionTypeAPI.gets();
 
             set({ transactionTypes: data ?? [] }, false, "getTransactionTypes");
           } catch (error) {
@@ -72,9 +67,7 @@ export const useTransactionOptionStore = create<TransactionOptionStore>()(
         },
         getCategories: async () => {
           try {
-            const { data, error } = await supabase.from("categories").select("*").order("order", { ascending: true });
-
-            if (error) throw error;
+            const data = await categoryAPI.gets();
 
             set({ categories: data ?? [] }, false, "getCategories");
           } catch (error) {

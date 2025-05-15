@@ -2,9 +2,9 @@ import type { z } from "zod";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
+import { macroAPI } from "@/apis/macro.api";
 import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { STORE_NAME } from "@/constants/store";
-import { supabase } from "@/lib/supabase/client";
 import type { macroFormSchema } from "@/schema/macro.schema";
 import { log } from "@/utils/log";
 
@@ -42,9 +42,7 @@ export const useMacroStore = create<MacroStore>()(
 
         getMacros: async () => {
           try {
-            const { data, error } = await supabase.from("macros").select("*").eq("active", true);
-
-            if (error) throw error;
+            const data = await macroAPI.gets({ active: MACRO_ACTIVE_STATUS.ACTIVE });
 
             set({ macros: data ?? [] }, false, "getMacros");
           } catch (error) {
@@ -55,17 +53,7 @@ export const useMacroStore = create<MacroStore>()(
           try {
             const activeStatus = get().activeStatus;
 
-            const builder = supabase.from("macros").select("*");
-
-            if (activeStatus === MACRO_ACTIVE_STATUS.ACTIVE) {
-              builder.eq("active", true);
-            } else if (activeStatus === MACRO_ACTIVE_STATUS.INACTIVE) {
-              builder.eq("active", false);
-            }
-
-            const { data, error } = await builder.order("created_at", { ascending: true });
-
-            if (error) throw error;
+            const data = await macroAPI.gets({ active: activeStatus });
 
             set({ allMacros: data ?? [] }, false, "getAllMacros");
           } catch (error) {
@@ -76,9 +64,7 @@ export const useMacroStore = create<MacroStore>()(
           try {
             set({ isLoading: true }, false, "getMacro");
 
-            const { data, error } = await supabase.from("macros").select("*").eq("id", macroId).maybeSingle();
-
-            if (error) throw error;
+            const data = await macroAPI.get({ id: macroId });
 
             set({ isLoading: false }, false, "getMacro");
 
@@ -93,27 +79,7 @@ export const useMacroStore = create<MacroStore>()(
           try {
             set({ isLoading: true }, false, "createMacro");
 
-            const { data, error } = await supabase.auth.getUser();
-
-            if (error) throw error;
-
-            if (!data?.user) throw new Error("User not exist");
-
-            const { error: macroError } = await supabase.from("macros").insert({
-              user_id: data.user.id,
-              name: formdata.name,
-              type_id: formdata.type_id ? Number(formdata.type_id) : null,
-              category_id: formdata.category_id ? Number(formdata.category_id) : null,
-              currency_id: formdata.currency_id ? Number(formdata.currency_id) : null,
-              amount: formdata.amount ? Number(formdata.amount) : null,
-              memo: formdata.memo,
-              day: formdata.day ? Number(formdata.day) : null,
-              hour: formdata.hour ? Number(formdata.hour) : null,
-              minute: formdata.minute ? Number(formdata.minute) : null,
-              active: true,
-            });
-
-            if (macroError) throw macroError;
+            await macroAPI.create(formdata);
 
             set({ isLoading: false }, false, "createMacro");
           } catch (error) {
@@ -126,24 +92,7 @@ export const useMacroStore = create<MacroStore>()(
           try {
             set({ isLoading: true }, false, "updateMacro");
 
-            const { error: macroError } = await supabase
-              .from("macros")
-              .update({
-                user_id: macro.user_id,
-                name: formdata.name,
-                type_id: formdata.type_id ? Number(formdata.type_id) : null,
-                category_id: formdata.category_id ? Number(formdata.category_id) : null,
-                currency_id: formdata.currency_id ? Number(formdata.currency_id) : null,
-                amount: formdata.amount ? Number(formdata.amount) : null,
-                memo: formdata.memo,
-                day: formdata.day ? Number(formdata.day) : null,
-                hour: formdata.hour ? Number(formdata.hour) : null,
-                minute: formdata.minute ? Number(formdata.minute) : null,
-                active: macro.active,
-              })
-              .eq("id", macro.id);
-
-            if (macroError) throw macroError;
+            await macroAPI.update(macro, formdata);
 
             set({ isLoading: false }, false, "updateMacro");
           } catch (error) {
@@ -156,9 +105,7 @@ export const useMacroStore = create<MacroStore>()(
           try {
             set({ isLoading: true }, false, "toggleMacroActive");
 
-            const { error } = await supabase.from("macros").update({ active }).eq("id", macroId);
-
-            if (error) throw error;
+            await macroAPI.toggle({ id: macroId, active });
 
             set({ isLoading: false }, false, "toggleMacroActive");
           } catch (error) {
@@ -171,9 +118,7 @@ export const useMacroStore = create<MacroStore>()(
           try {
             set({ isLoading: true }, false, "removeMacro");
 
-            const { error } = await supabase.from("macros").delete().eq("id", macroId);
-
-            if (error) throw error;
+            await macroAPI.delete({ id: macroId });
 
             set({ isLoading: false }, false, "removeMacro");
           } catch (error) {
