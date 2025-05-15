@@ -3,20 +3,22 @@ import type { z } from "zod";
 import { supabase } from "@/lib/supabase/client";
 import type { goalFormSchema } from "@/schema/goal.schema";
 
+// const { data, error } = await supabase
+//   .from("goals")
+//   .select("*, type: type_id (*), currency: currency_id (*), map: goal_category_map (id, category: categories (*))")
+//   .or("repeat.eq.every, and(repeat.eq.once,period.eq.month,start.lte.${endOfMonth},end.gte.${startOfMonth}), and(repeat.eq.once,period.eq.week,start.lte.${endOfWeek},end.gte.${startOfWeek})")
+//   .lte("start", start)
+//   .gte("end", end)
+//   .order("start", { ascending: true })
+//   .order("created_at", { ascending: true });
+
 export const goalAPI = {
   gets: async ({ start, end }: { start: string; end: string }) => {
     const { data, error } = await supabase
       .from("goals")
       .select("*, type: type_id (*), currency: currency_id (*), map: goal_category_map (id, category: categories (*))")
-      // .or(
-      //   `
-      //   repeat.eq.every,
-      //   and(repeat.eq.once,period.eq.month,start.lte.${endOfMonth},end.gte.${startOfMonth}),
-      //   and(repeat.eq.once,period.eq.week,start.lte.${endOfWeek},end.gte.${startOfWeek})
-      //   `,
-      // )
-      .lte("start", start)
-      .gte("end", end)
+      .gte("start", start)
+      .lte("end", end)
       .order("start", { ascending: true })
       .order("created_at", { ascending: true });
 

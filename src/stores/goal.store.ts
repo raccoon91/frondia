@@ -4,10 +4,10 @@ import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import { goalAPI } from "@/apis/goal.api";
-import { GOAL_STATUS } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import type { goalFormSchema } from "@/schema/goal.schema";
 import { log } from "@/utils/log";
+import { parseGoalBystatus } from "@/utils/parse-goal-by-status";
 import { useSessionStore } from "./common/session.store";
 
 interface GoalStore {
@@ -44,41 +44,7 @@ export const useGoalStore = create<GoalStore>()(
 
             const goals = await goalAPI.gets({ start: startOfMonth, end: endOfMonth });
 
-            const { goalsInReady, goalsInProgress, goalsInDone, updated } = goals.reduce<{
-              goalsInReady: Goal[];
-              goalsInProgress: Goal[];
-              goalsInDone: Goal[];
-              updated: Goal[];
-            }>(
-              (acc, goal) => {
-                if (
-                  goal.status === GOAL_STATUS.READY &&
-                  (dayjs(goal.start).isSame(today) || dayjs(goal.start).isBefore(today))
-                ) {
-                  // change goal status to progress
-                  goal.status = GOAL_STATUS.PROGRESS;
-
-                  acc.updated.push(goal);
-                } else if (goal.status === GOAL_STATUS.PROGRESS && dayjs(goal.end).isBefore(today)) {
-                  // change goal status to done
-                  goal.status = GOAL_STATUS.DONE;
-
-                  acc.updated.push(goal);
-                }
-
-                if (goal.status === GOAL_STATUS.READY) acc.goalsInReady.push(goal);
-                if (goal.status === GOAL_STATUS.PROGRESS) acc.goalsInProgress.push(goal);
-                if (goal.status === GOAL_STATUS.DONE) acc.goalsInDone.push(goal);
-
-                return acc;
-              },
-              {
-                goalsInReady: [],
-                goalsInProgress: [],
-                goalsInDone: [],
-                updated: [],
-              },
-            );
+            const { goalsInReady, goalsInProgress, goalsInDone, updated } = parseGoalBystatus(goals, today);
 
             await goalAPI.bulkUpdate(updated);
 

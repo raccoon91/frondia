@@ -4,10 +4,11 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import { goalAPI } from "@/apis/goal.api";
 import { transactionAPI } from "@/apis/transaction.api";
-import { GOAL_RULE, GOAL_STATUS } from "@/constants/goal";
+import { GOAL_RULE } from "@/constants/goal";
 import { STORE_NAME } from "@/constants/store";
 import { log } from "@/utils/log";
 import { mapBy } from "@/utils/map-by";
+import { parseGoalBystatus } from "@/utils/parse-goal-by-status";
 import { useSessionStore } from "./common/session.store";
 import { useTransactionOptionStore } from "./transaction-option.store";
 
@@ -210,66 +211,43 @@ export const useDashboardStore = create<DashboardStore>()(
 
             const goals = await goalAPI.gets({ start: startOfMonth, end: endOfMonth });
 
-            const { goalsInProgress, updated } = goals.reduce<{
-              goalsInProgress: GoalInProgress[];
-              updated: Goal[];
-            }>(
-              (acc, goal) => {
-                if (
-                  goal.status === GOAL_STATUS.READY &&
-                  (dayjs(goal.start).isSame(today) || dayjs(goal.start).isBefore(today))
-                ) {
-                  // change goal status to progress
-                  goal.status = GOAL_STATUS.PROGRESS;
+            const { goalsInProgress: progress, updated } = parseGoalBystatus(goals, today);
 
-                  acc.updated.push(goal);
-                } else if (goal.status === GOAL_STATUS.PROGRESS && dayjs(goal.end).isBefore(today)) {
-                  // change goal status to done
-                  goal.status = GOAL_STATUS.DONE;
+            const goalsInProgress = progress.map((goal) => {
+              let totalAmount = 0;
+              let result: GoalInProgress["result"] = "success";
+              let value = 0;
 
-                  acc.updated.push(goal);
-                }
+              goal.map?.forEach(({ category }) => {
+                const transactionsByCategory = transactionMapByCategoryId?.[category.id] ?? [];
 
-                if (goal.status === GOAL_STATUS.PROGRESS) {
-                  let totalAmount = 0;
-                  let result: GoalInProgress["result"] = "success";
-                  let value = 0;
-
-                  goal.map.forEach(({ category }) => {
-                    const transactionsByCategory = transactionMapByCategoryId?.[category.id] ?? [];
-
-                    transactionsByCategory.forEach((transaction) => {
-                      if (goal.currency_id === transaction.currency_id) {
-                        totalAmount += transaction.amount;
-                      }
-                    });
-                  });
-
-                  if (goal.rule === GOAL_RULE.GREATER) {
-                    result = totalAmount >= goal.amount ? "success" : "failure";
-                    value = (totalAmount / goal.amount) * 100;
-                  } else if (goal.rule === GOAL_RULE.LESS) {
-                    result = totalAmount <= goal.amount ? "success" : "failure";
-                    value = (totalAmount / goal.amount) * 100;
+                transactionsByCategory.forEach((transaction) => {
+                  if (goal.currency_id === transaction.currency_id) {
+                    totalAmount += transaction.amount;
                   }
+                });
+              });
 
-                  acc.goalsInProgress.push({
-                    id: goal.id,
-                    rule: goal.rule,
-                    result,
-                    name: goal.name,
-                    value,
-                    remain:
-                      goal.period === "custom"
-                        ? dayjs(goal.end).diff(dayjs(), "day")
-                        : dayjs(dayjs().endOf(goal.period as "month" | "week")).diff(dayjs(), "day"),
-                  });
-                }
+              if (goal.rule === GOAL_RULE.GREATER) {
+                result = totalAmount >= goal.amount ? "success" : "failure";
+                value = (totalAmount / goal.amount) * 100;
+              } else if (goal.rule === GOAL_RULE.LESS) {
+                result = totalAmount <= goal.amount ? "success" : "failure";
+                value = (totalAmount / goal.amount) * 100;
+              }
 
-                return acc;
-              },
-              { goalsInProgress: [], updated: [] },
-            );
+              return {
+                id: goal.id,
+                rule: goal.rule,
+                result,
+                name: goal.name,
+                value,
+                remain:
+                  goal.period === "custom"
+                    ? dayjs(goal.end).diff(dayjs(), "day")
+                    : dayjs(dayjs().endOf(goal.period as "month" | "week")).diff(dayjs(), "day"),
+              };
+            });
 
             await goalAPI.bulkUpdate(updated);
 
