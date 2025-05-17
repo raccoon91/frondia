@@ -1,22 +1,27 @@
 import { Link, Outlet, createLazyFileRoute } from "@tanstack/react-router";
-import { ToggleLeft, ToggleRight, Wrench } from "lucide-react";
+import { Coins, Flame, ToggleLeft, ToggleRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
+import { GoalMacroCard } from "@/components/macro/goal-macro-card";
 import { TransactionMacroCard } from "@/components/macro/transaction-macro-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TRANSACTION_MACRO_ACTIVE_STATUS } from "@/constants/macro";
+import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { MACRO_FILE_ROUTE, ROUTE } from "@/constants/route";
-import { useTransactionMacroStore } from "@/stores/transaction-macro.store";
+import { useGoalMacroStore } from "@/stores/macro/goal-macro.store";
+import { useMacroOptionStore } from "@/stores/macro/macro-option.store";
+import { useTransactionMacroStore } from "@/stores/macro/transaction-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { mapBy } from "@/utils/map-by";
 
 const MacroPage = () => {
-  const [selectedMacro, setSelectedMacro] = useState<TransactionMacro | null>(null);
-  const [isOpenDeleteMacroDialog, setIsOpenDeleteMacroDialog] = useState(false);
+  const [selectedTransactionMacro, setSelectedTransactionMacro] = useState<TransactionMacro | null>(null);
+  const [selectedGoalMacro, setSelectedGoalMacro] = useState<GoalMacro | null>(null);
+  const [isOpenDeleteTransactionMacroDialog, setIsOpenDeleteTransactionMacroDialog] = useState(false);
+  const [isOpenDeleteGoalMacroDialog, setIsOpenDeleteGoalMacroDialog] = useState(false);
 
   const { currencies, transactionTypes, categories, getCurrencies, getTransactionTypes, getCategories } =
     useTransactionOptionStore(
@@ -29,23 +34,40 @@ const MacroPage = () => {
         getCategories: state.getCategories,
       })),
     );
+  const { status, changeMacroStatus } = useMacroOptionStore(
+    useShallow((state) => ({
+      status: state.status,
+      changeMacroStatus: state.changeMacroStatus,
+    })),
+  );
   const {
-    isLoading,
-    status,
+    isLoading: isTransactionLoading,
     allTransactionMacros,
-    changeMacroStatus,
     getAllTransactionMacros,
     toggleTransactionMacroActive,
     removeTransactionMacro,
   } = useTransactionMacroStore(
     useShallow((state) => ({
       isLoading: state.isLoading,
-      status: state.status,
       allTransactionMacros: state.allTransactionMacros,
-      changeMacroStatus: state.changeMacroStatus,
       getAllTransactionMacros: state.getAllTransactionMacros,
       toggleTransactionMacroActive: state.toggleTransactionMacroActive,
       removeTransactionMacro: state.removeTransactionMacro,
+    })),
+  );
+  const {
+    isLoading: isGoalLoading,
+    allGoalMacros,
+    getAllGoalMacros,
+    toggleGoalMacroActive,
+    removeGoalMacro,
+  } = useGoalMacroStore(
+    useShallow((state) => ({
+      isLoading: state.isLoading,
+      allGoalMacros: state.allGoalMacros,
+      getAllGoalMacros: state.getAllGoalMacros,
+      toggleGoalMacroActive: state.toggleGoalMacroActive,
+      removeGoalMacro: state.removeGoalMacro,
     })),
   );
 
@@ -53,55 +75,117 @@ const MacroPage = () => {
   const typeMap = useMemo(() => mapBy(transactionTypes, "id"), [transactionTypes]);
   const categoryMap = useMemo(() => mapBy(categories, "id"), [categories]);
 
+  const transactionMacrosWithJoin = useMemo(() => {
+    return allTransactionMacros.map((transactionMacro) => ({
+      ...transactionMacro,
+      currency: transactionMacro.currency_id ? currencyMap[transactionMacro.currency_id] : null,
+      type: transactionMacro.type_id ? typeMap[transactionMacro.type_id] : null,
+      category: transactionMacro.category_id ? categoryMap[transactionMacro.category_id] : null,
+    }));
+  }, [allTransactionMacros, currencyMap, typeMap, categoryMap]);
+
+  const goalMacrosWithJoin = useMemo(() => {
+    return allGoalMacros.map((goalMacro) => ({
+      ...goalMacro,
+      currency: goalMacro.currency_id ? currencyMap[goalMacro.currency_id] : null,
+      type: goalMacro.type_id ? typeMap[goalMacro.type_id] : null,
+      categories: Array.isArray(goalMacro.category_ids)
+        ? goalMacro.category_ids?.map((categoryId) => categoryMap[categoryId as string])
+        : null,
+    }));
+  }, [allGoalMacros, currencyMap, typeMap, categoryMap]);
+
   useEffect(() => {
     Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
     getAllTransactionMacros();
+    getAllGoalMacros();
   }, []);
 
   const handleChangeActiveStatus = (value: string) => {
     changeMacroStatus(value);
     getAllTransactionMacros();
+    getAllGoalMacros();
   };
 
-  const handleToggleMacroActive = async (macroId: number, active: boolean) => {
-    await toggleTransactionMacroActive(macroId, active);
+  const handleToggleTransactionMacroActive = async (transactionMacroId: number, active: boolean) => {
+    await toggleTransactionMacroActive(transactionMacroId, active);
 
     getAllTransactionMacros();
   };
 
-  const handleOpenDeleteMacroDialog = (macro: TransactionMacro) => {
-    if (!macro) return;
+  const handleToggleGoalMacroActive = async (goalMacroId: number, active: boolean) => {
+    await toggleGoalMacroActive(goalMacroId, active);
 
-    setIsOpenDeleteMacroDialog(true);
-    setSelectedMacro(macro);
+    getAllGoalMacros();
   };
 
-  const handleCloseDeleteMacroDialog = (open?: boolean) => {
+  const handleOpenDeleteTransactionMacroDialog = (transactionMacro: TransactionMacro) => {
+    if (!transactionMacro) return;
+
+    setIsOpenDeleteTransactionMacroDialog(true);
+    setSelectedTransactionMacro(transactionMacro);
+  };
+
+  const handleCloseDeleteTransactionMacroDialog = (open?: boolean) => {
     if (open) return;
 
-    setIsOpenDeleteMacroDialog(false);
-    setSelectedMacro(null);
+    setIsOpenDeleteTransactionMacroDialog(false);
+    setSelectedTransactionMacro(null);
   };
 
-  const handleDeleteMacro = async () => {
-    if (selectedMacro) {
-      await removeTransactionMacro(selectedMacro.id);
+  const handleDeleteTransactionMacro = async () => {
+    if (selectedTransactionMacro) {
+      await removeTransactionMacro(selectedTransactionMacro.id);
       await getAllTransactionMacros();
     }
 
-    handleCloseDeleteMacroDialog();
+    handleCloseDeleteTransactionMacroDialog();
+  };
+
+  const handleOpenDeleteGoalMacroDialog = (goalMacro: GoalMacro) => {
+    if (!goalMacro) return;
+
+    setIsOpenDeleteGoalMacroDialog(true);
+    setSelectedGoalMacro(goalMacro);
+  };
+
+  const handleCloseDeleteGoalMacroDialog = (open?: boolean) => {
+    if (open) return;
+
+    setIsOpenDeleteGoalMacroDialog(false);
+    setSelectedGoalMacro(null);
+  };
+
+  const handleDeleteGoalMacro = async () => {
+    if (selectedGoalMacro) {
+      await removeGoalMacro(selectedGoalMacro.id);
+      await getAllGoalMacros();
+    }
+
+    handleCloseDeleteGoalMacroDialog();
   };
 
   return (
     <>
       <DeleteDialog
-        isOpen={isOpenDeleteMacroDialog}
+        isOpen={isOpenDeleteTransactionMacroDialog}
         title="Delete Transaction Macro"
-        onClose={handleCloseDeleteMacroDialog}
-        onConfirm={handleDeleteMacro}
+        onClose={handleCloseDeleteTransactionMacroDialog}
+        onConfirm={handleDeleteTransactionMacro}
       >
         <p className="text-sm">
-          Do you want to delete transaction macro <span className="font-bold">{selectedMacro?.name}</span> ?
+          Do you want to delete transaction macro <span className="font-bold">{selectedTransactionMacro?.name}</span> ?
+        </p>
+      </DeleteDialog>
+
+      <DeleteDialog
+        isOpen={isOpenDeleteGoalMacroDialog}
+        title="Delete Goal Macro"
+        onClose={handleCloseDeleteGoalMacroDialog}
+        onConfirm={handleDeleteGoalMacro}
+      >
+        <p className="text-sm">
+          Do you want to delete goal macro <span className="font-bold">{selectedGoalMacro?.name}</span> ?
         </p>
       </DeleteDialog>
 
@@ -114,40 +198,46 @@ const MacroPage = () => {
           <div className="flex justify-between gap-2">
             <Tabs defaultValue={status} onValueChange={handleChangeActiveStatus}>
               <TabsList>
-                <TabsTrigger value={TRANSACTION_MACRO_ACTIVE_STATUS.ALL}>
+                <TabsTrigger value={MACRO_ACTIVE_STATUS.ALL}>
                   <p className="font-bold">All</p>
                 </TabsTrigger>
-                <TabsTrigger value={TRANSACTION_MACRO_ACTIVE_STATUS.ACTIVE}>
+                <TabsTrigger value={MACRO_ACTIVE_STATUS.ACTIVE}>
                   <ToggleRight />
                 </TabsTrigger>
-                <TabsTrigger value={TRANSACTION_MACRO_ACTIVE_STATUS.INACTIVE}>
+                <TabsTrigger value={MACRO_ACTIVE_STATUS.INACTIVE}>
                   <ToggleLeft />
                 </TabsTrigger>
               </TabsList>
             </Tabs>
 
-            <Button disabled={isLoading} variant="outline" size="sm" asChild>
-              <Link to={ROUTE.TRANSACTION_MACRO_CREATE}>
-                <Wrench />
-                <p>Transaction</p>
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button disabled={isTransactionLoading} variant="outline" size="sm" asChild>
+                <Link to={ROUTE.TRANSACTION_MACRO_CREATE}>
+                  <Coins />
+                  <p>Transaction</p>
+                </Link>
+              </Button>
+
+              <Button disabled={isGoalLoading} variant="outline" size="sm" asChild>
+                <Link to={ROUTE.GOAL_MACRO_CREATE}>
+                  <Flame />
+                  <p>Goal</p>
+                </Link>
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Card>
-              {allTransactionMacros?.length ? (
+              {transactionMacrosWithJoin?.length ? (
                 <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  {allTransactionMacros.map((transactionMacro) => (
+                  {transactionMacrosWithJoin.map((transactionMacro) => (
                     <TransactionMacroCard
                       key={transactionMacro.id}
-                      isLoading={isLoading}
+                      isLoading={isTransactionLoading}
                       transactionMacro={transactionMacro}
-                      currency={transactionMacro.currency_id ? currencyMap[transactionMacro.currency_id] : null}
-                      type={transactionMacro.type_id ? typeMap[transactionMacro.type_id] : null}
-                      category={transactionMacro.category_id ? categoryMap[transactionMacro.category_id] : null}
-                      onToggleActive={handleToggleMacroActive}
-                      onDelete={handleOpenDeleteMacroDialog}
+                      onToggleActive={handleToggleTransactionMacroActive}
+                      onDelete={handleOpenDeleteTransactionMacroDialog}
                     />
                   ))}
                 </CardContent>
@@ -159,9 +249,23 @@ const MacroPage = () => {
             </Card>
 
             <Card>
-              <CardContent className="flex justify-center py-12">
-                <p className="text-sm font-semibold">No Goal Macro</p>
-              </CardContent>
+              {goalMacrosWithJoin?.length ? (
+                <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {goalMacrosWithJoin.map((goalMacro) => (
+                    <GoalMacroCard
+                      key={goalMacro.id}
+                      isLoading={isGoalLoading}
+                      goalMacro={goalMacro}
+                      onToggleActive={handleToggleGoalMacroActive}
+                      onDelete={handleOpenDeleteGoalMacroDialog}
+                    />
+                  ))}
+                </CardContent>
+              ) : (
+                <CardContent className="flex justify-center py-12">
+                  <p className="text-sm font-semibold">No Goal Macro</p>
+                </CardContent>
+              )}
             </Card>
           </div>
         </div>

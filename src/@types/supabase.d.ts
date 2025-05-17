@@ -90,4 +90,26 @@ interface TransactionMacro {
   hour: Nullable<number>;
   minute: Nullable<number>;
   active: boolean;
+
+  currency?: Nullable<Currency>;
+  type?: Nullable<TransactionType>;
+  category?: Nullable<Category>;
+}
+
+interface GoalMacro {
+  id: number;
+  user_id: string;
+  name: string;
+  type_id: Nullable<number>;
+  category_ids: Nullable<JsonType>;
+  rule: Nullable<string>;
+  amount: Nullable<number>;
+  currency_id: Nullable<number>;
+  period: Nullable<string>;
+  created_at: string;
+  active: boolean;
+
+  currency?: Nullable<Currency>;
+  type?: Nullable<TransactionType>;
+  categories?: Nullable<Category[]>;
 }

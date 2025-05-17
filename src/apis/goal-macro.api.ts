@@ -2,11 +2,11 @@ import type { z } from "zod";
 
 import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
 import { supabase } from "@/lib/supabase/client";
-import type { transactionMacroFormSchema } from "@/schema/macro.schema";
+import type { goalMacroFormSchema } from "@/schema/macro.schema";
 
-export const transactionMacroAPI = {
+export const goalMacroAPI = {
   gets: async ({ active }: { active?: string }) => {
-    const builder = supabase.from("transaction_macros").select("*");
+    const builder = supabase.from("goal_macros").select("*");
 
     if (active === MACRO_ACTIVE_STATUS.ACTIVE) {
       builder.eq("active", true);
@@ -22,31 +22,31 @@ export const transactionMacroAPI = {
   },
 
   get: async ({ id }: { id: number }) => {
-    const { data, error } = await supabase.from("transaction_macros").select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabase.from("goal_macros").select("*").eq("id", id).maybeSingle();
 
     if (error) throw error;
 
     return data;
   },
 
-  create: async (formdata: z.infer<typeof transactionMacroFormSchema>) => {
+  create: async (formdata: z.infer<typeof goalMacroFormSchema>) => {
     const { data: authData, error: authError } = await supabase.auth.getUser();
 
     if (authError) throw authError;
 
     if (!authData?.user) throw new Error("User not exist");
 
-    const { data, error } = await supabase.from("transaction_macros").insert({
+    const { data, error } = await supabase.from("goal_macros").insert({
       user_id: authData.user.id,
       name: formdata.name,
       type_id: formdata.type_id ? Number(formdata.type_id) : null,
-      category_id: formdata.category_id ? Number(formdata.category_id) : null,
+      category_ids: formdata.category_ids?.length
+        ? formdata.category_ids.map((categoryId) => Number(categoryId))
+        : null,
       currency_id: formdata.currency_id ? Number(formdata.currency_id) : null,
+      rule: formdata.rule,
       amount: formdata.amount ? Number(formdata.amount) : null,
-      memo: formdata.memo,
-      day: formdata.day ? Number(formdata.day) : null,
-      hour: formdata.hour ? Number(formdata.hour) : null,
-      minute: formdata.minute ? Number(formdata.minute) : null,
+      period: formdata.period,
       active: true,
     });
 
@@ -55,21 +55,21 @@ export const transactionMacroAPI = {
     return data;
   },
 
-  update: async (macro: TransactionMacro, formdata: z.infer<typeof transactionMacroFormSchema>) => {
+  update: async (macro: GoalMacro, formdata: z.infer<typeof goalMacroFormSchema>) => {
     const { data, error } = await supabase
-      .from("transaction_macros")
+      .from("goal_macros")
       .update({
         user_id: macro.user_id,
         name: formdata.name,
         type_id: formdata.type_id ? Number(formdata.type_id) : null,
-        category_id: formdata.category_id ? Number(formdata.category_id) : null,
+        category_ids: formdata.category_ids?.length
+          ? formdata.category_ids.map((categoryId) => Number(categoryId))
+          : null,
         currency_id: formdata.currency_id ? Number(formdata.currency_id) : null,
+        rule: formdata.rule,
         amount: formdata.amount ? Number(formdata.amount) : null,
-        memo: formdata.memo,
-        day: formdata.day ? Number(formdata.day) : null,
-        hour: formdata.hour ? Number(formdata.hour) : null,
-        minute: formdata.minute ? Number(formdata.minute) : null,
-        active: macro.active,
+        period: formdata.period,
+        active: true,
       })
       .eq("id", macro.id);
 
@@ -79,7 +79,7 @@ export const transactionMacroAPI = {
   },
 
   toggle: async ({ id, active }: { id: number; active: boolean }) => {
-    const { data, error } = await supabase.from("transaction_macros").update({ active }).eq("id", id);
+    const { data, error } = await supabase.from("goal_macros").update({ active }).eq("id", id);
 
     if (error) throw error;
 
@@ -87,7 +87,7 @@ export const transactionMacroAPI = {
   },
 
   delete: async ({ id }: { id: number }) => {
-    const { data, error } = await supabase.from("transaction_macros").delete().eq("id", id);
+    const { data, error } = await supabase.from("goal_macros").delete().eq("id", id);
 
     if (error) throw error;
 

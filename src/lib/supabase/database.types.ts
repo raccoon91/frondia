@@ -107,6 +107,48 @@ export type Database = {
           },
         ]
       }
+      goal_macros: {
+        Row: {
+          active: boolean
+          amount: number | null
+          category_ids: Json | null
+          created_at: string
+          currency_id: number | null
+          id: number
+          name: string
+          period: string | null
+          rule: string | null
+          type_id: number | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          amount?: number | null
+          category_ids?: Json | null
+          created_at?: string
+          currency_id?: number | null
+          id?: number
+          name: string
+          period?: string | null
+          rule?: string | null
+          type_id?: number | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          amount?: number | null
+          category_ids?: Json | null
+          created_at?: string
+          currency_id?: number | null
+          id?: number
+          name?: string
+          period?: string | null
+          rule?: string | null
+          type_id?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           amount: number

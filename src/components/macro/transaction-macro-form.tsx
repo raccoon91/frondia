@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import { LoadingDot } from "@/components/ui/loading-dot";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { macroFormSchema } from "@/schema/macro.schema";
+import type { transactionMacroFormSchema } from "@/schema/macro.schema";
 
 interface TransactionMacroFormProps {
   isLoading: boolean;
@@ -15,8 +15,8 @@ interface TransactionMacroFormProps {
   transactionTypes: TransactionType[];
   categories: Category[];
   submitText: string;
-  transactionMacroForm: UseFormReturn<z.infer<typeof macroFormSchema>, unknown, undefined>;
-  onSubmitMacro: (formdata: z.infer<typeof macroFormSchema>) => Promise<void>;
+  transactionMacroForm: UseFormReturn<z.infer<typeof transactionMacroFormSchema>, unknown, undefined>;
+  onSubmitMacro: (formdata: z.infer<typeof transactionMacroFormSchema>) => Promise<void>;
 }
 
 export const TransactionMacroForm: FC<TransactionMacroFormProps> = ({

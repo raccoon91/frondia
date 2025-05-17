@@ -33,7 +33,7 @@ interface MultiSelectProps
     VariantProps<typeof multiSelectVariants> {
   options?: MultiSelectOption[];
   defaultValues?: string[];
-  values?: string[];
+  values?: (string | number)[];
   placeholder?: string;
   maxCount?: number;
   className?: string;
@@ -66,7 +66,7 @@ const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     useEffect(() => {
       if (!values.length) return;
 
-      setSelectedValues(values);
+      setSelectedValues(values.map((value) => value.toString()));
     }, [values]);
 
     const handleChangeKeyword = (event: React.KeyboardEvent<HTMLInputElement>) => {

@@ -26,6 +26,10 @@ export const TRANSACTION_MACRO_CREATE_FILE_ROUTE = "/_private/macro/transaction/
 
 export const TRANSACTION_MACRO_UPDATE_FILE_ROUTE = "/_private/macro/transaction/$id";
 
+export const GOAL_MACRO_CREATE_FILE_ROUTE = "/_private/macro/goal/create";
+
+export const GOAL_MACRO_UPDATE_FILE_ROUTE = "/_private/macro/goal/$id";
+
 export const REPORT_FILE_ROUTE = "/_private/report";
 
 export const SETTING_FILE_ROUTE = "/_private/setting";
@@ -44,6 +48,8 @@ export const ROUTE = {
   MACRO: "/macro",
   TRANSACTION_MACRO_CREATE: "/macro/transaction/create",
   TRANSACTION_MACRO_UPDATE: "/macro/transaction/$id",
+  GOAL_MACRO_CREATE: "/macro/goal/create",
+  GOAL_MACRO_UPDATE: "/macro/goal/$id",
   REPORT: "/report",
   SETTING: "/setting",
 };

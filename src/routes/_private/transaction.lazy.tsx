@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ROUTE, TRANSACTION_FILE_ROUTE } from "@/constants/route";
 import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/stores/common/session.store";
-import { useTransactionMacroStore } from "@/stores/transaction-macro.store";
+import { useTransactionMacroStore } from "@/stores/macro/transaction-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 import { useTransactionStore } from "@/stores/transaction.store";
 

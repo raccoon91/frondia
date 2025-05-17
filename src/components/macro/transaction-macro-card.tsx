@@ -11,9 +11,6 @@ import { ROUTE } from "@/constants/route";
 interface TransactionMacroCardProps {
   isLoading: boolean;
   transactionMacro: TransactionMacro;
-  currency: Nullable<Currency>;
-  type: Nullable<TransactionType>;
-  category: Nullable<Category>;
   onToggleActive: (transactionMacroId: number, active: boolean) => Promise<void>;
   onDelete: (transactionMacro: TransactionMacro) => void;
 }
@@ -21,9 +18,6 @@ interface TransactionMacroCardProps {
 export const TransactionMacroCard: FC<TransactionMacroCardProps> = ({
   isLoading,
   transactionMacro,
-  currency,
-  type,
-  category,
   onToggleActive,
   onDelete,
 }) => {
@@ -36,7 +30,7 @@ export const TransactionMacroCard: FC<TransactionMacroCardProps> = ({
   };
 
   return (
-    <Card className="bg-background">
+    <Card className="bg-background gap-4">
       <CardMenu className="top-2 right-2">
         <Button disabled={isLoading} size="icon" variant="ghost" className="w-8 h-8" onClick={handleDeleteMarco}>
           <Trash />
@@ -59,23 +53,19 @@ export const TransactionMacroCard: FC<TransactionMacroCardProps> = ({
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-2">
-        <div className="flex gap-4">
-          <p className="min-w-[72px] text-sm">type</p>
-          {type ? <Badge variant="secondary">{type.name}</Badge> : <Badge variant="outline">None</Badge>}
+      <CardContent className="flex flex-col gap-3">
+        <div className="flex gap-2">
+          {transactionMacro.type ? <Badge variant="secondary">{transactionMacro.type?.name}</Badge> : null}
+
+          {transactionMacro.category ? <Badge variant="outline">{transactionMacro.category?.name}</Badge> : null}
         </div>
 
-        <div className="flex gap-4">
-          <p className="min-w-[72px] text-sm">category</p>
-          {category ? <Badge variant="secondary">{category.name}</Badge> : <Badge variant="outline">None</Badge>}
-        </div>
-
-        <p className="my-2 font-bold text-sm">{transactionMacro.memo}</p>
+        <p className="font-bold text-sm">{transactionMacro.memo}</p>
 
         <div className="flex justify-between">
           <div className="flex gap-1 text-sm">
             <p>{transactionMacro.amount?.toLocaleString("en-US")}</p>
-            {currency ? <p>{currency.symbol}</p> : null}
+            {transactionMacro.currency ? <p>{transactionMacro.currency.symbol}</p> : null}
           </div>
 
           <div className="flex items-center justify-end gap-2 text-muted-foreground text-xs">

@@ -8,11 +8,11 @@ import { useShallow } from "zustand/shallow";
 import { TransactionMacroForm } from "@/components/macro/transaction-macro-form";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ROUTE, TRANSACTION_MACRO_UPDATE_FILE_ROUTE } from "@/constants/route";
-import { macroFormDefaultValues, macroFormSchema } from "@/schema/macro.schema";
-import { useTransactionMacroStore } from "@/stores/transaction-macro.store";
+import { transactionMacroFormDefaultValues, transactionMacroFormSchema } from "@/schema/macro.schema";
+import { useTransactionMacroStore } from "@/stores/macro/transaction-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
-const MacroUpdatePage = () => {
+const TransactionMacroUpdatePage = () => {
   const navigate = useNavigate();
   const params = useParams({ from: TRANSACTION_MACRO_UPDATE_FILE_ROUTE });
   const [isOpenMacroUpdateSheet, setIsOpenMacroUpdateSheet] = useState(true);
@@ -34,12 +34,12 @@ const MacroUpdatePage = () => {
     })),
   );
 
-  const transactionMacroForm = useForm<z.infer<typeof macroFormSchema>>({
-    resolver: zodResolver(macroFormSchema),
-    defaultValues: macroFormDefaultValues,
+  const transactionMacroForm = useForm<z.infer<typeof transactionMacroFormSchema>>({
+    resolver: zodResolver(transactionMacroFormSchema),
+    defaultValues: transactionMacroFormDefaultValues,
   });
 
-  const getMacroDetail = useCallback(async () => {
+  const getTransactionMacroDetail = useCallback(async () => {
     if (!params.id) return;
 
     const transactionMacro = await getTransactionMacro(params.id);
@@ -48,8 +48,8 @@ const MacroUpdatePage = () => {
 
     setTransactionMacro(transactionMacro);
 
-    Object.keys(macroFormDefaultValues).forEach((key) => {
-      const formKey = key as keyof typeof macroFormDefaultValues;
+    Object.keys(transactionMacroFormDefaultValues).forEach((key) => {
+      const formKey = key as keyof typeof transactionMacroFormDefaultValues;
       const formValue =
         typeof transactionMacro[formKey] === "number"
           ? transactionMacro[formKey].toString()
@@ -60,10 +60,10 @@ const MacroUpdatePage = () => {
   }, [params]);
 
   useEffect(() => {
-    getMacroDetail();
-  }, [getMacroDetail]);
+    getTransactionMacroDetail();
+  }, [getTransactionMacroDetail]);
 
-  const handleCloseMacroSheet = (open?: boolean) => {
+  const handleCloseTransactionMacroSheet = (open?: boolean) => {
     if (open) return;
 
     setIsOpenMacroUpdateSheet(false);
@@ -74,18 +74,18 @@ const MacroUpdatePage = () => {
     navigate({ to: ROUTE.MACRO });
   };
 
-  const handleUpdateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
+  const handleUpdateTransactionMacro = async (formdata: z.infer<typeof transactionMacroFormSchema>) => {
     if (!transactionMacro) return;
 
     await updateTransactionMacro(transactionMacro, formdata);
 
     getAllTransactionMacros();
 
-    handleCloseMacroSheet();
+    handleCloseTransactionMacroSheet();
   };
 
   return (
-    <Sheet open={isOpenMacroUpdateSheet} onOpenChange={handleCloseMacroSheet}>
+    <Sheet open={isOpenMacroUpdateSheet} onOpenChange={handleCloseTransactionMacroSheet}>
       <SheetContent className="flex flex-col gap-2 w-[400px] sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>Transaction Macro</SheetTitle>
@@ -97,9 +97,9 @@ const MacroUpdatePage = () => {
           currencies={currencies}
           transactionTypes={transactionTypes}
           categories={categories}
-          submitText="Update Macro"
+          submitText="Update Transaction Macro"
           transactionMacroForm={transactionMacroForm}
-          onSubmitMacro={handleUpdateMacro}
+          onSubmitMacro={handleUpdateTransactionMacro}
         />
       </SheetContent>
     </Sheet>
@@ -107,5 +107,5 @@ const MacroUpdatePage = () => {
 };
 
 export const Route = createFileRoute(TRANSACTION_MACRO_UPDATE_FILE_ROUTE)({
-  component: MacroUpdatePage,
+  component: TransactionMacroUpdatePage,
 });

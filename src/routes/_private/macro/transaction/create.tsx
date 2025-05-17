@@ -8,11 +8,11 @@ import { useShallow } from "zustand/shallow";
 import { TransactionMacroForm } from "@/components/macro/transaction-macro-form";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ROUTE, TRANSACTION_MACRO_CREATE_FILE_ROUTE } from "@/constants/route";
-import { macroFormDefaultValues, macroFormSchema } from "@/schema/macro.schema";
-import { useTransactionMacroStore } from "@/stores/transaction-macro.store";
+import { transactionMacroFormDefaultValues, transactionMacroFormSchema } from "@/schema/macro.schema";
+import { useTransactionMacroStore } from "@/stores/macro/transaction-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
-const MacroCreatePage = () => {
+const TransactionMacroCreatePage = () => {
   const navigate = useNavigate();
   const [isOpenMacroCreateSheet, setIsOpenMacroCreateSheet] = useState(true);
 
@@ -31,12 +31,12 @@ const MacroCreatePage = () => {
     })),
   );
 
-  const transactionMacroForm = useForm<z.infer<typeof macroFormSchema>>({
-    resolver: zodResolver(macroFormSchema),
-    defaultValues: macroFormDefaultValues,
+  const transactionMacroForm = useForm<z.infer<typeof transactionMacroFormSchema>>({
+    resolver: zodResolver(transactionMacroFormSchema),
+    defaultValues: transactionMacroFormDefaultValues,
   });
 
-  const handleCloseMacroSheet = (open?: boolean) => {
+  const handleCloseTransactionMacroSheet = (open?: boolean) => {
     if (open) return;
 
     setIsOpenMacroCreateSheet(false);
@@ -44,16 +44,16 @@ const MacroCreatePage = () => {
     navigate({ to: ROUTE.MACRO });
   };
 
-  const handleCreateMacro = async (formdata: z.infer<typeof macroFormSchema>) => {
+  const handleCreateTransactionMacro = async (formdata: z.infer<typeof transactionMacroFormSchema>) => {
     await createTransactionMacro(formdata);
 
     getAllTransactionMacros();
 
-    handleCloseMacroSheet();
+    handleCloseTransactionMacroSheet();
   };
 
   return (
-    <Sheet open={isOpenMacroCreateSheet} onOpenChange={handleCloseMacroSheet}>
+    <Sheet open={isOpenMacroCreateSheet} onOpenChange={handleCloseTransactionMacroSheet}>
       <SheetContent className="flex flex-col gap-2 w-[400px] sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>Transaction Macro</SheetTitle>
@@ -65,9 +65,9 @@ const MacroCreatePage = () => {
           currencies={currencies}
           transactionTypes={transactionTypes}
           categories={categories}
-          submitText="Create Macro"
+          submitText="Create Transaction Macro"
           transactionMacroForm={transactionMacroForm}
-          onSubmitMacro={handleCreateMacro}
+          onSubmitMacro={handleCreateTransactionMacro}
         />
       </SheetContent>
     </Sheet>
@@ -75,5 +75,5 @@ const MacroCreatePage = () => {
 };
 
 export const Route = createFileRoute(TRANSACTION_MACRO_CREATE_FILE_ROUTE)({
-  component: MacroCreatePage,
+  component: TransactionMacroCreatePage,
 });
