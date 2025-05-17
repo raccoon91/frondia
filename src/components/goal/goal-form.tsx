@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { LoadingDot } from "@/components/ui/loading-dot";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GOAL_STATUS } from "@/constants/goal";
+import { GOAL_PERIODS, GOAL_RULES, GOAL_STATUS } from "@/constants/goal";
 import type { goalFormSchema } from "@/schema/goal.schema";
 
 interface GoalFormProps {
@@ -119,8 +119,11 @@ export const GoalForm: FC<GoalFormProps> = ({
                     </FormControl>
 
                     <SelectContent className="max-h-[240px]">
-                      <SelectItem value="less">Less</SelectItem>
-                      <SelectItem value="greater">Greater</SelectItem>
+                      {GOAL_RULES.map((rule) => (
+                        <SelectItem key={rule.value} value={rule.value}>
+                          {rule.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -196,9 +199,11 @@ export const GoalForm: FC<GoalFormProps> = ({
                     </FormControl>
 
                     <SelectContent className="max-h-[240px]">
-                      <SelectItem value="month">Month</SelectItem>
-                      <SelectItem value="week">Week</SelectItem>
-                      <SelectItem value="custom">Custom</SelectItem>
+                      {GOAL_PERIODS.map((period) => (
+                        <SelectItem key={period.value} value={period.value}>
+                          {period.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormItem>

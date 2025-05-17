@@ -7,6 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import { LoadingDot } from "@/components/ui/loading-dot";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { GOAL_PERIODS, GOAL_RULES } from "@/constants/goal";
 import type { goalMacroFormSchema } from "@/schema/macro.schema";
 import { MultiSelect } from "../ui/multi-select";
 
@@ -119,8 +120,11 @@ export const GoalMacroForm: FC<GoalMacroFormProps> = ({
                       </FormControl>
 
                       <SelectContent className="max-h-[240px]">
-                        <SelectItem value="less">Less</SelectItem>
-                        <SelectItem value="greater">Greater</SelectItem>
+                        {GOAL_RULES.map((rule) => (
+                          <SelectItem key={rule.value} value={rule.value}>
+                            {rule.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -182,9 +186,11 @@ export const GoalMacroForm: FC<GoalMacroFormProps> = ({
                     </FormControl>
 
                     <SelectContent className="max-h-[240px]">
-                      <SelectItem value="month">Month</SelectItem>
-                      <SelectItem value="week">Week</SelectItem>
-                      <SelectItem value="custom">Custom</SelectItem>
+                      {GOAL_PERIODS.map((period) => (
+                        <SelectItem key={period.value} value={period.value}>
+                          {period.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
