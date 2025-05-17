@@ -1,15 +1,17 @@
 import { Link, Outlet, createLazyFileRoute } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Goal } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Goal, Settings } from "lucide-react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 
 import { GoalCard } from "@/components/goal/goal-card";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardMenu, CardTitle } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { GOAL_FILE_ROUTE, ROUTE } from "@/constants/route";
+import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/stores/common/session.store";
 import { useGoalStore } from "@/stores/goal.store";
+import { useGoalMacroStore } from "@/stores/macro/goal-macro.store";
 import { useTransactionOptionStore } from "@/stores/transaction-option.store";
 
 const GoalPage = () => {
@@ -30,6 +32,12 @@ const GoalPage = () => {
       getCategories: state.getCategories,
     })),
   );
+  const { goalMacros, getGoalMacros } = useGoalMacroStore(
+    useShallow((state) => ({
+      goalMacros: state.goalMacros,
+      getGoalMacros: state.getGoalMacros,
+    })),
+  );
   const { isLoading, goalsInReady, goalsInProgress, goalsInDone, getGoals, removeGoal } = useGoalStore(
     useShallow((state) => ({
       isLoading: state.isLoading,
@@ -42,7 +50,7 @@ const GoalPage = () => {
   );
 
   useEffect(() => {
-    Promise.all([getCurrencies(), getTransactionTypes(), getCategories()]);
+    Promise.all([getCurrencies(), getTransactionTypes(), getCategories(), getGoalMacros()]);
     getGoals();
   }, []);
 
@@ -81,6 +89,19 @@ const GoalPage = () => {
     handleCloseDeleteGoalDialog();
   };
 
+  const handleClickGoalMacro = (e: MouseEvent<HTMLDivElement>) => {
+    const dataset = e.currentTarget.dataset;
+    const macroId = dataset.macroId;
+
+    if (!macroId) return;
+
+    const macro = goalMacros.find((macro) => macro.id.toString() === macroId);
+
+    if (!macro) return;
+
+    console.log(macro);
+  };
+
   return (
     <>
       <DeleteDialog
@@ -105,53 +126,84 @@ const GoalPage = () => {
           </Button>
         </div>
 
-        <div className="grid grid-rows-[32px_auto] gap-4">
-          <div className="flex justify-end gap-2">
-            <Button size="sm" variant="outline" asChild>
-              <Link to={ROUTE.GOAL_CREATE}>
-                <Goal />
-                <p>Goal</p>
-              </Link>
-            </Button>
+        <div className="grid grid-cols-[1fr_272px] items-start gap-6">
+          <div className="grid grid-rows-[32px_auto] gap-4">
+            <div className="flex justify-end gap-2">
+              <Button size="sm" variant="outline" asChild>
+                <Link to={ROUTE.GOAL_CREATE}>
+                  <Goal />
+                  <p>Goal</p>
+                </Link>
+              </Button>
 
-            {/* <ScheduleSheet /> */}
+              {/* <ScheduleSheet /> */}
+            </div>
+
+            <div className="grid grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Ready</CardTitle>
+                </CardHeader>
+
+                <CardContent className="flex flex-col gap-2">
+                  {goalsInReady.map((goal) => (
+                    <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Progress</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  {goalsInProgress.map((goal) => (
+                    <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Done</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  {goalsInDone.map((goal) => (
+                    <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ready</CardTitle>
-              </CardHeader>
+          <Card className="pt-8 gap-4">
+            <CardMenu>
+              <Button asChild size="icon" variant="ghost" className="w-8 h-8">
+                <Link to={ROUTE.MACRO}>
+                  <Settings />
+                </Link>
+              </Button>
+            </CardMenu>
 
-              <CardContent className="flex flex-col gap-2">
-                {goalsInReady.map((goal) => (
-                  <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Progress</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-2">
-                {goalsInProgress.map((goal) => (
-                  <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Done</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-2">
-                {goalsInDone.map((goal) => (
-                  <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
-                ))}
-              </CardContent>
-            </Card>
-          </div>
+            <CardContent className="flex flex-col gap-2">
+              {goalMacros?.length ? (
+                goalMacros.map((macro) => (
+                  <div
+                    key={macro.id}
+                    data-macro-id={macro.id}
+                    className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
+                    onClick={handleClickGoalMacro}
+                  >
+                    <p className="text-sm">{macro.name}</p>
+                  </div>
+                ))
+              ) : (
+                <Button asChild size="sm" variant="outline">
+                  <Link to={ROUTE.TRANSACTION_MACRO_CREATE}>Create Macro</Link>
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
 

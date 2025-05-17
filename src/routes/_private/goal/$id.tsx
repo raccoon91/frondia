@@ -60,6 +60,8 @@ const GoalUpdatePage = () => {
 
       goalForm.setValue(formKey, formValue);
     });
+
+    goalForm.trigger();
   }, [params]);
 
   useEffect(() => {

@@ -51,10 +51,16 @@ const GoalMacroUpdatePage = () => {
     Object.keys(goalMacroFormDefaultValues).forEach((key) => {
       const formKey = key as keyof typeof goalMacroFormDefaultValues;
       const formValue =
-        typeof goalMacro[formKey] === "number" ? goalMacro[formKey].toString() : (goalMacro[formKey] ?? "");
+        formKey === "category_ids"
+          ? ((goalMacro[formKey] as number[])?.map((id) => id.toString()) ?? [])
+          : typeof goalMacro[formKey] === "number"
+            ? goalMacro[formKey].toString()
+            : (goalMacro[formKey] ?? "");
 
       goalMacroForm.setValue(formKey, formValue as string | string[]);
     });
+
+    goalMacroForm.trigger();
   }, [params]);
 
   useEffect(() => {

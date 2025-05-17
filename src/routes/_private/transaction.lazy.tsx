@@ -142,7 +142,7 @@ const TransactionPage = () => {
     getTransactions();
   };
 
-  const handleClickMacro = (e: MouseEvent<HTMLDivElement>) => {
+  const handleClickTransactionMacro = (e: MouseEvent<HTMLDivElement>) => {
     const dataset = e.currentTarget.dataset;
     const macroId = dataset.macroId;
 
@@ -319,7 +319,7 @@ const TransactionPage = () => {
                   key={macro.id}
                   data-macro-id={macro.id}
                   className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
-                  onClick={handleClickMacro}
+                  onClick={handleClickTransactionMacro}
                 >
                   <p className="text-sm">{macro.name}</p>
                 </div>

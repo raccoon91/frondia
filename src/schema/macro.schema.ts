@@ -15,11 +15,11 @@ export const transactionMacroFormSchema = z.object({
 export const goalMacroFormSchema = z.object({
   name: z.string().nonempty(),
   type_id: z.string().default(""),
-  category_ids: z.array(z.string()).default([]),
+  category_ids: z.string().array().default([]),
   currency_id: z.string().default(""),
-  rule: z.string().nonempty(),
+  rule: z.string().default(""),
   amount: z.string().default(""),
-  period: z.string().nonempty(),
+  period: z.string().default(""),
 });
 
 export const transactionMacroFormDefaultValues = {
