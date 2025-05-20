@@ -63,6 +63,19 @@ export const GoalMacroForm: FC<GoalMacroFormProps> = ({
 
           <FormField
             control={goalMacroForm.control}
+            name="goal_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel aria-required>Goal Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={goalMacroForm.control}
             name="type_id"
             render={({ field }) => (
               <FormItem>

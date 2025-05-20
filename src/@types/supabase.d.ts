@@ -100,6 +100,7 @@ interface GoalMacro {
   id: number;
   user_id: string;
   name: string;
+  goal_name: string;
   type_id: Nullable<number>;
   category_ids: Nullable<JsonType>;
   rule: Nullable<string>;

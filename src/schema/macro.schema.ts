@@ -14,6 +14,7 @@ export const transactionMacroFormSchema = z.object({
 
 export const goalMacroFormSchema = z.object({
   name: z.string().nonempty(),
+  goal_name: z.string().nonempty(),
   type_id: z.string().default(""),
   category_ids: z.string().array().default([]),
   currency_id: z.string().default(""),
@@ -36,6 +37,7 @@ export const transactionMacroFormDefaultValues = {
 
 export const goalMacroFormDefaultValues = {
   name: "",
+  goal_name: "",
   type_id: "",
   category_ids: [],
   currency_id: "",

@@ -114,6 +114,7 @@ export type Database = {
           category_ids: Json | null
           created_at: string
           currency_id: number | null
+          goal_name: string
           id: number
           name: string
           period: string | null
@@ -127,6 +128,7 @@ export type Database = {
           category_ids?: Json | null
           created_at?: string
           currency_id?: number | null
+          goal_name: string
           id?: number
           name: string
           period?: string | null
@@ -140,6 +142,7 @@ export type Database = {
           category_ids?: Json | null
           created_at?: string
           currency_id?: number | null
+          goal_name?: string
           id?: number
           name?: string
           period?: string | null
