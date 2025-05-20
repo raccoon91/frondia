@@ -39,6 +39,7 @@ export const goalMacroAPI = {
     const { data, error } = await supabase.from("goal_macros").insert({
       user_id: authData.user.id,
       name: formdata.name,
+      goal_name: formdata.goal_name,
       type_id: formdata.type_id ? Number(formdata.type_id) : null,
       category_ids: formdata.category_ids?.length
         ? formdata.category_ids.map((categoryId) => Number(categoryId))
@@ -61,6 +62,7 @@ export const goalMacroAPI = {
       .update({
         user_id: macro.user_id,
         name: formdata.name,
+        goal_name: formdata.goal_name,
         type_id: formdata.type_id ? Number(formdata.type_id) : null,
         category_ids: formdata.category_ids?.length
           ? formdata.category_ids.map((categoryId) => Number(categoryId))
