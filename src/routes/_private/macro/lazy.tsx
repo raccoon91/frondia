@@ -6,7 +6,7 @@ import { useShallow } from "zustand/shallow";
 import { GoalMacroCard } from "@/components/macro/goal-macro-card";
 import { TransactionMacroCard } from "@/components/macro/transaction-macro-card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteDialog } from "@/components/ui/delete-dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MACRO_ACTIVE_STATUS } from "@/constants/macro";
@@ -228,7 +228,11 @@ const MacroPage = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Card className="py-4">
+            <Card className="gap-4 py-4">
+              <CardHeader>
+                <CardTitle>Transaction Macro</CardTitle>
+              </CardHeader>
+
               {transactionMacrosWithJoin?.length ? (
                 <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4 px-4">
                   {transactionMacrosWithJoin.map((transactionMacro) => (
@@ -248,7 +252,11 @@ const MacroPage = () => {
               )}
             </Card>
 
-            <Card className="py-4">
+            <Card className="gap-4 py-4">
+              <CardHeader>
+                <CardTitle>Goal Macro</CardTitle>
+              </CardHeader>
+
               {goalMacrosWithJoin?.length ? (
                 <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4 px-4">
                   {goalMacrosWithJoin.map((goalMacro) => (
