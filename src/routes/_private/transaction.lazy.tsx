@@ -303,7 +303,7 @@ const TransactionPage = () => {
 
         {/* <div className="sticky top-[20px] grid grid-rows-[32px_auto] gap-4"></div> */}
 
-        <Card className="pt-8 gap-4">
+        <Card className="pt-8 pb-4 gap-4">
           <CardMenu>
             <Button asChild size="icon" variant="ghost" className="w-8 h-8">
               <Link to={ROUTE.MACRO}>
@@ -312,7 +312,7 @@ const TransactionPage = () => {
             </Button>
           </CardMenu>
 
-          <CardContent className="flex flex-col gap-2">
+          <CardContent className="flex flex-col gap-2 px-4">
             {transactionMacros?.length ? (
               transactionMacros.map((macro) => (
                 <div

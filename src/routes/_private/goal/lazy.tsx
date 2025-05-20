@@ -176,7 +176,7 @@ const GoalPage = () => {
             </div>
           </div>
 
-          <Card className="pt-8 gap-4">
+          <Card className="pt-8 pb-4 gap-4">
             <CardMenu>
               <Button asChild size="icon" variant="ghost" className="w-8 h-8">
                 <Link to={ROUTE.MACRO}>
@@ -185,7 +185,7 @@ const GoalPage = () => {
               </Button>
             </CardMenu>
 
-            <CardContent className="flex flex-col gap-2">
+            <CardContent className="flex flex-col gap-2 px-4">
               {goalMacros?.length ? (
                 goalMacros.map((macro) => (
                   <div
