@@ -139,35 +139,35 @@ const GoalPage = () => {
               {/* <ScheduleSheet /> */}
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
-              <Card>
+            <div className="grid grid-cols-3 gap-4">
+              <Card className="gap-4 py-4">
                 <CardHeader>
                   <CardTitle>Ready</CardTitle>
                 </CardHeader>
 
-                <CardContent className="flex flex-col gap-2">
+                <CardContent className="flex flex-col gap-2 px-4">
                   {goalsInReady.map((goal) => (
                     <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
                   ))}
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="gap-4 py-4">
                 <CardHeader>
                   <CardTitle>Progress</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-2">
+                <CardContent className="flex flex-col gap-2 px-4">
                   {goalsInProgress.map((goal) => (
                     <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
                   ))}
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="gap-4 py-4">
                 <CardHeader>
                   <CardTitle>Done</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-2">
+                <CardContent className="flex flex-col gap-2 px-4">
                   {goalsInDone.map((goal) => (
                     <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
                   ))}

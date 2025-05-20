@@ -228,9 +228,9 @@ const MacroPage = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Card>
+            <Card className="py-4">
               {transactionMacrosWithJoin?.length ? (
-                <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4 px-4">
                   {transactionMacrosWithJoin.map((transactionMacro) => (
                     <TransactionMacroCard
                       key={transactionMacro.id}
@@ -242,15 +242,15 @@ const MacroPage = () => {
                   ))}
                 </CardContent>
               ) : (
-                <CardContent className="flex justify-center py-12">
+                <CardContent className="flex justify-center py-12 px-4">
                   <p className="text-sm font-semibold">No Transaction Macro</p>
                 </CardContent>
               )}
             </Card>
 
-            <Card>
+            <Card className="py-4">
               {goalMacrosWithJoin?.length ? (
-                <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4 px-4">
                   {goalMacrosWithJoin.map((goalMacro) => (
                     <GoalMacroCard
                       key={goalMacro.id}
@@ -262,7 +262,7 @@ const MacroPage = () => {
                   ))}
                 </CardContent>
               ) : (
-                <CardContent className="flex justify-center py-12">
+                <CardContent className="flex justify-center py-12 px-4">
                   <p className="text-sm font-semibold">No Goal Macro</p>
                 </CardContent>
               )}
