@@ -145,33 +145,53 @@ const GoalPage = () => {
                   <CardTitle>Ready</CardTitle>
                 </CardHeader>
 
-                <CardContent className="flex flex-col gap-2 px-4">
-                  {goalsInReady.map((goal) => (
-                    <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
-                  ))}
-                </CardContent>
+                {goalsInReady?.length ? (
+                  <CardContent className="flex flex-col gap-2 px-4">
+                    {goalsInReady.map((goal) => (
+                      <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
+                    ))}
+                  </CardContent>
+                ) : (
+                  <CardContent className="flex justify-center py-12 px-4">
+                    <p className="text-sm font-semibold">Empty</p>
+                  </CardContent>
+                )}
               </Card>
 
               <Card className="gap-4 py-4">
                 <CardHeader>
                   <CardTitle>Progress</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-2 px-4">
-                  {goalsInProgress.map((goal) => (
-                    <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
-                  ))}
-                </CardContent>
+
+                {goalsInProgress.length ? (
+                  <CardContent className="flex flex-col gap-2 px-4">
+                    {goalsInProgress.map((goal) => (
+                      <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
+                    ))}
+                  </CardContent>
+                ) : (
+                  <CardContent className="flex justify-center py-12 px-4">
+                    <p className="text-sm font-semibold">Empty</p>
+                  </CardContent>
+                )}
               </Card>
 
               <Card className="gap-4 py-4">
                 <CardHeader>
                   <CardTitle>Done</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-2 px-4">
-                  {goalsInDone.map((goal) => (
-                    <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
-                  ))}
-                </CardContent>
+
+                {goalsInDone.length ? (
+                  <CardContent className="flex flex-col gap-2 px-4">
+                    {goalsInDone.map((goal) => (
+                      <GoalCard key={goal.id} isLoading={isLoading} goal={goal} onDelete={handleOpenDeleteGoalDialog} />
+                    ))}
+                  </CardContent>
+                ) : (
+                  <CardContent className="flex justify-center py-12 px-4">
+                    <p className="text-sm font-semibold">Empty</p>
+                  </CardContent>
+                )}
               </Card>
             </div>
           </div>
